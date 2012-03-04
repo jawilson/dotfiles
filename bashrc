@@ -57,11 +57,11 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 export EDITOR=vim
-export PATH="$PATH:/home/atlanta800/bin:/opt/android/bin"
+export PATH="$PATH:$HOME/.bin:/opt/android/bin"
 
 # DistCC Configuration
 if [ -d /usr/lib/distcc ]; then
-  DISTCC_HOSTS="localhost JewJitsu Faraday"
+  DISTCC_HOSTS="localhost Faraday"
   PATH="/usr/lib/distcc:${PATH}"
   export DISTCC_HOSTS PATH
 fi
