@@ -1,0 +1,17 @@
+#!/bin/sh
+
+DVDRW=/dev/scd0
+ISO="$1"
+
+if [ $# -eq 2 ];
+then
+	DVDRW="$1"
+	ISO="$2"
+fi
+
+if [ $# -eq 2 -o $# -eq 1 ];
+then
+	growisofs -use-the-force-luke=dao -use-the-force-luke=break:1913760 -dvd-compat -speed=4 -Z "$DVDRW"="$ISO"
+else
+	echo "Usage: $0 [dvd_drive] <iso>"
+fi
