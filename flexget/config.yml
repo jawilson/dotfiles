@@ -1,0 +1,269 @@
+# Flexget (http://www.flexget.com) configuration file.
+#
+# Created by: Jeff Wilson <jeff@jeffalwilson.com>
+# Updated: 1/20/12
+#
+# This config grabs many rss feeds and adds movies and TV shows to deluge. There's a fairly standard
+# series plugin preset as well as a series_premieres to grab new shows. While the series preset is
+# standard, the actual feeds that use it are an advanced way of implementing a tiered wait period
+# base on minimum quality. I also have movie_queue set up to grab movies from my IMDB watchlist and
+# download them when available. Finally, there is a feed that automatically downloads all movies
+# based on some fairly strict rules.
+
+presets:
+  global:
+    include: [ private/global.yml ]
+    # Make there's 50GB free before adding more downloads
+    free_space:
+      path: /raid
+      space: 50000
+    # Most of these are the results of problem torrents I kept seeing still pop up, so I wholesale blocked them
+    # RegExr (http://www.gskinner.com/RegExr/) is a great tool for testing regexes
+    regexp:
+      reject:
+        - (s|d)ub(s|bed)?\b: {from: title}                    # Block any subbed/dubbed/etc videos
+        - \b(duo|tri|quadri|tetra|penta)logy\b: {from: title} # Block series, only accept one at a time
+        - \b3-?D\b: {from: title}                             # I don't have any 3D displays
+        - \bR5\b: {from: title}                               # The following are poor quality types that somehow got through the quality
+        - \bWEBSCR\b: {from: title}                           # features usually due to the title including a keyword like "720p" as well
+        - \bscreener\b: {from: title}
+        - \bTS\b: {from: title}
+        - \bCam\b: {from: title}
+        - '{C_P}': {from: title}                              # The following are groups with poor quality releases
+        - TrTd TeaM: {from: title}
+        - \[TNTVillage\]: {from: title}
+        - \[facepalm\]: {from: title}
+    cookies: /home/deluge/.flexget/demonoid-cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
+    #torrent_alive: 20 # Require at least 20 seeds of any torrent
+    # Limit the frequency of requests to domains so they don't complain about using a bot
+    domain_delay:
+      bt-chat.com: 5 seconds
+    deluge:
+      main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
+    email:
+      from: deluge@Faraday.singularity
+      to: atlanta800+flexget@gmail.com
+
+  # This preset is a "global" preset for all TV-related feeds.
+  # We keep all of the RSS feeds that list tv-related torrents here
+  # as well as where to check existing shows.
+  tv-global:
+    include: [ private/tv-global.yml ]
+    # This is a TON of feeds, you probably don't need so many, but why not?
+    inputs:
+      - rss: http://static.demonoid.me/rss/3.xml                # Demonoid (All TV)
+      - rss: http://www.torlock.com/television/rss.xml          # TorLock (TV)
+      - rss: http://torrentz.eu/feed_verified?q=tv              # Torrentz (Verified only, TV)
+      - rss: http://ezrss.it/feed/                              # EZRSS
+      - rss: http://showrss.karmorra.info/feeds/all.rss         # Karmorra (All)
+      - rss: http://rss.bt-chat.com/?group=3                    # BT-Chat (EZTV)
+      - rss: http://rss.thepiratebay.org/208                    # The Pirate Bay (Highres - TV shows)
+    # Impose reasonable size constraints
+    content_size:
+      max: 4000
+      min: 20
+    # Prevent from downloading shows that were aquired manually
+    # or are currently downloading
+    exists_series:
+      - "/raid/videos/TV Shows/"
+      - "/raid/downloads/TV Shows/"
+      - "/home/deluge/downloads/"
+    # Look up info on TheTVDB.com to fill in extra info
+    thetvdb_lookup: yes
+    # Add accepted entries to Deluge and make sure they end up in the correct folder with a nice name
+    deluge:
+      # Rename the "content file" to something nice
+      content_filename: |
+        {{ series_name | pathscrub }} - {{ series_id }}{% if ep_name|default(False) %} - {{ ep_name | pathscrub }}{% endif %} - {{ quality }}
+      label: tv
+
+  # These are the shows I regularly watch
+  tv-my_shows:
+    # I've broken out my series lists into a seperate yml to clean up my config
+    include: [ series.yml ]
+    # Add accepted entries to Deluge, queue them to the top and make sure they end up in the
+    # correct folder
+    deluge:
+      movedone: "/raid/videos/TV Shows/{{ series_name | pathscrub }}/Season {{ series_season }}"
+      queuetotop: yes
+
+  # I'm always up for new shows, but some I genres I just can't stand. This preset
+  # grabs all of the premieres except for some genres
+  tv-premieres:
+    # The entry has to have the series_genres field so I can filter by it
+    require_field:
+      - series_genres
+      - ep_air_date
+    # Block these genres if they exist in the list of series_genres at all
+    regexp:
+      reject:
+        - documentary: {from: series_genres}
+        - talk show: {from: series_genres}
+        - game show: {from: series_genres}
+        - reality: {from: series_genres}
+        - children: {from: series_genres}
+        - home and garden: {from: series_genres}
+    if:
+      # Block these genres only if they are the ONLY genre listed in series_genres
+      # For example, this will not block a show that's both "Comedy" and "Drama" but it will
+      # block a show that is just "Drama"
+      - "series_genres == ['Drama']": reject
+      # Block premieres that weren't within the last 60 days
+      - ep_air_date != None and ep_air_date < now - timedelta(days=60): reject
+    # Accept all series permieres, 1080p first, then minimum of 720p after 8 hours
+    series_premiere:
+      quality: 1080p
+      min_quality: 720p
+      timeframe: 8 hours
+    # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
+    # location
+    deluge:
+      movedone: "/raid/downloads/TV Shows/{{ series_name | pathscrub }}/Season {{ series_season }}"
+      queuetotop: no
+      label: tv-premiere
+
+  # This preset is a "global" preset for all movie-related feeds.
+  # We keep all of the RSS feeds that list movie-related torrents here
+  # as well as some other configurations.
+  movies-global:
+    include: [ private/movies-global.yml ]
+    inputs:
+      - rss: http://static.demonoid.me/rss/1.xml                # Demonoid (All Movies)
+      - rss: http://www.torlock.com/movies/rss.xml              # TorLock (Movies)
+      - rss: http://torrentz.eu/feed_verified?q=movies          # Torrentz (Verified Movies)
+      - rss: http://rss.thepiratebay.org/207                    # The Pirate Bay (Highres - Movies)
+    # Some feeds might include TV Shows, ignore them
+    regexp:
+      reject:
+        - s\d+e\d+: {from: title}
+        - '\d{4}.\d{2}.\d{2}': {from: title}
+        - \d+x\d+: {from: title}
+    # Force proper_movies to run after regexp to avoid unnecessary imdb_lookup
+    plugin_priority:
+      proper_movies: 171
+    # Impose reasonable size constraints
+    content_size:
+      max: 16000
+      min: 1000
+    imdb_lookup: yes
+    rottentomatoes_lookup: yes
+    seen_movies: strict # Don't download movies we've already seen
+    # Check for already downloaded or currently downloading movies
+    exists_movie:
+      - /raid/videos/Movies/
+      - /raid/videos/SDMovies/
+      - /raid/downloads/Movies/
+      - /home/deluge/downloads/
+    # Download propers, since they will have the same content_filename, lower/non propers will be overwritten
+    proper_movies: yes
+    deluge:
+      # Give folders/files nice names
+      movedone: "/raid/downloads/Movies/{{ imdb_name | pathscrub }} ({{ imdb_year }})"
+      content_filename: |
+        {{ imdb_name | pathscrub }} ({{ imdb_year }}) - {{ quality }}
+ 
+
+  # This preset grabs highly rated movies from after 2001 except some genres
+  # that I don't really care for.
+  movies-auto:
+    quality:
+      min: 720p
+    my_movie_filter: yes
+    deluge:
+      queuetotop: no
+      label: movies-auto
+
+  # This preset uses the movie queue to download movies
+  movies-queued:
+    movie_queue: yes
+    deluge:
+      label: my-movies
+
+# This is where we pull everything together
+feeds:
+
+  # All of the TV-related feeds pull in the tv-global preset, this gives
+  # all of the necessary rss sources and a few extra configs
+
+  # There are 3 My_TV Shows feeds, the first, tries to get the most wanted qualities
+  My_TV_Shows:
+    priority: 1
+    preset:
+      - tv-global
+      - tv-my_shows
+    series:
+      settings:
+        Best: { min_quality: 720p }
+        Better: { min_quality: 720p }
+        Average: { min_quality: HDTV }
+
+  # If we can't find anything that good after 12 hours, fall back to a lower quality
+  My_TV_Shows-Secondary:
+    priority: 2
+    preset:
+      - tv-global
+      - tv-my_shows
+    series:
+      settings:
+        Best: { min_quality: 720p }
+        Better: { min_quality: HDTV }
+        Average: { min_quality: SDTV }
+    delay: 12 hours
+
+  # If we can't find anything better after 3 days, screw it, just get it
+  # Do note that the other 2 feeds still run before this one, so we can still
+  # get a good quality torrent if it shows up
+  My_TV_Shows-Fallback:
+    priority: 3
+    preset:
+      - tv-global
+      - tv-my_shows
+    series:
+      settings:
+        Best: { min_quality: HDTV }
+        Better: { min_quality: SDTV }
+        Average: { min_quality: Preair }
+    delay: 3 days
+
+  # Feed for the tv-premieres plugin
+  Series_Premieres:
+    priority: 4
+    preset:
+      - tv-global
+      - tv-premieres
+
+  # This feed queues all of the movies in my IMDB watchlist
+  IMDB_Movie_Queue:
+    priority: 10 # Always run before My_Movies feeds
+    preset: no_global # None of the global presets make sense here
+    interval: 2 hours # Only check every 2 hours (I have Flexget run every hour)
+    imdb_list:
+      user_id: ur7174817
+      list: watchlist
+    accept_all: yes
+    queue_movies: # Output entries to movie queue (with any quality)
+      force: no
+  
+  # The next two feeds download the queue from the previous feed effectively implementing
+  # a 2 day timeframe for 1080p movies, then falls back to 720p
+  My_Movies-1080p:
+    priority: 11
+    preset:
+      - movies-global
+      - movies-queued
+    quality: {min: 1080p}
+
+  My_Movies-720p:
+    priority: 12
+    preset:
+      - movies-global
+      - movies-queued
+    quality: {min: 720p}
+    delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
+
+  # This feed simply implements the movies-auto preset
+  Auto_movies:
+    priority: 13
+    preset:
+      - movies-global
+      - movies-auto

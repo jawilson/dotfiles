@@ -1,0 +1,7 @@
+*.sqlite
+*.log*
+*.pyc
+received/
+temp/
+userstatic/
+private/
