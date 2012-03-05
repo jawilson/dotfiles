@@ -1,7 +1,6 @@
 # Flexget (http://www.flexget.com) configuration file.
 #
 # Created by: Jeff Wilson <jeff@jeffalwilson.com>
-# Updated: 1/20/12
 #
 # This config grabs many rss feeds and adds movies and TV shows to deluge. There's a fairly standard
 # series plugin preset as well as a series_premieres to grab new shows. While the series preset is
@@ -34,10 +33,11 @@ presets:
         - \[TNTVillage\]: {from: title}
         - \[facepalm\]: {from: title}
     cookies: /home/deluge/.flexget/demonoid-cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
-    #torrent_alive: 20 # Require at least 20 seeds of any torrent
+    torrent_alive: 20 # Require at least 20 seeds of any torrent
     # Limit the frequency of requests to domains so they don't complain about using a bot
     domain_delay:
       bt-chat.com: 5 seconds
+      torrentz.eu: 2 seconds
     deluge:
       main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
     email:
@@ -112,7 +112,6 @@ presets:
       - ep_air_date != None and ep_air_date < now - timedelta(days=60): reject
     # Accept all series permieres, 1080p first, then minimum of 720p after 8 hours
     series_premiere:
-      quality: 1080p
       min_quality: 720p
       timeframe: 8 hours
     # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
@@ -121,6 +120,16 @@ presets:
       movedone: "/raid/downloads/TV Shows/{{ series_name | pathscrub }}/Season {{ series_season }}"
       queuetotop: no
       label: tv-premiere
+
+  # If a premier was grabbed, keep on tracking it until the directory is (re)moved
+  tv-premieres-track:
+    import_series:
+      settings:
+        min_quality: 720p
+        timeframe: 8 hours
+      from:
+        listdir:
+          - "/raid/downloads/TV Shows/"
 
   # This preset is a "global" preset for all movie-related feeds.
   # We keep all of the RSS feeds that list movie-related torrents here
@@ -162,16 +171,13 @@ presets:
       content_filename: |
         {{ imdb_name | pathscrub }} ({{ imdb_year }}) - {{ quality }}
  
-
-  # This preset grabs highly rated movies from after 2001 except some genres
-  # that I don't really care for.
+  # This preset runs feeds through my very specific custom filter
   movies-auto:
     quality:
       min: 720p
     my_movie_filter: yes
     deluge:
       queuetotop: no
-      label: movies-auto
 
   # This preset uses the movie queue to download movies
   movies-queued:
@@ -232,6 +238,13 @@ feeds:
       - tv-global
       - tv-premieres
 
+  # Feed for the tv-premieres-track plugin
+  Series_Premieres_Track:
+    priority: 5
+    preset:
+      - tv-global
+      - tv-premieres-track
+
   # This feed queues all of the movies in my IMDB watchlist
   IMDB_Movie_Queue:
     priority: 10 # Always run before My_Movies feeds
@@ -267,3 +280,28 @@ feeds:
     preset:
       - movies-global
       - movies-auto
+    deluge:
+      label: movies-auto
+
+  # This feed discovers movies from Rotten Tomatoes and searches for them
+  Discovered_Movies:
+    priority: 14
+    interval: 24 hours # Only once every day (I have Flexget run every hour)
+    preset:
+      - movies-global
+      - movies-auto
+    disable_plugin: inputs
+    discover:
+      what:
+        - rottentomatoes_list:
+            dvds:
+              - top_rentals
+              - new_releases
+      from:
+        - torrentz
+        - piratebay
+      type: movies
+    deluge:
+      label: movies-discovered
+
+
