@@ -2,12 +2,6 @@
 #
 # Created by: Jeff Wilson <jeff@jeffalwilson.com>
 #
-# This config grabs many rss feeds and adds movies and TV shows to deluge. There's a fairly standard
-# series plugin preset as well as a series_premieres to grab new shows. While the series preset is
-# standard, the actual feeds that use it are an advanced way of implementing a tiered wait period
-# base on minimum quality. I also have movie_queue set up to grab movies from my IMDB watchlist and
-# download them when available. Finally, there is a feed that automatically downloads all movies
-# based on some fairly strict rules.
 
 presets:
   global:
@@ -16,6 +10,8 @@ presets:
     free_space:
       path: /raid
       space: 50000
+    # Make sure all filenames are Windows safe (for samba)
+    pathscrub: windows
     # Most of these are the results of problem torrents I kept seeing still pop up, so I wholesale blocked them
     # RegExr (http://www.gskinner.com/RegExr/) is a great tool for testing regexes
     regexp:
@@ -74,7 +70,7 @@ presets:
     deluge:
       # Rename the "content file" to something nice
       content_filename: |
-        {{ series_name | pathscrub }} - {{ series_id }}{% if ep_name|default(False) %} - {{ ep_name | pathscrub }}{% endif %} - {{ quality }}
+        {{ series_name|replace('/', '_') }} - {{ series_id }}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_') }}{% endif %} - {{ quality }}
       label: tv
 
   # These are the shows I regularly watch
@@ -84,7 +80,7 @@ presets:
     # Add accepted entries to Deluge, queue them to the top and make sure they end up in the
     # correct folder
     deluge:
-      movedone: "/raid/videos/TV Shows/{{ series_name | pathscrub }}/Season {{ series_season }}"
+      movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season }}"
       queuetotop: yes
 
   # I'm always up for new shows, but some I genres I just can't stand. This preset
@@ -117,7 +113,7 @@ presets:
     # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
     # location
     deluge:
-      movedone: "/raid/downloads/TV Shows/{{ series_name | pathscrub }}/Season {{ series_season }}"
+      movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season }}"
       queuetotop: no
       label: tv-premiere
 
@@ -167,9 +163,9 @@ presets:
     proper_movies: yes
     deluge:
       # Give folders/files nice names
-      movedone: "/raid/downloads/Movies/{{ imdb_name | pathscrub }} ({{ imdb_year }})"
+      movedone: "/raid/downloads/Movies/{{ imdb_name|replace('/', '_') }} ({{ imdb_year }})"
       content_filename: |
-        {{ imdb_name | pathscrub }} ({{ imdb_year }}) - {{ quality }}
+        {{ imdb_name|replace('/', '_') }} ({{ imdb_year }}) - {{ quality }}
  
   # This preset runs feeds through my very specific custom filter
   movies-auto:
