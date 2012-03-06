@@ -1,4 +1,5 @@
-*.sqlite
+*.sqlite*
+*-lock
 *.log*
 *.pyc
 received/
