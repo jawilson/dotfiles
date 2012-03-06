@@ -1,0 +1,8 @@
+#/bin/sh
+
+# This script deletes any Daily Show episodes that are over 21 days old.
+
+the_daily_show="/raid/videos/TV Shows/The Daily Show with Jon Stewart/"
+
+find "$the_daily_show" -mindepth 1 -maxdepth 1 -not -name ".actors" -not -name *.tbn -not -name *.jpg -not -name tvshow.nfo -mtime +21 -exec rm -rf "{}" \;
+

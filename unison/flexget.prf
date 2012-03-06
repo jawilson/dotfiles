@@ -1,0 +1,7 @@
+root = /home/deluge/.flexget
+root = /home/atlanta800/Dropbox/Flexget
+perms = 0x1707 
+ignore = Name .*
+ignore = Name *.pyc
+ignore = Regex .*(temp|received).*
+ignore = Path userstatic

@@ -1,0 +1,83 @@
+series:
+  settings:
+    global:
+      propers: no
+    Average:
+      propers: yes
+  # These are my favorite shows, I want the best quality from these
+  Best:
+    - 30 Rock
+    - House of Lies
+    - How I Met Your Mother
+    - Justified
+    - Modern Family
+    - Parks and Recreation
+    - Rules of Engagement
+    - The Big Bang Theory
+    - Top Gear:
+        # Do not, under any circumstances, download the US version, it sucks
+        name_regexp: ^top.gear(?!.us)
+    # Because I use XBMC, some series need to have extra info in their folder name to ensure proper TheTVDB matches,
+    # but sometimes the torrents themselves don't include this information, so we add the name_regexp.
+    # Check out http://flexget.com/wiki/Plugins/series/closematch for more info
+    - The Office (US):
+        name_regexp: ^the.office(?!.uk)
+    - Weeds
+      # These are my other shows, quality isn't extremely important, but I still like to watch them!
+  Better:
+    - 2 Broke Girls
+    - Allen Gregory
+    - American Dad!:
+        # Similar to The Office (US), see http://flexget.com/wiki/Plugins/series/closematch for info
+        name_regexp: ^american.dad(!)?
+    - Aqua Teen Hunger Force
+    - Aqua Unit Patrol Squad 1
+    - Archer (2009):
+        name_regexp: ^archer(.2009)?
+    - Are You There Chelsea
+    #- Blue Mountain State
+    - Bobs Burgers
+    #- Breaking Bad
+    - Castle (2009):
+        name_regexp: ^castle(.2009)?
+    - Eastbound & Down:
+        name_regexp: ^east.?bound(.and|.&)?.down
+    - Family Guy
+    - Futurama
+    - Its Always Sunny In Philadelphia
+    - Last Man Standing (US):
+        name_regexp: ^last.man.standing(.us)?
+    - Man Up
+    - Metalocolypse
+    - MythBusters
+    - New Girl
+    - Outsourced
+    #- Pioneer One
+    - Robot Chicken
+    - Shit My Dad Says
+    - South Park
+    - Suburgatory
+    - The Boondocks
+    - The Cleveland Show
+    - The Fades
+    - The IT Crowd
+    - The Simpsons
+    - The Venture Bros:
+        name_regexp: ^the.venture.bro(ther)?s
+    #- The Walking Dead
+    - Tosh.0
+    - Two and a Half Men
+    - Up All Night
+    - Whitney
+    - Wilfred (US):
+        name_regexp: ^wilfred(.us)?
+      # The "Average" group is missing because right now nothing really fits in it, maybe later...
+  Average:
+    - The Daily Show with Jon Stewart:
+        name_regexp: ^the.daily.show(.with.jon.stewart)?
+        # I always like to watch Stewart the next morning, so don't wait too long
+        timeframe: 2 hours
+        # Stuff everything in one folder, I have a cronjob that deletes all of The
+        # Daily Show episodes that are over 4 weeks old
+        set:
+          movedone: "/raid/videos/TV Shows/The Daily Show with Jon Stewart/"
