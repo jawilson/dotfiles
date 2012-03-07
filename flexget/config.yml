@@ -33,7 +33,7 @@ presets:
     # Limit the frequency of requests to domains so they don't complain about using a bot
     domain_delay:
       bt-chat.com: 5 seconds
-      torrentz.eu: 2 seconds
+      torrentz.eu: 5 seconds
     deluge:
       main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
     email:
@@ -294,7 +294,9 @@ feeds:
               - top_rentals
               - new_releases
       from:
-        - torrentz
+        - flexget_archive: yes
+        #- torrentz
+        - demonoid: movies
         - piratebay
       type: movies
     deluge:
