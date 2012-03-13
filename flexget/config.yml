@@ -28,14 +28,13 @@ presets:
         - TrTd TeaM: {from: title}
         - \[TNTVillage\]: {from: title}
         - \[facepalm\]: {from: title}
-    cookies: /home/deluge/.flexget/demonoid-cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
-    torrent_alive: 20 # Require at least 20 seeds of any torrent
+        - \bASAP\b: {from: title}
+    cookies: /home/deluge/.flexget/private/cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
+    #torrent_alive: 20 # Require at least 20 seeds of any torrent
     # Limit the frequency of requests to domains so they don't complain about using a bot
     domain_delay:
       bt-chat.com: 5 seconds
       torrentz.eu: 5 seconds
-    deluge:
-      main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
     email:
       from: deluge@Faraday.singularity
       to: atlanta800+flexget@gmail.com
@@ -67,10 +66,17 @@ presets:
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     # Add accepted entries to Deluge and make sure they end up in the correct folder with a nice name
-    deluge:
+    set:
       # Rename the "content file" to something nice
-      content_filename: |
-        {{ series_name|replace('/', '_') }} - {{ series_id }}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_') }}{% endif %} - {{ quality }}
+      content_filename: >
+        {{ series_name|replace('/', '_') }} - 
+        {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}
+        {{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}
+        {% else %}
+        {{ series_id }}
+        {% endif %}
+        {% if ep_name|default(False) %} - {{ ep_name|replace('/', '_') }}{% endif %}
+        - {{ quality }}
       label: tv
 
   # These are the shows I regularly watch
@@ -79,8 +85,8 @@ presets:
     include: [ series.yml ]
     # Add accepted entries to Deluge, queue them to the top and make sure they end up in the
     # correct folder
-    deluge:
-      movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season }}"
+    set:
+      movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}"
       queuetotop: yes
 
   # I'm always up for new shows, but some I genres I just can't stand. This preset
@@ -112,7 +118,7 @@ presets:
       timeframe: 8 hours
     # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
     # location
-    deluge:
+    set:
       movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season }}"
       queuetotop: no
       label: tv-premiere
@@ -145,6 +151,7 @@ presets:
         - \d+x\d+: {from: title}
     # Force proper_movies to run after regexp to avoid unnecessary imdb_lookup
     plugin_priority:
+      if: 173
       proper_movies: 171
     # Impose reasonable size constraints
     content_size:
@@ -161,7 +168,7 @@ presets:
       - /home/deluge/downloads/
     # Download propers, since they will have the same content_filename, lower/non propers will be overwritten
     proper_movies: yes
-    deluge:
+    set:
       # Give folders/files nice names
       movedone: "/raid/downloads/Movies/{{ imdb_name|replace('/', '_') }} ({{ imdb_year }})"
       content_filename: |
@@ -172,13 +179,22 @@ presets:
     quality:
       min: 720p
     my_movie_filter: yes
-    deluge:
+    set:
       queuetotop: no
 
   # This preset uses the movie queue to download movies
   movies-queued:
     movie_queue: yes
-    deluge:
+    discover:
+      what:
+        - emit_movie_queue: yes
+      from:
+        - flexget_archive: yes
+        - torrentz
+        - demonoid: movies
+        - piratebay
+      type: movies
+    set:
       label: my-movies
 
 # This is where we pull everything together
@@ -271,12 +287,12 @@ feeds:
     delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
 
   # This feed simply implements the movies-auto preset
-  Auto_movies:
+  Auto_Movies:
     priority: 13
     preset:
       - movies-global
       - movies-auto
-    deluge:
+    set:
       label: movies-auto
 
   # This feed discovers movies from Rotten Tomatoes and searches for them
@@ -295,11 +311,11 @@ feeds:
               - new_releases
       from:
         - flexget_archive: yes
-        #- torrentz
+        - torrentz
         - demonoid: movies
         - piratebay
       type: movies
-    deluge:
+    set:
       label: movies-discovered
 
 
