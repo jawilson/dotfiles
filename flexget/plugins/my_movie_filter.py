@@ -19,19 +19,19 @@ class MyMovieFilter(object):
                 'rt_audience_score', 'rt_average_score'
                 ]
         self.languages = ['english']
-        self.max_accept_ages = [(2,'new'), (10, 'recent'), (25, 'old'), (2000, 'classic')]
+        self.max_accept_ages = [(2,'new'), (10, 'recent'), (25, 'old'), (40, 'classic')]
 
         self.imdb_genres_reject = ['musical']
         self.imdb_single_genres_strict = {'drama': 95, 'romance': 97, 'animation': 90}
-        self.imdb_genres_strict = {'drama': 85, 'romance': 85, 'documentary': 83, 'horror': 90, 'thriller': 75, 'animation': 86, 'family': 85}
+        self.imdb_genres_strict = {'drama': 85, 'romance': 85, 'documentary': 83, 'horror': 90, 'animation': 86, 'family': 85}
         self.imdb_genres_accept_except = ['animation', 'family', 'horror', 'romance']
-        self.imdb_genres_accept = {'action': 62, 'sci-fi': 62, 'war': 62, 'crime': 62, 'comedy': 65, 'history': 70, 'mystery': 72}
+        self.imdb_genres_accept = {'action': 62, 'sci-fi': 62, 'war': 62, 'crime': 62, 'comedy': 65, 'history': 70, 'mystery': 72, 'thriller': 72}
 
-        self.rt_genres_reject = ['Art House & International Movies', 'Musical & Performing Arts', 'Anime & Manga', 'Faith & Spirituality', 'Gay & Lesbian']
-        self.rt_single_genres_strict = {'Drama': 95, 'Romance': 97}
-        self.rt_genres_strict = {'Drama': 85, 'Romance': 85, 'Documentary': 83, 'Horror': 90, 'Animation': 86, 'Special Interest': 89, 'Kids & Family': 85}
-        self.rt_genres_accept_except = ['Animation', 'Kids & Family', 'Horror', 'Romance']
-        self.rt_genres_accept = {'Action & Adventure': 62, 'Science Fiction & Fantasy': 62, 'Comedy': 65, 'Mystery & Suspense': 72}
+        self.rt_genres_reject = ['Musical & Performing Arts', 'Anime & Manga', 'Faith & Spirituality', 'Gay & Lesbian']
+        self.rt_single_genres_strict = {'Drama': 95, 'Romance': 97, 'Art House & International Movies': 99}
+        self.rt_genres_strict = {'Drama': 85, 'Romance': 85, 'Documentary': 83, 'Horror': 90, 'Animation': 86, 'Special Interest': 89, 'Kids & Family': 85, 'Art House & International Movies': 80}
+        self.rt_genres_accept_except = ['Animation', 'Kids & Family', 'Horror', 'Romance', 'Art House & International Movies']
+        self.rt_genres_accept = {'Action & Adventure': 60, 'Science Fiction & Fantasy': 62, 'Comedy': 65, 'Mystery & Suspense': 72}
 
     def validator(self):
         from flexget import validator
