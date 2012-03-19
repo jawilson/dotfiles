@@ -31,6 +31,16 @@ presets:
         - \bASAP\b: {from: title}
     cookies: /home/deluge/.flexget/private/cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
     #torrent_alive: 20 # Require at least 20 seeds of any torrent
+    # Filter by filenames. Allow multiple video types and rar packs (but note if there is just a
+    # single .rar file it won't be accepted)
+    content_filter:
+      require:
+        - '*.avi'
+        - '*.mkv'
+        - '*.mp4'
+        - '*.r0*'
+        - '*.part0*'
+      reject: [ 'password.txt' ]
     # Limit the frequency of requests to domains so they don't complain about using a bot
     domain_delay:
       bt-chat.com: 5 seconds
@@ -69,13 +79,13 @@ presets:
     set:
       # Rename the "content file" to something nice
       content_filename: >
-        {{ series_name|replace('/', '_') }} - 
+        {{ series_name|replace('/', '_')|replace(':', ' -') }} -
         {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}
         {{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}
         {% else %}
         {{ series_id }}
         {% endif %}
-        {% if ep_name|default(False) %} - {{ ep_name|replace('/', '_') }}{% endif %}
+        {% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %}
         - {{ quality }}
       label: tv
 
@@ -86,7 +96,7 @@ presets:
     # Add accepted entries to Deluge, queue them to the top and make sure they end up in the
     # correct folder
     set:
-      movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}"
+      movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}"
       queuetotop: yes
 
   # I'm always up for new shows, but some I genres I just can't stand. This preset
@@ -119,7 +129,7 @@ presets:
     # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
     # location
     set:
-      movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_') }}/Season {{ series_season }}"
+      movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season }}"
       queuetotop: no
       label: tv-premiere
 
@@ -170,9 +180,9 @@ presets:
     proper_movies: yes
     set:
       # Give folders/files nice names
-      movedone: "/raid/downloads/Movies/{{ imdb_name|replace('/', '_') }} ({{ imdb_year }})"
+      movedone: "/raid/downloads/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})"
       content_filename: |
-        {{ imdb_name|replace('/', '_') }} ({{ imdb_year }}) - {{ quality }}
+        {{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}
  
   # This preset runs feeds through my very specific custom filter
   movies-auto:

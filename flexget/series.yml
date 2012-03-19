@@ -30,7 +30,6 @@ series:
     - American Dad!:
         # Similar to The Office (US), see http://flexget.com/wiki/Plugins/series/closematch for info
         name_regexp: ^american.dad(!)?
-        identified_by: auto
         set:
           thetvdb_lookup_season_offset: 1
     - Aqua Teen Hunger Force

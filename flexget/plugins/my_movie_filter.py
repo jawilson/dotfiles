@@ -12,26 +12,40 @@ class MyMovieFilter(object):
        Filters entries based on some crazy custom rules
     """
     
-    def __init__(self):
-        self.required_fields = [
-                'imdb_url', 'imdb_languages', 'imdb_votes', 'imdb_votes', 'rt_id', 'rt_releases',
-                'rt_genres', 'rt_critics_rating', 'rt_audience_rating', 'rt_critics_score',
-                'rt_audience_score', 'rt_average_score'
-                ]
-        self.languages = ['english']
-        self.max_accept_ages = [(2,'new'), (10, 'recent'), (25, 'old'), (40, 'classic')]
+    required_fields = [
+            'imdb_url', 'imdb_languages', 'imdb_votes', 'imdb_votes', 'rt_id', 'rt_releases',
+            'rt_genres', 'rt_critics_rating', 'rt_audience_rating', 'rt_critics_score',
+            'rt_audience_score', 'rt_average_score'
+            ]
+    languages = ['english']
+    max_accept_ages = [(2,'new'), (10, 'recent'), (15, 'old'), (30, 'older'), (40, 'classic')]
 
-        self.imdb_genres_reject = ['musical']
-        self.imdb_single_genres_strict = {'drama': 95, 'romance': 97, 'animation': 90}
-        self.imdb_genres_strict = {'drama': 85, 'romance': 85, 'documentary': 83, 'horror': 90, 'animation': 86, 'family': 85}
-        self.imdb_genres_accept_except = ['animation', 'family', 'horror', 'romance']
-        self.imdb_genres_accept = {'action': 62, 'sci-fi': 62, 'war': 62, 'crime': 62, 'comedy': 65, 'history': 70, 'mystery': 72, 'thriller': 72}
+    global_min_score = 70
 
-        self.rt_genres_reject = ['Musical & Performing Arts', 'Anime & Manga', 'Faith & Spirituality', 'Gay & Lesbian']
-        self.rt_single_genres_strict = {'Drama': 95, 'Romance': 97, 'Art House & International Movies': 99}
-        self.rt_genres_strict = {'Drama': 85, 'Romance': 85, 'Documentary': 83, 'Horror': 90, 'Animation': 86, 'Special Interest': 89, 'Kids & Family': 85, 'Art House & International Movies': 80}
-        self.rt_genres_accept_except = ['Animation', 'Kids & Family', 'Horror', 'Romance', 'Art House & International Movies']
-        self.rt_genres_accept = {'Action & Adventure': 60, 'Science Fiction & Fantasy': 62, 'Comedy': 65, 'Mystery & Suspense': 72}
+    imdb_genres_reject = \
+        ['musical']
+    imdb_single_genres_strict = \
+        {'drama': 95, 'romance': 97, 'animation': 90}
+    imdb_genres_strict = \
+        {'drama': 85, 'romance': 85, 'documentary': 83, 'horror': 86, 'animation': 86, 'family': 90}
+    imdb_genres_accept_except = \
+        ['animation', 'family', 'horror', 'romance', 'biography']
+    imdb_genres_accept = \
+        {'action': 52, 'sci-fi': 62, 'war': 62, 'crime': 62, 'comedy': 65, 'history': 70, 'mystery': 72, 'thriller': 72}
+
+    rt_genres_ignore = \
+        ['Classics', 'Cult Movies']
+    rt_genres_reject = \
+        ['Musical & Performing Arts', 'Anime & Manga', 'Faith & Spirituality', 'Gay & Lesbian']
+    rt_single_genres_strict = \
+        {'Drama': 95, 'Romance': 97, 'Art House & International Movies': 99}
+    rt_genres_strict = \
+        {'Drama': 85, 'Romance': 85, 'Documentary': 83, 'Horror': 86, 'Animation': 86,
+            'Special Interest': 89, 'Kids & Family': 90, 'Art House & International Movies': 80}
+    rt_genres_accept_except = \
+        ['Animation', 'Kids & Family', 'Horror', 'Romance', 'Art House & International Movies']
+    rt_genres_accept = \
+        {'Action & Adventure': 52, 'Science Fiction & Fantasy': 62, 'Comedy': 65, 'Mystery & Suspense': 72}
 
     def validator(self):
         from flexget import validator
@@ -46,7 +60,7 @@ class MyMovieFilter(object):
         return True
 
 
-    @priority(-255) # Make filter run very last
+    @priority(0) # Make filter run after other filters, but before exists_movies
     def on_feed_filter(self, feed, config):
         log.debug('Running custom filter')
         for entry in feed.entries:
@@ -83,14 +97,35 @@ class MyMovieFilter(object):
                     break
 
             # Make sure all scores are reliable
-            if (age in ['new', 'recent'] and not entry['rt_critics_consensus']) or entry['rt_critics_score'] < 0 or entry['rt_audience_score'] < 0 or entry['imdb_votes'] < 6000 or entry['imdb_score'] == 0:
+            if entry['rt_critics_score'] < 0 or entry['rt_audience_score'] < 0 or entry['imdb_votes'] < 6000 or entry['imdb_score'] == 0:
                 feed.reject(entry, 'Unreliable scores (rt_critics_consensus: %s, rt_critics_score: %s, rt_audience_score: %s, imdb_votes: %s, imdb_score: %s)' % 
                     (('filled' if entry['rt_critics_consensus'] else None) , entry['rt_critics_score'], entry['rt_audience_score'], entry['imdb_votes'], entry['imdb_score'])
                 )
                 continue
 
+            # Score filters that depend on age
+            score_offset = 0
+            if entry_age == 'new' or entry_age == 'recent':
+                pass
+            elif entry_age == 'old':
+                score_offset = -3;
+            elif entry_age == 'older':
+                score_offset = -5;
+            elif entry_age == 'classic':
+                score_offset = -12;
+                if entry['rt_critics_rating'] != 'Certified Fresh':
+                    reasons.append('%s movie (%s != Certified Fresh)' % (entry_age, entry['rt_critics_rating']))
+            else:
+                feed.reject(entry, 'Theater release date too far in the past')
+                continue
+
+            log.debug('Minimum acceptable score is %s' % self.global_min_score)
+
             # Determine which score to use
-            if entry['rt_audience_rating'] == 'Spilled':
+            if not entry['rt_critics_consensus'] and entry['rt_critics_rating'] != 'Certified Fresh':
+                log.debug('No critics consensus, averaging audience with imdb')
+                score = (entry['rt_audience_score'] + entry['imdb_score']*10)/2
+            elif entry['rt_audience_rating'] == 'Spilled':
                 log.debug('Audience doesn\'t approve, using audience score')
                 score = entry['rt_audience_score']
             elif entry['rt_critics_score'] - entry['rt_audience_score'] > 20:
@@ -103,61 +138,63 @@ class MyMovieFilter(object):
                 score = entry['rt_average_score']
                 
             log.debug('Using score: %s' % score)
+            if score_offset != 0:
+                score = score + score_offset
+                log.debug('Score offset used, score is now: %s' % score)
 
-            # Score filters that depend on age
-            if entry_age == 'new' or entry_age == 'recent':
-                min_score = 70;
-            elif entry_age == 'old':
-                min_score = 75;
-            elif entry_age == 'classic':
-                min_score = 85;
-                if entry['rt_critics_rating'] != 'Certified Fresh':
-                    reasons.append('%s movie (%s != Certified Fresh)' % (entry_age, entry['rt_critics_rating']))
-            else:
-                min_score = 101
-                reasons.append('Theater release date too far in the past')
-                
-            log.debug('Minimum acceptable score is %s' % min_score)
-            if score < min_score:
-                reasons.append('%s movie (score %s < %s)' % (entry_age, score, min_score))
+            if score < self.global_min_score:
+                reasons.append('%s movie (score %s < %s)' % (entry_age, score, self.global_min_score))
 
             # A bunch of imdb genre filters
             strict_reasons = []
             allow_force_accept = not any(genre in self.imdb_genres_accept_except for genre in entry['imdb_genres'])
+            if any(genre in self.imdb_genres_strict for genre in entry['imdb_genres']) and entry['rt_critics_rating'] != 'Certified Fresh':
+                strict_reasons.append('not certified fresh')
             for genre in entry['imdb_genres']:
-                if len(entry['imdb_genres']) == 1:
+                if len(entry['imdb_genres']) == 1 or all(genre in self.imdb_single_genres_strict for genre in entry['imdb_genres']):
                     min_score = self.imdb_single_genres_strict.get(genre, None)
                     if min_score and score < min_score:
-                            reasons.append('imdb single genre strict (%s and %s < %s)' % (genre, score,min_score))
+                            reasons.append('imdb single genre strict (%s and %s < %s)' % (genre, score, min_score))
                 min_score = self.imdb_genres_strict.get(genre, None)
-                if min_score and (score < min_score or entry['rt_critics_rating'] != 'Certified Fresh'):
+                if min_score and score < min_score:
                         strict_reasons.append('%s and %s < %s' % (genre, score, min_score))
                 if allow_force_accept:
                     min_score = self.imdb_genres_accept.get(genre, None)
-                    if min_score and score > min_score:
-                        log.debug('Accepting because of imdb genre accept (%s and %s < %s)' % (genre,score,min_score))
-                        force_accept = True
-                        break
+                    if min_score:
+                        if not any(genre in self.imdb_genres_strict for genre in entry['imdb_genres']):
+                            min_score = min_score - 5
+                        if score > min_score:
+                            log.debug('Accepting because of imdb genre accept (%s and %s > %s)' % (genre,score, min_score))
+                            force_accept = True
+                            break
             if strict_reasons:
                 reasons.append('imdb genre strict (%s)' %  (', '.join(strict_reasons)))
 
             # A bunch of rt genre filters
             strict_reasons = []
+            for genre in self.rt_genres_ignore[:]:
+                if genre in entry['rt_genres']:
+                    entry['rt_genres'].remove(genre)
             allow_force_accept = not any(genre in self.rt_genres_accept_except for genre in entry['rt_genres'])
+            if any(genre in self.rt_genres_strict for genre in entry['rt_genres']) and entry['rt_critics_rating'] != 'Certified Fresh':
+                strict_reasons.append('not certified fresh')
             for genre in entry['rt_genres']:
-                if len(entry['rt_genres']) == 1:
+                if len(entry['rt_genres']) == 1 or all(genre in self.rt_single_genres_strict for genre in entry['rt_genres']):
                     min_score = self.rt_single_genres_strict.get(genre, None)
                     if min_score and score < min_score:
-                            reasons.append('rt single genre strict (%s and %s < %s)' % (genre,score,min_score))
+                            reasons.append('rt single genre strict (%s and %s < %s)' % (genre,score, min_score))
                 min_score = self.rt_genres_strict.get(genre, None)
-                if min_score and (score < min_score or entry['rt_critics_rating'] != 'Certified Fresh'):
+                if min_score and score < min_score:
                         strict_reasons.append('%s and %s < %s' % (genre, score, min_score))
                 if allow_force_accept:
                     min_score = self.rt_genres_accept.get(genre, None)
-                    if min_score and score > min_score:
-                        log.debug('Accepting because of rt genre accept (%s and %s < %s)' % (genre,score,min_score))
-                        force_accept = True
-                        break
+                    if min_score:
+                        if not any(genre in self.rt_genres_strict for genre in entry['rt_genres']):
+                            min_score = min_score - 5
+                        if score > min_score:
+                            log.debug('Accepting because of rt genre accept (%s and %s > %s)' % (genre,score, min_score))
+                            force_accept = True
+                            break
             if strict_reasons:
                 reasons.append('rt genre strict (%s)' %  (', '.join(strict_reasons)))
 
@@ -168,6 +205,8 @@ class MyMovieFilter(object):
                 if feed.manager.options.debug:
                     log.debug(msg)
                 else:
+                    if score_offset != 0:
+                        msg = 'Offset score by %s. %s' % (score_offset, msg)
                     if feed.manager.options.quiet:
                         log_once(msg, log)
                     else:

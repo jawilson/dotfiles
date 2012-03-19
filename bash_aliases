@@ -4,3 +4,6 @@ alias "ll"="ls -l"
 
 # grep
 alias "grep"="grep --color"
+
+# ack-grep
+alias "ack"="ack-grep"
