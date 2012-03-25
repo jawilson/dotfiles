@@ -1,17 +1,27 @@
-#!/bin/sh
+#!/usr/bin/python -O
+import argparse
+from subprocess import call
+from sys import exit
 
-DVDRW=/dev/scd0
-ISO="$1"
+parser = argparse.ArgumentParser("Burn an Xbox 360 disc")
+parser.add_argument('iso', type=argparse.FileType('rw'),
+                    help='Xbox 360 ISO to burn')
+parser.add_argument('-o', '--dvdrw', type=str, default='/dev/dvdrw',
+                    help='location of the burner')
+parser.add_argument('-3', '--xdg3',  action='store_const', const=True, default=False,
+                    help='supplied image is in XDG3 format')
 
-if [ $# -eq 2 ];
-then
-	DVDRW="$1"
-	ISO="$2"
-fi
+args = parser.parse_args()
 
-if [ $# -eq 2 -o $# -eq 1 ];
-then
-	growisofs -use-the-force-luke=dao -use-the-force-luke=break:1913760 -dvd-compat -speed=4 -Z "$DVDRW"="$ISO"
-else
-	echo "Usage: $0 [dvd_drive] <iso>"
-fi
+args.iso.close()
+
+if args.xdg3:
+    if call('truncate --size=8547991552 ' + args.iso.name, shell=True) != 0:
+        print 'Failed to truncate XDG3 formated image'
+        exit(1)
+    break_point = 2086912
+else:
+    break_point = 1913760
+
+call('growisofs -use-the-force-luke=dao -use-the-force-luke=break:'+str(break_point)+\
+    ' -dvd-compat -speed=4 -Z "'+args.dvdrw+'"="'+args.iso.name+'"', shell=True)
