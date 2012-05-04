@@ -30,7 +30,7 @@ presets:
         - \[facepalm\]: {from: title}
         - \bASAP\b: {from: title}
     cookies: /home/deluge/.flexget/private/cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
-    #torrent_alive: 20 # Require at least 20 seeds of any torrent
+    torrent_alive: 20 # Require at least 20 seeds of any torrent
     # Filter by filenames. Allow multiple video types and rar packs (but note if there is just a
     # single .rar file it won't be accepted)
     content_filter:
@@ -48,6 +48,11 @@ presets:
     email:
       from: deluge@Faraday.singularity
       to: atlanta800+flexget@gmail.com
+    # Deluge is configured in my private configs, but I'm leaving this for clarity
+    #deluge:
+    # # Ignore all but the file that is >90% of the torrent if it exists
+    # # Yor will most likely want to combine this with the 'DeletePartials' Deluge plugin
+    #  main_file_only: yes
 
   # This preset is a "global" preset for all TV-related feeds.
   # We keep all of the RSS feeds that list tv-related torrents here
@@ -56,13 +61,13 @@ presets:
     include: [ private/tv-global.yml ]
     # This is a TON of feeds, you probably don't need so many, but why not?
     inputs:
-      - rss: http://static.demonoid.me/rss/3.xml                # Demonoid (All TV)
-      - rss: http://www.torlock.com/television/rss.xml          # TorLock (TV)
-      - rss: http://torrentz.eu/feed_verified?q=tv              # Torrentz (Verified only, TV)
-      - rss: http://ezrss.it/feed/                              # EZRSS
-      - rss: http://showrss.karmorra.info/feeds/all.rss         # Karmorra (All)
-      - rss: http://rss.bt-chat.com/?group=3                    # BT-Chat (EZTV)
-      - rss: http://rss.thepiratebay.org/208                    # The Pirate Bay (Highres - TV shows)
+      #- rss: { url: 'http://static.demonoid.me/rss/3.xml', silent: yes }        # Demonoid (All TV)
+      - rss: { url: 'http://www.torlock.com/television/rss.xml', silent: yes }  # TorLock (TV)
+      - rss: { url: 'http://torrentz.eu/feed_verified?q=tv', silent: yes }      # Torrentz (Verified only, TV)
+      - rss: { url: 'http://ezrss.it/feed/', silent: yes }                      # EZRSS
+      - rss: { url: 'http://showrss.karmorra.info/feeds/all.rss', silent: yes } # Karmorra (All)
+      - rss: { url: 'http://rss.bt-chat.com/?group=3', silent: yes }            # BT-Chat (EZTV)
+      - rss: { url: 'http://rss.thepiratebay.org/208', silent: yes }            # The Pirate Bay (Highres - TV shows)
     # Impose reasonable size constraints
     content_size:
       max: 4000
@@ -79,14 +84,7 @@ presets:
     set:
       # Rename the "content file" to something nice
       content_filename: >
-        {{ series_name|replace('/', '_')|replace(':', ' -') }} -
-        {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}
-        {{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}
-        {% else %}
-        {{ series_id }}
-        {% endif %}
-        {% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %}
-        - {{ quality }}
+        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}{{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}{% else %}{{ series_id }}{% endif %}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
       label: tv
 
   # These are the shows I regularly watch
@@ -98,6 +96,11 @@ presets:
     set:
       movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}"
       queuetotop: yes
+    # Due to Flexget shortcomings, this doesn't actually work right now
+    #if :
+    #  - 'any(".rar" == fname[-4:] for fname in content_files)':
+    #      set:
+    #        movedone: '/home/deluge/downloads/completed/tv_shows/'
 
   # I'm always up for new shows, but some I genres I just can't stand. This preset
   # grabs all of the premieres except for some genres
@@ -142,6 +145,10 @@ presets:
       from:
         listdir:
           - "/raid/downloads/TV Shows/"
+    set:
+      movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season }}"
+      queuetotop: no
+      label: tv-premiere-track
 
   # This preset is a "global" preset for all movie-related feeds.
   # We keep all of the RSS feeds that list movie-related torrents here
@@ -149,10 +156,10 @@ presets:
   movies-global:
     include: [ private/movies-global.yml ]
     inputs:
-      - rss: http://static.demonoid.me/rss/1.xml                # Demonoid (All Movies)
-      - rss: http://www.torlock.com/movies/rss.xml              # TorLock (Movies)
-      - rss: http://torrentz.eu/feed_verified?q=movies          # Torrentz (Verified Movies)
-      - rss: http://rss.thepiratebay.org/207                    # The Pirate Bay (Highres - Movies)
+      #- rss: { url: 'http://static.demonoid.me/rss/1.xml', silent: yes }       # Demonoid (All Movies)
+      - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
+      - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
+      - rss: { url: 'http://rss.thepiratebay.org/207', silent: yes }           # The Pirate Bay (Highres - Movies)
     # Some feeds might include TV Shows, ignore them
     regexp:
       reject:
@@ -322,10 +329,9 @@ feeds:
       from:
         - flexget_archive: yes
         - torrentz
-        - demonoid: movies
+        #- demonoid: movies
         - piratebay
       type: movies
     set:
       label: movies-discovered
-
 

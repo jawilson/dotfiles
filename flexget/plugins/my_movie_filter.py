@@ -38,7 +38,7 @@ class MyMovieFilter(object):
     rt_genres_reject = \
         ['Musical & Performing Arts', 'Anime & Manga', 'Faith & Spirituality', 'Gay & Lesbian']
     rt_single_genres_strict = \
-        {'Drama': 95, 'Romance': 97, 'Art House & International Movies': 99}
+        {'Drama': 90, 'Romance': 97, 'Art House & International Movies': 99}
     rt_genres_strict = \
         {'Drama': 85, 'Romance': 85, 'Documentary': 83, 'Horror': 86, 'Animation': 86,
             'Special Interest': 89, 'Kids & Family': 90, 'Art House & International Movies': 80}
