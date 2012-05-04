@@ -1,0 +1,33 @@
+presets:
+  global:
+    manual: yes
+    disable_builtins: [seen]
+    accept_all: yes
+    find:
+      regexp: '.*\.(avi|mkv|mp4)$'
+      recursive: yes
+
+feeds:
+  Sort_Unpacked_TV_Shows:
+    find:
+      path: '/raid/downloads/staging/tv_shows/'
+    thetvdb_lookup: yes
+    include: [series.yml]
+    all_series:
+      parse_only: yes
+    require_field: [series_id]
+    move:
+      filename: >
+        /raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}/{{ series_name|replace('/', '_')|replace(':', ' -') }} - {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}{{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}{% else %}{{ series_id }}{% endif %}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
+      clean_source: 40
+
+  Sort_Unpacked_Movies:
+    find:
+      path: '/raid/downloads/staging/movies/'
+    imdb_lookup: yes
+    require_field: [imdb_url]
+    move:
+      filename: >
+        /raid/downloads/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}.{{ location[-3:] }}
+
+      clean_source: 1000

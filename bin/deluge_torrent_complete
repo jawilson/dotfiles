@@ -1,0 +1,36 @@
+#!/usr/bin/python -O
+import sys
+import md5
+from subprocess import call
+
+DOWNLOAD_PATH='/home/deluge/downloads/completed'
+STAGING_PATH='/raid/downloads/staging'
+FLEXGET_COMMAND='python ~/Flexget/flexget_vanilla.py --logfile '\
+        '/home/deluge/.flexget/flexget-sorting.log'
+FLEXGET_SORTING_CONFIG='/home/deluge/.flexget/sorting.yml'
+FLEXGET_FEED_PREFIX='Sort_Unpacked_'
+
+torrent_id=sys.argv[1]
+torrent_name=sys.argv[2]
+torrent_path=sys.argv[3]
+
+if DOWNLOAD_PATH not in torrent_path:
+    chain()
+
+if DOWNLOAD_PATH+'/movies/' in torrent_path:
+    call('find "'+torrent_path+'/'+torrent_name+'/" -type f -regex ".*\.\(\part[0-9]+\.\)?r\([0-9]+\|ar\)$" '\
+        '| head -1 | xargs -I {} unrar x -o+ {} '+STAGING_PATH+'/movies/'+torrent_id+'/', shell=True)
+    call(FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --feed '+FLEXGET_FEED_PREFIX+'Movies',
+            shell=True)
+elif DOWNLOAD_PATH+'/tv_shows/' in torrent_path:
+    call('find "'+torrent_path+'/'+torrent_name+'/" -type f -regex ".*\.\(\part[0-9]+\.\)?r\([0-9]+\|ar\)$" '\
+        '| head -1 | xargs -I {} unrar x -o+ {} '+STAGING_PATH+'/tv_shows/'+torrent_id+'/', shell=True)
+    call(FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --feed '+FLEXGET_FEED_PREFIX+'TV_Shows --debug --disable-advancement',
+            shell=True)
+
+chain()
+
+def chain():
+    call('/home/deluge/.bin/update_xbmc_library "'+torrent_id+'" "'+torrent_name+'" "'+torrent_path+'"',
+            shell=True)
+    sys.exit(0)
