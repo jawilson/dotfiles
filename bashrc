@@ -57,7 +57,7 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 export EDITOR=vim
-export PATH="$PATH:$HOME/.bin:/opt/android/bin"
+export PATH="$HOME/.bin:$PATH:/opt/android/bin"
 
 # DistCC Configuration
 if [ -d /usr/lib/distcc ]; then
