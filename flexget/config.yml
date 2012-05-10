@@ -96,11 +96,10 @@ presets:
     set:
       movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}"
       queuetotop: yes
-    # Due to Flexget shortcomings, this doesn't actually work right now
-    #if :
-    #  - 'any(".rar" == fname[-4:] for fname in content_files)':
-    #      set:
-    #        movedone: '/home/deluge/downloads/completed/tv_shows/'
+    # This is a custom plugin, it is part of my rar-unpacking method, it changes 'movedone'
+    # based on the regexp in the key
+    content_sort:
+      '*.rar': '/home/deluge/downloads/completed/tv_shows/'
 
   # I'm always up for new shows, but some I genres I just can't stand. This preset
   # grabs all of the premieres except for some genres
@@ -190,6 +189,10 @@ presets:
       movedone: "/raid/downloads/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})"
       content_filename: |
         {{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}
+    # This is a custom plugin, it is part of my rar-unpacking method, it changes 'movedone'
+    # based on the regexp in the key
+    content_sort:
+      '*.rar': '/home/deluge/downloads/completed/movies/'
  
   # This preset runs feeds through my very specific custom filter
   movies-auto:
