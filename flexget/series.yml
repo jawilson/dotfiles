@@ -23,7 +23,7 @@ series:
     - The Office (US):
         name_regexp: ^the.office(?!.uk)
     - Weeds
-      # These are my other shows, quality isn't extremely important, but I still like to watch them!
+  # These are my other shows, quality isn't extremely important, but I still like to watch them!
   Better:
     - 2 Broke Girls
     - Allen Gregory
@@ -73,8 +73,9 @@ series:
     - Whitney
     - Wilfred (US):
         name_regexp: ^wilfred(.us)?
-      # The "Average" group is missing because right now nothing really fits in it, maybe later...
+  # And this is everything else, quality doesn't matter that much
   Average:
+    # I love the daily show, but I'm more interested in just watching it than video quality
     - The Daily Show with Jon Stewart:
         name_regexp: ^the.daily.show(.with.jon.stewart)?
         #identified_by: date
