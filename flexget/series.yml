@@ -82,7 +82,3 @@ series:
         identified_by: auto
         # I always like to watch Stewart the next morning, so don't wait too long
         timeframe: 2 hours
-        # Stuff everything in one folder, I have a cronjob that deletes all of The
-        # Daily Show episodes that are over 4 weeks old
-        set:
-          movedone: "/raid/videos/TV Shows/The Daily Show with Jon Stewart/"

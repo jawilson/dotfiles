@@ -94,7 +94,8 @@ presets:
     # Add accepted entries to Deluge, queue them to the top and make sure they end up in the
     # correct folder
     set:
-      movedone: "/raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}"
+      movedone: >
+        /raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}/{% endif %}
       queuetotop: yes
     # This is a custom plugin, it is part of my rar-unpacking method, it changes 'movedone'
     # based on the regexp in the key
@@ -145,7 +146,8 @@ presets:
         listdir:
           - "/raid/downloads/TV Shows/"
     set:
-      movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season }}"
+      movedone: >
+        /raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}/{% endif %}
       queuetotop: no
       label: tv-premiere-track
 
