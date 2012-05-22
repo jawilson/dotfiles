@@ -12,6 +12,8 @@ presets:
     # Disable seen, alway process files
     disable_builtins: [seen]
     accept_all: yes
+    # Make sure all filenames are Windows safe (for samba)
+    pathscrub: windows
     find:
       # We are looking for any video files that were extracted
       regexp: '.*\.(avi|mkv|mp4)$'
