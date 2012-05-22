@@ -19,6 +19,7 @@ presets:
         - (s|d)ub(s|bed)?\b: {from: title}                    # Block any subbed/dubbed/etc videos
         - \b(duo|tri|quadri|tetra|penta)logy\b: {from: title} # Block series, only accept one at a time
         - \b3-?D\b: {from: title}                             # I don't have any 3D displays
+        - \btrailer\b: {from: title}                          # I've gotten a few trailers that matched as movies. VERY annoying
         - \bR5\b: {from: title}                               # The following are poor quality types that somehow got through the quality
         - \bWEBSCR\b: {from: title}                           # features usually due to the title including a keyword like "720p" as well
         - \bscreener\b: {from: title}
