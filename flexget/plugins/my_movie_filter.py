@@ -19,6 +19,8 @@ class MyMovieFilter(object):
             ]
     languages = ['english']
     max_accept_ages = [(2,'new'), (10, 'recent'), (15, 'old'), (30, 'older'), (40, 'classic')]
+    min_imdb_votes = 10000
+
 
     global_min_score = 70
 
@@ -97,7 +99,7 @@ class MyMovieFilter(object):
                     break
 
             # Make sure all scores are reliable
-            if entry['rt_critics_score'] < 0 or entry['rt_audience_score'] < 0 or entry['imdb_votes'] < 6000 or entry['imdb_score'] == 0:
+            if entry['rt_critics_score'] < 0 or entry['rt_audience_score'] < 0 or entry['imdb_votes'] < self.min_imdb_votes or entry['imdb_score'] == 0:
                 feed.reject(entry, 'Unreliable scores (rt_critics_consensus: %s, rt_critics_score: %s, rt_audience_score: %s, imdb_votes: %s, imdb_score: %s)' % 
                     (('filled' if entry['rt_critics_consensus'] else None) , entry['rt_critics_score'], entry['rt_audience_score'], entry['imdb_votes'], entry['imdb_score'])
                 )
