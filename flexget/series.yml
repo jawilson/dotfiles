@@ -39,7 +39,7 @@ series:
     - Are You There Chelsea
     #- Blue Mountain State
     - Bobs Burgers
-    #- Breaking Bad
+    - Breaking Bad
     - Castle (2009):
         name_regexp: ^castle(.2009)?
     - Eastbound & Down:
@@ -69,7 +69,6 @@ series:
     #- The Walking Dead
     - Tosh.0
     - Two and a Half Men
-    - Up All Night
     - Whitney
     - Wilfred (US):
         name_regexp: ^wilfred(.us)?

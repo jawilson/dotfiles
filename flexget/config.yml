@@ -128,7 +128,7 @@ presets:
       - ep_air_date != None and ep_air_date < now - timedelta(days=60): reject
     # Accept all series permieres, 1080p first, then minimum of 720p after 8 hours
     series_premiere:
-      min_quality: 720p
+      quality: 720p+ hdtv+
       timeframe: 8 hours
     # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
     # location
@@ -136,12 +136,16 @@ presets:
       movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season }}"
       queuetotop: no
       label: tv-premiere
+    # This is a custom plugin, it is part of my rar-unpacking method, it changes 'movedone'
+    # based on the regexp in the key
+    content_sort:
+      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
   # If a premier was grabbed, keep on tracking it until the directory is (re)moved
   tv-premieres-track:
     import_series:
       settings:
-        min_quality: 720p
+        quality: 720p+ hdtv+
         timeframe: 8 hours
       from:
         listdir:
@@ -151,6 +155,10 @@ presets:
         /raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}/{% endif %}
       queuetotop: no
       label: tv-premiere-track
+    # This is a custom plugin, it is part of my rar-unpacking method, it changes 'movedone'
+    # based on the regexp in the key
+    content_sort:
+      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
   # This preset is a "global" preset for all movie-related feeds.
   # We keep all of the RSS feeds that list movie-related torrents here
@@ -199,8 +207,7 @@ presets:
  
   # This preset runs feeds through my very specific custom filter
   movies-auto:
-    quality:
-      min: 720p
+    quality: 720p+ bluray
     my_movie_filter: yes
     set:
       queuetotop: no
@@ -234,9 +241,9 @@ feeds:
       - tv-my_shows
     series:
       settings:
-        Best: { min_quality: 720p }
-        Better: { min_quality: 720p }
-        Average: { min_quality: HDTV }
+        Best: { quality: 720p+ hdtv+ }
+        Better: { quality: 720p+ dvdscr+ }
+        Average: { quality: webrip+ }
 
   # If we can't find anything that good after 12 hours, fall back to a lower quality
   My_TV_Shows-Secondary:
@@ -246,9 +253,9 @@ feeds:
       - tv-my_shows
     series:
       settings:
-        Best: { min_quality: 720p }
-        Better: { min_quality: HDTV }
-        Average: { min_quality: SDTV }
+        Best: { quality: 720p+ dvdscr+ }
+        Better: { quality: hdtv+ }
+        Average: { quality: tvrip+ }
     delay: 12 hours
 
   # If we can't find anything better after 3 days, screw it, just get it
@@ -261,9 +268,9 @@ feeds:
       - tv-my_shows
     series:
       settings:
-        Best: { min_quality: HDTV }
-        Better: { min_quality: SDTV }
-        Average: { min_quality: Preair }
+        Best: { quality: hdtv+ }
+        Better: { quality: tvrip+ }
+        Average: { quality: preair+ }
     delay: 3 days
 
   # Feed for the tv-premieres plugin
@@ -299,14 +306,14 @@ feeds:
     preset:
       - movies-global
       - movies-queued
-    quality: {min: 1080p}
+    quality: 1080p bluray h264+ dd5.1|ac3|dts
 
   My_Movies-720p:
     priority: 12
     preset:
       - movies-global
       - movies-queued
-    quality: {min: 720p}
+    quality: 720p+ bluray xvid+ dd5.1+
     delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
 
   # This feed simply implements the movies-auto preset

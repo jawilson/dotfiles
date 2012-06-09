@@ -22,7 +22,14 @@ class MyMovieFilter(object):
     min_imdb_votes = 10000
 
 
-    global_min_score = 70
+    # Minimum allowable score of any type including offset
+    global_min_score = 45
+    # Prefer greater than this score
+    ideal_min_score = 70
+
+    # How much to weigh low/high scores when there is a desparity
+    weight_low = 0.25
+    weight_high = 1-weight_low
 
     imdb_genres_reject = \
         ['musical']
@@ -110,18 +117,25 @@ class MyMovieFilter(object):
             if entry_age == 'new' or entry_age == 'recent':
                 pass
             elif entry_age == 'old':
-                score_offset = -3;
-            elif entry_age == 'older':
                 score_offset = -5;
+            elif entry_age == 'older':
+                score_offset = -8;
             elif entry_age == 'classic':
-                score_offset = -12;
+                score_offset = -15;
                 if entry['rt_critics_rating'] != 'Certified Fresh':
                     reasons.append('%s movie (%s != Certified Fresh)' % (entry_age, entry['rt_critics_rating']))
             else:
                 feed.reject(entry, 'Theater release date too far in the past')
                 continue
 
-            log.debug('Minimum acceptable score is %s' % self.global_min_score)
+            log.debug('Minimum acceptable score is %s' % self.ideal_min_score)
+
+            # Enforce global minimum
+            for s in (entry['rt_audience_score'], entry['rt_critics_score'],
+                    entry['imdb_score']*10):
+                if (s+score_offset) < self.global_min_score:
+                    feed.reject(entry, 'Score (%s) with offset (%s) below global minimum (%s)' %
+                            (s,score_offset,self.global_min_score))
 
             # Determine which score to use
             if not entry['rt_critics_consensus'] and entry['rt_critics_rating'] != 'Certified Fresh':
@@ -131,11 +145,13 @@ class MyMovieFilter(object):
                 log.debug('Audience doesn\'t approve, using audience score')
                 score = entry['rt_audience_score']
             elif entry['rt_critics_score'] - entry['rt_audience_score'] > 20:
-                log.debug('Critics and audience don\'t agree, using critics')
-                score = entry['rt_critics_score']
+                log.debug('Critics and audience don\'t agree, weighting critics')
+                score = (entry['rt_critics_score']*self.weight_high) + \
+                            (entry['rt_audience_score']*self.weight_low)
             elif entry['rt_audience_score'] - entry['rt_critics_score'] > 20:
-                log.debug('Critics and audience don\'t agree, using audience')
-                score = entry['rt_audience_score']
+                log.debug('Critics and audience don\'t agree, weighting audience')
+                score = (entry['rt_audience_score']*self.weight_high) + \
+                            (entry['rt_critics_score']*self.weight_low)
             else:
                 score = entry['rt_average_score']
                 
@@ -144,8 +160,8 @@ class MyMovieFilter(object):
                 score = score + score_offset
                 log.debug('Score offset used, score is now: %s' % score)
 
-            if score < self.global_min_score:
-                reasons.append('%s movie (score %s < %s)' % (entry_age, score, self.global_min_score))
+            if score < self.ideal_min_score:
+                reasons.append('%s movie (score %s < %s)' % (entry_age, score, self.ideal_min_score))
 
             # A bunch of imdb genre filters
             strict_reasons = []
