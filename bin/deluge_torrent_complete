@@ -20,13 +20,20 @@ FLEXGET_PATH_FEED={
 
 log = logging.getLogger("torrent_complete")
 log.setLevel(logging.DEBUG)
+logformat = logging.Formatter("%(levelname)s\t%(asctime)s\t%(message)s")
 
 logfile = logging.FileHandler(LOG_FILE)
-logfile.setFormatter(
-    logging.Formatter("%(levelname)s\t%(asctime)s\t%(message)s")
-    )
+logfile.setFormatter(logformat)
 logfile.setLevel(logging.INFO)
 log.addHandler(logfile)
+
+# Log to stdout and increase logging level if run from a console
+if os.isatty(sys.stdin.fileno()):
+    ch = logging.StreamHandler()
+    ch.setFormatter(logformat)
+    ch.setLevel(logging.DEBUG)
+    log.addHandler(ch)
+    FLEXGET_COMMAND += ' --debug'
 
 if len(sys.argv) != 4:
     log.error('%s called with %d arguments, it requires 3.' % (sys.argv[0],(len(sys.argv)-1)))
@@ -57,7 +64,7 @@ for path, feed in FLEXGET_PATH_FEED.items():
 
         for root, dirs, files in os.walk(torrent_path+'/'+torrent_name, topdown=False):
             cmd='find "'+root+'" -maxdepth 1 -type f -regex ".*\.\(\part[0-9]+\.\)?r\([0-9]+\|ar\)$" '\
-                '| head -1 | xargs -I {} unrar x -o+ {} '+STAGING_PATH+path+torrent_id+'/'
+                '| head -1 | xargs -I {} unrar x -o+ "{}" '+STAGING_PATH+path+torrent_id+'/'
             log.debug('Shelling out: %s' % cmd)
             ret = call(cmd, shell=True)
             if ret != 0:
