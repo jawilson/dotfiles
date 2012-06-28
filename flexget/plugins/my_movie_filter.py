@@ -18,7 +18,7 @@ class MyMovieFilter(object):
             'rt_audience_score', 'rt_average_score'
             ]
     languages = ['english']
-    max_accept_ages = [(2,'new'), (10, 'recent'), (15, 'old'), (30, 'older'), (40, 'classic')]
+    max_accept_ages = [(2,'new'), (10, 'recent'), (15, 'old'), (30, 'older')] #, (40, 'classic')]
     min_imdb_votes = 10000
 
 
@@ -34,27 +34,57 @@ class MyMovieFilter(object):
     imdb_genres_reject = \
         ['musical']
     imdb_single_genres_strict = \
-        {'drama': 95, 'romance': 97, 'animation': 90}
+        {'drama': 95,
+         'romance': 97,
+         'animation': 90
+        }
     imdb_genres_strict = \
-        {'drama': 85, 'romance': 85, 'documentary': 83, 'horror': 86, 'animation': 86, 'family': 90}
+        {'drama': 85,
+         'romance': 85,
+         'documentary': 83,
+         'horror': 86,
+         'animation': 86,
+         'family': 90
+        }
     imdb_genres_accept_except = \
         ['animation', 'family', 'horror', 'romance', 'biography']
     imdb_genres_accept = \
-        {'action': 52, 'sci-fi': 62, 'war': 62, 'crime': 62, 'comedy': 65, 'history': 70, 'mystery': 72, 'thriller': 72}
+        {'action': 60, 
+         'sci-fi': 65,
+         'war': 66,
+         'crime': 70,
+         'comedy': 70,
+         'mystery': 75,
+         'thriller': 75
+        }
 
     rt_genres_ignore = \
         ['Classics', 'Cult Movies']
     rt_genres_reject = \
         ['Musical & Performing Arts', 'Anime & Manga', 'Faith & Spirituality', 'Gay & Lesbian']
     rt_single_genres_strict = \
-        {'Drama': 90, 'Romance': 97, 'Art House & International Movies': 99}
+        {'Drama': imdb_single_genres_strict['drama'],
+         'Romance': imdb_single_genres_strict['romance'],
+         'Art House & International Movies': 99
+        }
     rt_genres_strict = \
-        {'Drama': 85, 'Romance': 85, 'Documentary': 83, 'Horror': 86, 'Animation': 86,
-            'Special Interest': 89, 'Kids & Family': 90, 'Art House & International Movies': 80}
+        {'Drama': imdb_genres_strict['drama'],
+         'Romance': imdb_genres_strict['romance'],
+         'Documentary': imdb_genres_strict['documentary'],
+         'Horror': imdb_genres_strict['horror'],
+         'Animation': imdb_genres_strict['animation'],
+         'Kids & Family': imdb_genres_strict['family'],
+         'Special Interest': 89,
+         'Art House & International Movies': 80
+        }
     rt_genres_accept_except = \
         ['Animation', 'Kids & Family', 'Horror', 'Romance', 'Art House & International Movies']
     rt_genres_accept = \
-        {'Action & Adventure': 52, 'Science Fiction & Fantasy': 62, 'Comedy': 65, 'Mystery & Suspense': 72}
+        {'Action & Adventure': imdb_genres_accept['action'],
+         'Science Fiction & Fantasy': imdb_genres_accept['sci-fi'],
+         'Comedy': imdb_genres_accept['comedy'],
+         'Mystery & Suspense': (imdb_genres_accept['mystery']+imdb_genres_accept['thriller'])/2
+        }
 
     def validator(self):
         from flexget import validator
@@ -119,7 +149,9 @@ class MyMovieFilter(object):
             elif entry_age == 'old':
                 score_offset = -5;
             elif entry_age == 'older':
-                score_offset = -8;
+                score_offset = -10;
+                if entry['rt_critics_rating'] != 'Certified Fresh':
+                    reasons.append('%s movie (%s != Certified Fresh)' % (entry_age, entry['rt_critics_rating']))
             elif entry_age == 'classic':
                 score_offset = -15;
                 if entry['rt_critics_rating'] != 'Certified Fresh':
