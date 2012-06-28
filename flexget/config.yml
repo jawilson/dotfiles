@@ -230,12 +230,39 @@ presets:
 # This is where we pull everything together
 feeds:
 
+  # Use a local folder (synced with Dropbox) to use as a source in other feeds
+  Local_Torrents-TV:
+    priority: 1
+    preset:
+      - tv-global
+      - tv-my_shows
+    disable_plugin:
+      - inputs
+      - exists_series
+      - regexp
+      - content_size
+    listdir: /home/atlanta800/Dropbox/torrents/TV
+    accept_all: yes
+
+
+  Local_Torrents-Movies:
+    priority: 2
+    preset:
+      - movies-global
+    disable_plugin:
+      - inputs
+      - exists_movies
+      - regexp
+      - content_size
+    listdir: /home/atlanta800/Dropbox/torrents/Movies
+    accept_all: yes
+
   # All of the TV-related feeds pull in the tv-global preset, this gives
   # all of the necessary rss sources and a few extra configs
 
   # There are 3 My_TV Shows feeds, the first, tries to get the most wanted qualities
   My_TV_Shows:
-    priority: 1
+    priority: 10
     preset:
       - tv-global
       - tv-my_shows
@@ -247,7 +274,7 @@ feeds:
 
   # If we can't find anything that good after 12 hours, fall back to a lower quality
   My_TV_Shows-Secondary:
-    priority: 2
+    priority: 20
     preset:
       - tv-global
       - tv-my_shows
@@ -262,7 +289,7 @@ feeds:
   # Do note that the other 2 feeds still run before this one, so we can still
   # get a good quality torrent if it shows up
   My_TV_Shows-Fallback:
-    priority: 3
+    priority: 30
     preset:
       - tv-global
       - tv-my_shows
@@ -275,21 +302,21 @@ feeds:
 
   # Feed for the tv-premieres plugin
   Series_Premieres:
-    priority: 4
+    priority: 40
     preset:
       - tv-global
       - tv-premieres
 
   # Feed for the tv-premieres-track plugin
   Series_Premieres_Track:
-    priority: 5
+    priority: 50
     preset:
       - tv-global
       - tv-premieres-track
 
   # This feed queues all of the movies in my IMDB watchlist
   IMDB_Movie_Queue:
-    priority: 10 # Always run before My_Movies feeds
+    priority: 100 # Always run before My_Movies feeds
     preset: no_global # None of the global presets make sense here
     interval: 2 hours # Only check every 2 hours (I have Flexget run every hour)
     imdb_list:
@@ -302,14 +329,14 @@ feeds:
   # The next two feeds download the queue from the previous feed effectively implementing
   # a 2 day timeframe for 1080p movies, then falls back to 720p
   My_Movies-1080p:
-    priority: 11
+    priority: 110
     preset:
       - movies-global
       - movies-queued
     quality: 1080p bluray h264 !mp3
 
   My_Movies-720p:
-    priority: 12
+    priority: 120
     preset:
       - movies-global
       - movies-queued
@@ -318,7 +345,7 @@ feeds:
 
   # This feed simply implements the movies-auto preset
   Auto_Movies:
-    priority: 13
+    priority: 130
     preset:
       - movies-global
       - movies-auto
@@ -327,7 +354,7 @@ feeds:
 
   # This feed discovers movies from Rotten Tomatoes and searches for them
   Discovered_Movies:
-    priority: 14
+    priority: 140
     interval: 24 hours # Only once every day (I have Flexget run every hour)
     preset:
       - movies-global
