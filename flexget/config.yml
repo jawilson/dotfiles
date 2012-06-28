@@ -128,7 +128,7 @@ presets:
       - ep_air_date != None and ep_air_date < now - timedelta(days=60): reject
     # Accept all series permieres, 1080p first, then minimum of 720p after 8 hours
     series_premiere:
-      quality: 720p+ hdtv+
+      quality: 720p+ hdtv+ !10bit
       timeframe: 8 hours
     # Add to deluge, but don't queue to top (My_TV_Shows are more important) and put in a different
     # location
@@ -145,7 +145,7 @@ presets:
   tv-premieres-track:
     import_series:
       settings:
-        quality: 720p+ hdtv+
+        quality: 720p+ hdtv+ !10bit
         timeframe: 8 hours
       from:
         listdir:
@@ -207,7 +207,7 @@ presets:
  
   # This preset runs feeds through my very specific custom filter
   movies-auto:
-    quality: 720p+ bluray
+    quality: 720p+ bluray !10bit
     my_movie_filter: yes
     set:
       queuetotop: no
@@ -241,9 +241,9 @@ feeds:
       - tv-my_shows
     series:
       settings:
-        Best: { quality: 720p+ hdtv+ }
-        Better: { quality: 720p+ dvdscr+ }
-        Average: { quality: webrip+ }
+        Best: { quality: 720p+ hdtv+ !10bit }
+        Better: { quality: 720p+ dvdscr+ !10bit }
+        Average: { quality: webrip+ !10bit }
 
   # If we can't find anything that good after 12 hours, fall back to a lower quality
   My_TV_Shows-Secondary:
@@ -253,9 +253,9 @@ feeds:
       - tv-my_shows
     series:
       settings:
-        Best: { quality: 720p+ dvdscr+ }
-        Better: { quality: hdtv+ }
-        Average: { quality: tvrip+ }
+        Best: { quality: 720p+ dvdscr+ !10bit }
+        Better: { quality: hdtv+ !10bit }
+        Average: { quality: tvrip+ !10bit }
     delay: 12 hours
 
   # If we can't find anything better after 3 days, screw it, just get it
@@ -268,9 +268,9 @@ feeds:
       - tv-my_shows
     series:
       settings:
-        Best: { quality: hdtv+ }
-        Better: { quality: tvrip+ }
-        Average: { quality: preair+ }
+        Best: { quality: hdtv+ !10bit }
+        Better: { quality: tvrip+ !10bit }
+        Average: { quality: preair+ !10bit }
     delay: 3 days
 
   # Feed for the tv-premieres plugin
