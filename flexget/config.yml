@@ -306,14 +306,14 @@ feeds:
     preset:
       - movies-global
       - movies-queued
-    quality: 1080p bluray h264+ dd5.1|ac3|dts
+    quality: 1080p bluray h264 !mp3
 
   My_Movies-720p:
     priority: 12
     preset:
       - movies-global
       - movies-queued
-    quality: 720p+ bluray xvid+ dd5.1+
+    quality: 720p+ bluray xvid-h264 !mp3
     delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
 
   # This feed simply implements the movies-auto preset
