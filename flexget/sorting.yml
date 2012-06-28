@@ -18,6 +18,11 @@ presets:
       # We are looking for any video files that were extracted
       regexp: '.*\.(avi|mkv|mp4)$'
       recursive: yes
+    regexp:
+      reject:
+        - \bsample\b: {from: title}
+    content_size:
+      min: 100
 
 feeds:
   Sort_Unpacked_TV_Shows:
@@ -71,6 +76,8 @@ feeds:
     move:
       to: >
         /raid/downloads/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})/
+#      to: >
+#        /raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})/
       filename: >
         {{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}.{{ location[-3:] }}
       clean_source: 1000
