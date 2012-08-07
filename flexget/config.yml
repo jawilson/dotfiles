@@ -30,7 +30,6 @@ presets:
         - \[TNTVillage\]: {from: title}
         - \[facepalm\]: {from: title}
         - \bASAP\b: {from: title}
-    cookies: /home/deluge/.flexget/private/cookies.sqlite # Demonoid is a cookie monster (OM NOM NOM!)
     torrent_alive: 20 # Require at least 20 seeds of any torrent
     # Filter by filenames. Allow multiple video types and rar packs (but note if there is just a
     # single .rar file it won't be accepted)
@@ -62,7 +61,6 @@ presets:
     include: [ private/tv-global.yml ]
     # This is a TON of feeds, you probably don't need so many, but why not?
     inputs:
-      #- rss: { url: 'http://static.demonoid.me/rss/3.xml', silent: yes }        # Demonoid (All TV)
       - rss: { url: 'http://www.torlock.com/television/rss.xml', silent: yes }  # TorLock (TV)
       - rss: { url: 'http://torrentz.eu/feed_verified?q=tv', silent: yes }      # Torrentz (Verified only, TV)
       - rss: { url: 'http://ezrss.it/feed/', silent: yes }                      # EZRSS
@@ -166,7 +164,6 @@ presets:
   movies-global:
     include: [ private/movies-global.yml ]
     inputs:
-      #- rss: { url: 'http://static.demonoid.me/rss/1.xml', silent: yes }       # Demonoid (All Movies)
       - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
       - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
       - rss: { url: 'http://rss.thepiratebay.org/207', silent: yes }           # The Pirate Bay (Highres - Movies)
@@ -223,7 +220,6 @@ presets:
       from:
         - flexget_archive: yes
         - torrentz
-        - demonoid: movies
         - piratebay
       type: movies
     set:
@@ -373,7 +369,6 @@ feeds:
       from:
         - flexget_archive: yes
         - torrentz
-        #- demonoid: movies
         - piratebay
       type: movies
     set:
