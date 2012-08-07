@@ -185,7 +185,9 @@ presets:
       max: 16000
       min: 1000
     imdb_lookup: yes
-    rottentomatoes_lookup: yes
+    # A Rotten Tomatoes API key is set in my private config, but I'm leaving this here for clarity
+    # and completeness.
+    #rottentomatoes_lookup: yes
     seen_movies: strict # Don't download movies we've already seen
     # Check for already downloaded or currently downloading movies
     exists_movie:
