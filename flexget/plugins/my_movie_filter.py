@@ -91,40 +91,40 @@ class MyMovieFilter(object):
         return validator.factory('boolean')
 
 
-    def check_fields(self, feed, entry):
+    def check_fields(self, task, entry):
         for field in self.required_fields:
             if not entry.get(field) and entry.get(field) != 0:
-                feed.reject(entry, 'Required field %s is not present' % field)
+                task.reject(entry, 'Required field %s is not present' % field)
                 return False
         return True
 
 
     @priority(0) # Make filter run after other filters, but before exists_movies
-    def on_feed_filter(self, feed, config):
+    def on_task_filter(self, task, config):
         log.debug('Running custom filter')
-        for entry in feed.entries:
+        for entry in task.entries:
             force_accept = False
             reasons = []
             
-            if not self.check_fields(feed, entry):
+            if not self.check_fields(task, entry):
                 continue
 
             # Don't allow straight to DVD flicks
             if not entry['rt_releases'].get('theater', False):
-                feed.reject(entry, 'No theater release date')
+                task.reject(entry, 'No theater release date')
                 continue
 
             # Enforce languages
             if entry['imdb_languages'][0] not in self.languages:
-                feed.reject(entry, 'primary language not in %s' % self.languages)
+                task.reject(entry, 'primary language not in %s' % self.languages)
                 continue
 
             # Reject some genrces outright
             if any(genre in self.imdb_genres_reject for genre in entry['imdb_genres']):
-                feed.reject(entry, 'imdb genres')
+                task.reject(entry, 'imdb genres')
                 continue
             if any(genre in self.rt_genres_reject for genre in entry['rt_genres']):
-                feed.reject(entry, 'rt genres')
+                task.reject(entry, 'rt genres')
                 continue
 
             # Get the age classification of the movie
@@ -137,7 +137,7 @@ class MyMovieFilter(object):
 
             # Make sure all scores are reliable
             if entry['rt_critics_score'] < 0 or entry['rt_audience_score'] < 0 or entry['imdb_votes'] < self.min_imdb_votes or entry['imdb_score'] == 0:
-                feed.reject(entry, 'Unreliable scores (rt_critics_consensus: %s, rt_critics_score: %s, rt_audience_score: %s, imdb_votes: %s, imdb_score: %s)' % 
+                task.reject(entry, 'Unreliable scores (rt_critics_consensus: %s, rt_critics_score: %s, rt_audience_score: %s, imdb_votes: %s, imdb_score: %s)' % 
                     (('filled' if entry['rt_critics_consensus'] else None) , entry['rt_critics_score'], entry['rt_audience_score'], entry['imdb_votes'], entry['imdb_score'])
                 )
                 continue
@@ -157,7 +157,7 @@ class MyMovieFilter(object):
                 if entry['rt_critics_rating'] != 'Certified Fresh':
                     reasons.append('%s movie (%s != Certified Fresh)' % (entry_age, entry['rt_critics_rating']))
             else:
-                feed.reject(entry, 'Theater release date too far in the past')
+                task.reject(entry, 'Theater release date too far in the past')
                 continue
 
             log.debug('Minimum acceptable score is %s' % self.ideal_min_score)
@@ -166,7 +166,7 @@ class MyMovieFilter(object):
             for s in (entry['rt_audience_score'], entry['rt_critics_score'],
                     entry['imdb_score']*10):
                 if (s+score_offset) < self.global_min_score:
-                    feed.reject(entry, 'Score (%s) with offset (%s) below global minimum (%s)' %
+                    task.reject(entry, 'Score (%s) with offset (%s) below global minimum (%s)' %
                             (s,score_offset,self.global_min_score))
 
             # Determine which score to use
@@ -252,18 +252,18 @@ class MyMovieFilter(object):
             if reasons and not force_accept:
                 msg = 'Didn\'t accept `%s` because of rule(s) %s' % \
                     (entry.get('rt_name', None) or entry['title'], ', '.join(reasons))
-                if feed.manager.options.debug:
+                if task.manager.options.debug:
                     log.debug(msg)
                 else:
                     if score_offset != 0:
                         msg = 'Offset score by %s. %s' % (score_offset, msg)
-                    if feed.manager.options.quiet:
+                    if task.manager.options.quiet:
                         log_once(msg, log)
                     else:
                         log.info(msg)
             else:
                 log.debug('Accepting %s' % (entry['title']))
-                feed.accept(entry)
+                task.accept(entry)
 
 
 register_plugin(MyMovieFilter, 'my_movie_filter', api_ver=2)

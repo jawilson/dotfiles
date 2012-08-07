@@ -226,7 +226,7 @@ presets:
       label: my-movies
 
 # This is where we pull everything together
-feeds:
+tasks:
 
   # Use a local folder (synced with Dropbox) to use as a source in other feeds
   Local_Torrents-TV:
@@ -323,8 +323,7 @@ feeds:
       user_id: ur7174817
       list: watchlist
     accept_all: yes
-    queue_movies: # Output entries to movie queue (with any quality)
-      force: no
+    queue_movies: { force: no } # Output entries to movie queue (with any quality)
   
   # The next two feeds download the queue from the previous feed effectively implementing
   # a 2 day timeframe for 1080p movies, then falls back to 720p

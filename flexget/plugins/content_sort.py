@@ -22,7 +22,7 @@ class FilterContentSort(object):
         config.accept_any_key('any')
         return config
 
-    def process_entry(self, feed, entry, config):
+    def process_entry(self, task, entry, config):
         if 'content_files' in entry:
             files = entry['content_files']
             log.debug('%s files: %s' % (entry['title'], files))
@@ -43,14 +43,14 @@ class FilterContentSort(object):
                 entry['content_files'] = files
 
     @priority(149)
-    def on_feed_modify(self, feed):
-        if feed.manager.options.test or feed.manager.options.learn:
+    def on_task_modify(self, task):
+        if task.manager.options.test or task.manager.options.learn:
             log.info('Plugin is partially disabled with --test and --learn because content filename information may not be available')
             return
-        config = feed.config.get('content_sort')
-        for entry in feed.accepted:
+        config = task.config.get('content_sort')
+        for entry in task.accepted:
             # TODO: I don't know if we can parse filenames from nzbs, just do torrents for now
             self.parse_torrent_files(entry)
-            self.process_entry(feed, entry, config)
+            self.process_entry(task, entry, config)
 
 register_plugin(FilterContentSort, 'content_sort')

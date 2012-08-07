@@ -24,7 +24,7 @@ presets:
     content_size:
       min: 100
 
-feeds:
+tasks:
   Sort_Unpacked_TV_Shows:
     # Where to get the unpacked (staged) files from
     find:

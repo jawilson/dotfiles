@@ -10,9 +10,9 @@ STAGING_PATH='/raid/downloads/staging'
 FLEXGET_COMMAND='python ~/Flexget/flexget_vanilla.py --logfile '\
         '/home/deluge/.flexget/flexget-sorting.log'
 FLEXGET_SORTING_CONFIG='/home/deluge/.flexget/sorting.yml'
-FLEXGET_FEED_PREFIX='Sort_Unpacked_'
+FLEXGET_TASK_PREFIX='Sort_Unpacked_'
 
-FLEXGET_PATH_FEED={
+FLEXGET_PATH_TASK={
     '/movies/': 'Movies',
     '/tv_shows/': 'TV_Shows',
     '/tv_premieres/': 'TV_Premieres',
@@ -58,9 +58,9 @@ if DOWNLOAD_PATH not in torrent_path:
     log.debug("Torrent '%s' path (%s) not in %s, skipping unrar" % (torrent_name,torrent_path,DOWNLOAD_PATH))
     chain()
 
-for path, feed in FLEXGET_PATH_FEED.items():
+for path, task in FLEXGET_PATH_TASK.items():
     if DOWNLOAD_PATH+path in torrent_path:
-        log.info('Processing %s as part of feed %s.' % (torrent_name,feed))
+        log.info('Processing %s as part of task %s.' % (torrent_name,task))
 
         for root, dirs, files in os.walk(torrent_path+'/'+torrent_name, topdown=False):
             cmd='find "'+root+'" -maxdepth 1 -type f -regex ".*\.\(\part[0-9]+\.\)?r\([0-9]+\|ar\)$" '\
@@ -70,7 +70,7 @@ for path, feed in FLEXGET_PATH_FEED.items():
             if ret != 0:
                 log.warning('Unrar command returned non-zero value %d.' % ret)
 
-        cmd=FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --feed '+FLEXGET_FEED_PREFIX+feed+\
+        cmd=FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --task '+FLEXGET_TASK_PREFIX+task+\
             (' --disable-advancement' if 'tv' in path else '')
         log.debug('Shelling out: %s' % cmd)
         ret = call(cmd, shell=True)
