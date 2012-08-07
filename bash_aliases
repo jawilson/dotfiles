@@ -16,4 +16,4 @@ alias "flexget-sort-movies"="python ~/Flexget/flexget_vanilla.py --logfile /home
 alias "ack"="ack-grep"
 
 # git
-alias git-pretty-graph="git log --graph --pretty=oneline --abbrev-commit"
+alias git-pretty-graph="git log --graph --pretty=oneline --abbrev-commit --decorate"
