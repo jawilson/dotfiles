@@ -47,9 +47,9 @@ presets:
       bt-chat.com: 5 seconds
       torrentz.eu: 5 seconds
     email:
-      from: deluge@Faraday.singularity
+      from: deluge@Faraday.singularity.net
       to: atlanta800+flexget@gmail.com
-    # Deluge is configured in my private configs, but I'm leaving this for clarity
+    # Deluge is configured in my private configs, but I'm leaving this for clarity and completeness
     #deluge:
     # # Ignore all but the file that is >90% of the torrent if it exists
     # # Yor will most likely want to combine this with the 'DeletePartials' Deluge plugin
@@ -241,6 +241,7 @@ feeds:
       - exists_series
       - regexp
       - content_size
+      - torrent_alive
     listdir: /home/atlanta800/Dropbox/torrents/TV
     accept_all: yes
 
@@ -254,6 +255,7 @@ feeds:
       - exists_movies
       - regexp
       - content_size
+      - torrent_alive
     listdir: /home/atlanta800/Dropbox/torrents/Movies
     accept_all: yes
 
