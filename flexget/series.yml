@@ -6,7 +6,7 @@ series:
       propers: yes
   # These are my favorite shows, I want the best quality from these
   Best:
-    - 30 Rock
+    - Falling Skies
     - House of Lies
     - How I Met Your Mother
     - Justified
@@ -26,6 +26,7 @@ series:
   # These are my other shows, quality isn't extremely important, but I still like to watch them!
   Better:
     - 2 Broke Girls
+    - 30 Rock
     - Allen Gregory
     - American Dad!:
         # Similar to The Office (US), see http://flexget.com/wiki/Plugins/series/closematch for info
