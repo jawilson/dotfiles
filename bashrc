@@ -57,21 +57,12 @@ if [ -f /etc/bash_completion ]; then
 fi
 
 export EDITOR=vim
-export PATH="$HOME/.bin:$PATH:/opt/android/bin"
+export PATH="$HOME/.bin:$PATH"
 
-# DistCC Configuration
-if [ -d /usr/lib/distcc ]; then
-  DISTCC_HOSTS="localhost Faraday"
-  PATH="/usr/lib/distcc:${PATH}"
-  export DISTCC_HOSTS PATH
-fi
-
-# OpenEmbedded Environment Setup
-if [ -d $HOME/OE ]; then
-  export OEBASE=$HOME/OE
-  export PATH=$OEBASE/bitbake/bin:$PATH
-  export BBPATH=$OEBASE/build:$OEBASE/openembedded
-  export BB_ENV_EXTRAWHITE="OEBASE"
+# IceCC Configuration
+if [ -d /usr/lib/icecc/bin ]; then
+  export PATH="/usr/lib/icecc/bin:${PATH}"
+  export MAKEFLAGS="-j8"
 fi
 
 # Android SDK configuration
