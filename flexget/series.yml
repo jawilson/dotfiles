@@ -6,7 +6,9 @@ series:
       propers: yes
   # These are my favorite shows, I want the best quality from these
   Best:
+    - Dexter
     - Falling Skies
+    - Game of Thrones
     - House of Lies
     - How I Met Your Mother
     - Justified
@@ -33,6 +35,7 @@ series:
         name_regexp: ^american.dad(!)?
         set:
           thetvdb_lookup_season_offset: 1
+    - Anger Management
     - Aqua Teen Hunger Force
     - Aqua Unit Patrol Squad 1
     - Archer (2009):
@@ -43,14 +46,18 @@ series:
     - Breaking Bad
     - Castle (2009):
         name_regexp: ^castle(.2009)?
+    #- "Cosmos: A Personal Voyage":
+    #    name_regexp: 
     - Eastbound & Down:
         name_regexp: ^east.?bound(.and|.&)?.down
     - Family Guy
     - Futurama
+    - Hot in Cleveland
     - Its Always Sunny In Philadelphia
     - Last Man Standing (US):
         name_regexp: ^last.man.standing(.us)?
     - Man Up
+    - Men at Work
     - Metalocolypse
     - MythBusters
     - New Girl
@@ -67,7 +74,7 @@ series:
     - The Simpsons
     - The Venture Bros:
         name_regexp: ^the.venture.bro(ther)?s
-    #- The Walking Dead
+    - The Walking Dead
     - Tosh.0
     - Two and a Half Men
     - Whitney
