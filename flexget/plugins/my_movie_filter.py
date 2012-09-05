@@ -28,7 +28,7 @@ class MyMovieFilter(object):
     ideal_min_score = 70
 
     # How much to weigh low/high scores when there is a desparity
-    weight_low = 0.25
+    weight_low = 0.15
     weight_high = 1-weight_low
 
     imdb_genres_reject = \
