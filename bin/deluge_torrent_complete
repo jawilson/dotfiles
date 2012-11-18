@@ -7,6 +7,7 @@ from subprocess import call
 LOG_FILE='/home/deluge/.flexget/torrent_complete.log'
 DOWNLOAD_PATH='/home/deluge/downloads/completed'
 STAGING_PATH='/raid/downloads/staging'
+XBMC_HOST='Carina.singularity.net'
 FLEXGET_COMMAND='python ~/Flexget/flexget_vanilla.py --logfile '\
         '/home/deluge/.flexget/flexget-sorting.log'
 FLEXGET_SORTING_CONFIG='/home/deluge/.flexget/sorting.yml'
@@ -47,9 +48,8 @@ log.debug("%s called with torrent_id='%s', torrent_name='%s', torrent_path='%s'.
     torrent_id, torrent_name, torrent_path))
 
 def chain():
-    log.debug("Calling 'update_xbmc_library'")
-    ret=call('/home/deluge/.bin/update_xbmc_library "'+torrent_id+'" "'+torrent_name+'" "'+torrent_path+'"',
-            shell=True)
+    log.debug("Updating XBMC Library")
+    ret=call('/usr/bin/xbmc-send --host='+XBMC_HOST+' --action="XBMC.updatelibrary(video)"', shell=True)
     if ret != 0:
         log.warning('Update XBMC command returned non-zero value %d.' % ret)
     sys.exit(0)
