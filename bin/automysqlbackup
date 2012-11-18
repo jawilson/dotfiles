@@ -73,7 +73,7 @@ else
 	MDBNAMES="${DBNAMES}"
 	
 	# List of DBNAMES to EXLUCDE if DBNAMES are set to all (must be in " quotes)
-	DBEXCLUDE=""
+	DBEXCLUDE="information_schema"
 	
 	# Include CREATE DATABASE in backup?
 	CREATE_DATABASE=no

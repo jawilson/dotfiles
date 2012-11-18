@@ -33,7 +33,7 @@ set showmatch
 set expandtab
 set smarttab
 set softtabstop=4
-set shiftwidth=2
+set shiftwidth=4
 set tabstop=4
 set textwidth=100
 set wrap
