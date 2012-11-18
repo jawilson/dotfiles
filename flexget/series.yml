@@ -44,8 +44,6 @@ series:
     #- Blue Mountain State
     - Bobs Burgers
     - Breaking Bad
-    - Castle (2009):
-        name_regexp: ^castle(.2009)?
     #- "Cosmos: A Personal Voyage":
     #    name_regexp: 
     - Eastbound & Down:
@@ -69,7 +67,6 @@ series:
     - Suburgatory
     - The Boondocks
     - The Cleveland Show
-    - The Fades
     - The IT Crowd
     - The Simpsons
     - The Venture Bros:

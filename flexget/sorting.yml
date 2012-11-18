@@ -22,7 +22,7 @@ presets:
       reject:
         - \bsample\b: {from: title}
     content_size:
-      min: 100
+      min: 60
 
 tasks:
   Sort_Unpacked_TV_Shows:

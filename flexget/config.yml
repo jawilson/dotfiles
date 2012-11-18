@@ -4,6 +4,7 @@
 #
 
 presets:
+
   global:
     include: [ private/global.yml ]
     # Make there's 50GB free before adding more downloads
@@ -30,7 +31,7 @@ presets:
         - \[TNTVillage\]: {from: title}
         - \[facepalm\]: {from: title}
         - \bASAP\b: {from: title}
-    torrent_alive: 20 # Require at least 20 seeds of any torrent
+    torrent_alive: 40 # Require at least 20 seeds of any torrent
     # Filter by filenames. Allow multiple video types and rar packs (but note if there is just a
     # single .rar file it won't be accepted)
     content_filter:
@@ -45,14 +46,19 @@ presets:
     domain_delay:
       bt-chat.com: 5 seconds
       torrentz.eu: 5 seconds
-    email:
-      from: deluge@Faraday.singularity.net
-      to: atlanta800+flexget@gmail.com
+    # Ignore torrents with only magnet links, they don't play well with BT-Guard
+    magnets: no
+    # A couple people didn't change this when they tried out my configs, so I moved it
+    # to private/global.yml
+    #email:
+    #  from: user@your.domain
+    #  to: your@email.address
     # Deluge is configured in my private configs, but I'm leaving this for clarity and completeness
     #deluge:
     # # Ignore all but the file that is >90% of the torrent if it exists
-    # # Yor will most likely want to combine this with the 'DeletePartials' Deluge plugin
+    # # You will most likely want to combine this with the 'DeletePartials' Deluge plugin
     #  main_file_only: yes
+
 
   # This preset is a "global" preset for all TV-related feeds.
   # We keep all of the RSS feeds that list tv-related torrents here
@@ -86,6 +92,7 @@ presets:
         {{ series_name|replace('/', '_')|replace(':', ' -') }} - {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}{{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}{% else %}{{ series_id }}{% endif %}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
       label: tv
 
+
   # These are the shows I regularly watch
   tv-my_shows:
     # I've broken out my series lists into a seperate yml to clean up my config
@@ -100,6 +107,29 @@ presets:
     # based on the regexp in the key
     content_sort:
       '*.rar': '/home/deluge/downloads/completed/tv_shows/'
+
+
+  tv-primary:
+    series:
+      settings:
+        Best: { quality: 720p+ hdtv+ !10bit }
+        Better: { quality: 720p+ dvdscr+ !10bit }
+        Average: { quality: webrip+ !10bit }
+
+  tv-secondary:
+    series:
+      settings:
+        Best: { quality: 720p+ dvdscr+ !10bit }
+        Better: { quality: hdtv+ !10bit }
+        Average: { quality: tvrip+ !10bit }
+
+  tv-fallback:
+    series:
+      settings:
+        Best: { quality: hdtv+ !10bit }
+        Better: { quality: tvrip+ !10bit }
+        Average: { quality: preair+ !10bit }
+
 
   # I'm always up for new shows, but some I genres I just can't stand. This preset
   # grabs all of the premieres except for some genres
@@ -139,6 +169,7 @@ presets:
     content_sort:
       '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
+
   # If a premier was grabbed, keep on tracking it until the directory is (re)moved
   tv-premieres-track:
     import_series:
@@ -157,6 +188,7 @@ presets:
     # based on the regexp in the key
     content_sort:
       '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
+
 
   # This preset is a "global" preset for all movie-related feeds.
   # We keep all of the RSS feeds that list movie-related torrents here
@@ -204,12 +236,13 @@ presets:
     content_sort:
       '*.rar': '/home/deluge/downloads/completed/movies/'
  
+
   # This preset runs feeds through my very specific custom filter
   movies-auto:
-    quality: 720p+ bluray !10bit
     my_movie_filter: yes
     set:
       queuetotop: no
+
 
   # This preset uses the movie queue to download movies
   movies-queued:
@@ -219,11 +252,32 @@ presets:
         - emit_movie_queue: yes
       from:
         - flexget_archive: yes
-        - torrentz
-        - piratebay
+        - torrentz: verified
+        #- piratebay:
+        #  category: 207 # Highres - Movies
       type: movies
     set:
       label: my-movies
+  
+  movies-discover:
+    disable_plugin: inputs
+    discover:
+      what:
+        - rottentomatoes_list:
+            dvds:
+              - top_rentals
+              - new_releases
+        - emit_movie_queue: yes
+      from:
+        - flexget_archive: yes
+        - torrentz: verified
+        - piratebay:
+            category: "highres movies"
+            sort_by: seeds
+      type: movies
+    set:
+      label: movies-discovered
+
 
 # This is where we pull everything together
 tasks:
@@ -234,13 +288,19 @@ tasks:
     preset:
       - tv-global
       - tv-my_shows
+    disable_builtins: [seen]
     disable_plugin:
       - inputs
       - exists_series
       - regexp
       - content_size
       - torrent_alive
+    plugin_priority:
+      exec: 0
     listdir: /home/atlanta800/Dropbox/torrents/TV
+    exec:
+      on_output:
+        for_accepted: rm "/home/atlanta800/Dropbox/torrents/TV/{{title}}"
     accept_all: yes
 
 
@@ -248,14 +308,21 @@ tasks:
     priority: 2
     preset:
       - movies-global
+    disable_builtins: [seen]
     disable_plugin:
       - inputs
       - exists_movies
       - regexp
       - content_size
       - torrent_alive
+    plugin_priority:
+      exec: 0
     listdir: /home/atlanta800/Dropbox/torrents/Movies
+    exec:
+      on_output:
+        for_accepted: rm "/home/atlanta800/Dropbox/torrents/Movies/{{title}}"
     accept_all: yes
+
 
   # All of the TV-related feeds pull in the tv-global preset, this gives
   # all of the necessary rss sources and a few extra configs
@@ -266,11 +333,8 @@ tasks:
     preset:
       - tv-global
       - tv-my_shows
-    series:
-      settings:
-        Best: { quality: 720p+ hdtv+ !10bit }
-        Better: { quality: 720p+ dvdscr+ !10bit }
-        Average: { quality: webrip+ !10bit }
+      - tv-primary
+
 
   # If we can't find anything that good after 12 hours, fall back to a lower quality
   My_TV_Shows-Secondary:
@@ -278,12 +342,9 @@ tasks:
     preset:
       - tv-global
       - tv-my_shows
-    series:
-      settings:
-        Best: { quality: 720p+ dvdscr+ !10bit }
-        Better: { quality: hdtv+ !10bit }
-        Average: { quality: tvrip+ !10bit }
+      - tv-secondary
     delay: 12 hours
+
 
   # If we can't find anything better after 3 days, screw it, just get it
   # Do note that the other 2 feeds still run before this one, so we can still
@@ -293,12 +354,9 @@ tasks:
     preset:
       - tv-global
       - tv-my_shows
-    series:
-      settings:
-        Best: { quality: hdtv+ !10bit }
-        Better: { quality: tvrip+ !10bit }
-        Average: { quality: preair+ !10bit }
+      - tv-fallback
     delay: 3 days
+
 
   # Feed for the tv-premieres plugin
   Series_Premieres:
@@ -307,12 +365,14 @@ tasks:
       - tv-global
       - tv-premieres
 
+
   # Feed for the tv-premieres-track plugin
   Series_Premieres_Track:
     priority: 50
     preset:
       - tv-global
       - tv-premieres-track
+
 
   # This feed queues all of the movies in my IMDB watchlist
   IMDB_Movie_Queue:
@@ -324,7 +384,8 @@ tasks:
       list: watchlist
     accept_all: yes
     queue_movies: { force: no } # Output entries to movie queue (with any quality)
-  
+
+
   # The next two feeds download the queue from the previous feed effectively implementing
   # a 2 day timeframe for 1080p movies, then falls back to 720p
   My_Movies-1080p:
@@ -334,6 +395,7 @@ tasks:
       - movies-queued
     quality: 1080p bluray h264 !mp3
 
+
   My_Movies-720p:
     priority: 120
     preset:
@@ -342,34 +404,46 @@ tasks:
     quality: 720p+ bluray xvid-h264 !mp3
     delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
 
-  # This feed simply implements the movies-auto preset
-  Auto_Movies:
+
+  # These feeds implement the movies-auto preset
+  Auto_Movies-1080p:
     priority: 130
+    quality: 1080p+ bluray !10bit
     preset:
       - movies-global
       - movies-auto
     set:
       label: movies-auto
 
-  # This feed discovers movies from Rotten Tomatoes and searches for them
-  Discovered_Movies:
+  Auto_Movies-720p:
     priority: 140
-    interval: 24 hours # Only once every day (I have Flexget run every hour)
+    quality: 720p+ bluray !10bit
     preset:
       - movies-global
       - movies-auto
-    disable_plugin: inputs
-    discover:
-      what:
-        - rottentomatoes_list:
-            dvds:
-              - top_rentals
-              - new_releases
-      from:
-        - flexget_archive: yes
-        - torrentz
-        - piratebay
-      type: movies
     set:
-      label: movies-discovered
+      label: movies-auto
+    delay: 4 days # Wait 4 days for a 1080p movie before trying downloading 720p
+
+
+  # This feed 'discovers' movies from Rotten Tomatoes and my movie queue
+  # and searches for them
+  Discovered_Movies-1080p:
+    priority: 150
+    interval: 24 hours # Only once every day (I have Flexget run every hour)
+    quality: 1080p+ bluray !10bit
+    preset:
+      - movies-global
+      - movies-auto
+      - movies-discover
+
+  Discovered_Movies-720p:
+    priority: 160
+    interval: 24 hours # Only once every day (I have Flexget run every hour)
+    quality: 720p+ bluray !10bit
+    preset:
+      - movies-global
+      - movies-auto
+      - movies-discover
+    delay: 4 days # Wait 4 days for a 1080p movie before trying downloading 720p
 
