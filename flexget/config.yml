@@ -253,8 +253,9 @@ presets:
       from:
         - flexget_archive: yes
         - torrentz: verified
-        #- piratebay:
-        #  category: 207 # Highres - Movies
+        - piratebay:
+            category: "highres movies"
+            sort_by: seeds
       type: movies
     set:
       label: my-movies
@@ -267,7 +268,6 @@ presets:
             dvds:
               - top_rentals
               - new_releases
-        - emit_movie_queue: yes
       from:
         - flexget_archive: yes
         - torrentz: verified
@@ -302,6 +302,8 @@ tasks:
       on_output:
         for_accepted: rm "/home/atlanta800/Dropbox/torrents/TV/{{title}}"
     accept_all: yes
+    set:
+      label: local-tv
 
 
   Local_Torrents-Movies:
@@ -322,6 +324,8 @@ tasks:
       on_output:
         for_accepted: rm "/home/atlanta800/Dropbox/torrents/Movies/{{title}}"
     accept_all: yes
+    set:
+      label: local-movies
 
 
   # All of the TV-related feeds pull in the tv-global preset, this gives

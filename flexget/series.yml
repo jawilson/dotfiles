@@ -75,8 +75,6 @@ series:
     - Tosh.0
     - Two and a Half Men
     - Whitney
-    - Wilfred (US):
-        name_regexp: ^wilfred(.us)?
   # And this is everything else, quality doesn't matter that much
   Average:
     # I love the daily show, but I'm more interested in just watching it than video quality
