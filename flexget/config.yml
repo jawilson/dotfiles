@@ -26,7 +26,7 @@
 #       repository) when any torrent is done downloading
 #   5. deluge_torrent_complete checks if the torrent is located in the
 #       directory we set in step #2, if not it skips to the last step
-#   6. deluge_torrent_complete unpacks to first .rar file it finds in the
+#   6. deluge_torrent_complete unpacks the first .rar file it finds in the
 #       torrent to a 'staging' location
 #   7. deluge_torrent_complete calls flexget with a completely separate config,
 #       'sorting.yml' (also available in this repository)

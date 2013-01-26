@@ -94,7 +94,7 @@ class MyMovieFilter(object):
     def check_fields(self, task, entry):
         for field in self.required_fields:
             if not entry.get(field) and entry.get(field) != 0:
-                task.reject(entry, 'Required field %s is not present' % field)
+                entry.reject('Required field %s is not present' % field)
                 return False
         return True
 
@@ -111,20 +111,20 @@ class MyMovieFilter(object):
 
             # Don't allow straight to DVD flicks
             if not entry['rt_releases'].get('theater', False):
-                task.reject(entry, 'No theater release date')
+                entry.reject('No theater release date')
                 continue
 
             # Enforce languages
             if entry['imdb_languages'][0] not in self.languages:
-                task.reject(entry, 'primary language not in %s' % self.languages)
+                entry.reject('primary language not in %s' % self.languages)
                 continue
 
             # Reject some genrces outright
             if any(genre in self.imdb_genres_reject for genre in entry['imdb_genres']):
-                task.reject(entry, 'imdb genres')
+                entry.reject('imdb genres')
                 continue
             if any(genre in self.rt_genres_reject for genre in entry['rt_genres']):
-                task.reject(entry, 'rt genres')
+                entry.reject('rt genres')
                 continue
 
             # Get the age classification of the movie
@@ -137,7 +137,7 @@ class MyMovieFilter(object):
 
             # Make sure all scores are reliable
             if entry['rt_critics_score'] < 0 or entry['rt_audience_score'] < 0 or entry['imdb_votes'] < self.min_imdb_votes or entry['imdb_score'] == 0:
-                task.reject(entry, 'Unreliable scores (rt_critics_consensus: %s, rt_critics_score: %s, rt_audience_score: %s, imdb_votes: %s, imdb_score: %s)' % 
+                entry.reject('Unreliable scores (rt_critics_consensus: %s, rt_critics_score: %s, rt_audience_score: %s, imdb_votes: %s, imdb_score: %s)' % 
                     (('filled' if entry['rt_critics_consensus'] else None) , entry['rt_critics_score'], entry['rt_audience_score'], entry['imdb_votes'], entry['imdb_score'])
                 )
                 continue
@@ -157,7 +157,7 @@ class MyMovieFilter(object):
                 if entry['rt_critics_rating'] != 'Certified Fresh':
                     reasons.append('%s movie (%s != Certified Fresh)' % (entry_age, entry['rt_critics_rating']))
             else:
-                task.reject(entry, 'Theater release date too far in the past')
+                entry.reject('Theater release date too far in the past')
                 continue
 
             log.debug('Minimum acceptable score is %s' % self.ideal_min_score)
@@ -166,7 +166,7 @@ class MyMovieFilter(object):
             for s in (entry['rt_audience_score'], entry['rt_critics_score'],
                     entry['imdb_score']*10):
                 if (s+score_offset) < self.global_min_score:
-                    task.reject(entry, 'Score (%s) with offset (%s) below global minimum (%s)' %
+                    entry.reject('Score (%s) with offset (%s) below global minimum (%s)' %
                             (s,score_offset,self.global_min_score))
 
             # Determine which score to use
@@ -263,7 +263,7 @@ class MyMovieFilter(object):
                         log.info(msg)
             else:
                 log.debug('Accepting %s' % (entry['title']))
-                task.accept(entry)
+                entry.accept()
 
 
 register_plugin(MyMovieFilter, 'my_movie_filter', api_ver=2)
