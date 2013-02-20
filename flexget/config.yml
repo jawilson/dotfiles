@@ -76,7 +76,9 @@ presets:
         - '*.mp4'
         - '*.r0*'
         - '*.part0*'
-      reject: [ 'password.txt' ]
+      reject:
+        - 'password.txt'
+        - '*.wmv'
     # Limit the frequency of requests to domains so they don't complain about
     # using a bot
     domain_delay:
@@ -116,7 +118,7 @@ presets:
       - rss: { url: 'https://rss.thepiratebay.se/208', silent: yes }            # The Pirate Bay (Highres - TV shows)
     # Impose reasonable size constraints
     content_size:
-      max: 4000
+      max: 5000
       min: 20
     # Prevent from downloading shows that were aquired manually
     # or are currently downloading
@@ -153,28 +155,6 @@ presets:
       '*.rar': '/home/deluge/downloads/completed/tv_shows/'
 
 
-  tv-primary:
-    series:
-      settings:
-        Best: { quality: 720p+ hdtv+ !10bit }
-        Better: { quality: 720p+ dvdscr+ !10bit }
-        Average: { quality: webrip+ !10bit }
-
-  tv-secondary:
-    series:
-      settings:
-        Best: { quality: 720p+ dvdscr+ !10bit }
-        Better: { quality: hdtv+ !10bit }
-        Average: { quality: tvrip+ !10bit }
-
-  tv-fallback:
-    series:
-      settings:
-        Best: { quality: hdtv+ !10bit }
-        Better: { quality: tvrip+ !10bit }
-        Average: { quality: preair+ !10bit }
-
-
   # I'm always up for new shows, but some I genres I just can't stand. This
   # preset grabs all of the premieres except for some genres
   tv-premieres:
@@ -198,10 +178,11 @@ presets:
       - "series_genres == ['Drama']": reject
       # Block premieres that weren't within the last 60 days
       - ep_air_date != None and ep_air_date < now - timedelta(days=60): reject
-    # Accept all series permieres, 1080p first, then minimum of 720p after 8 hours
+    # Accept all series permieres
     series_premiere:
-      quality: 720p+ hdtv+ !10bit
-      timeframe: 8 hours
+      target: 720p+ hdtv+
+      timeframe: 3 days
+      quality: webrip+
     # Add to deluge, but don't queue to top (My_TV_Shows are more important)
     # and put in a different location
     set:
@@ -218,8 +199,9 @@ presets:
   tv-premieres-track:
     import_series:
       settings:
-        quality: 720p+ hdtv+ !10bit
-        timeframe: 8 hours
+        target: 720p+ hdtv+
+        timeframe: 3 days
+        quality: webrip+
       from:
         listdir:
           - "/raid/videos/TV Premieres/"
@@ -249,13 +231,14 @@ presets:
         - s\d+e\d+: {from: title}
         - '\d{4}.\d{2}.\d{2}': {from: title}
         - \d+x\d+: {from: title}
+        - \baac2: {from: title} # No 2 channel audio
     # Force proper_movies to run after regexp to avoid unnecessary imdb_lookup
     plugin_priority:
       if: 173
       proper_movies: 171
     # Impose reasonable size constraints
     content_size:
-      max: 16000
+      max: 20000
       min: 1000
     imdb_lookup: yes
     # A Rotten Tomatoes API key is set in my private config, but I'm leaving
@@ -282,34 +265,11 @@ presets:
       '*.rar': '/home/deluge/downloads/completed/movies/'
  
 
-  # This preset runs tasks through my very specific custom filter
+  # This preset runs feeds through my very specific custom filter
   movies-auto:
+    include: [ private/movies-discover.yml ]
+    interval: 2 hours # run less often since we'll be manuall searching sites
     my_movie_filter: yes
-    set:
-      queuetotop: no
-
-
-  # This preset uses the movie queue to find movies from various sources
-  movies-queued:
-    include: [ private/movies-discover.yml ]
-    movie_queue: yes
-    discover:
-      what:
-        - emit_movie_queue: yes
-      from:
-        - flexget_archive: yes
-        - torrentz: verified
-        - piratebay:
-            category: "highres movies"
-            sort_by: seeds
-      type: movies
-    set:
-      label: my-movies
-  
-  # This preset uses rottentomatoes lists to find movies from various sources
-  movies-discover:
-    include: [ private/movies-discover.yml ]
-    disable_plugin: inputs
     discover:
       what:
         - rottentomatoes_list:
@@ -324,7 +284,25 @@ presets:
             sort_by: seeds
       type: movies
     set:
-      label: movies-discovered
+      queuetotop: no
+      label: movies-auto
+
+
+  # This preset uses the movie queue to find movies from various sources
+  movies-queued:
+    movie_queue: yes
+    discover:
+      what:
+        - emit_movie_queue: yes
+      from:
+        - flexget_archive: yes
+        - torrentz: verified
+        - piratebay:
+            category: "highres movies"
+            sort_by: seeds
+      type: movies
+    set:
+      label: my-movies
 
 
 # This is where we pull everything together
@@ -391,29 +369,20 @@ tasks:
     preset:
       - tv-global
       - tv-my_shows
-      - tv-primary
-
-
-  # If we can't find anything that good after 12 hours, fall back to a lower quality
-  My_TV_Shows-Secondary:
-    priority: 20
-    preset:
-      - tv-global
-      - tv-my_shows
-      - tv-secondary
-    delay: 12 hours
-
-
-  # If we can't find anything better after 3 days, screw it, just get it
-  # Do note that the other 2 tasks still run before this one, so we can still
-  # get a good quality torrent if it shows up
-  My_TV_Shows-Fallback:
-    priority: 30
-    preset:
-      - tv-global
-      - tv-my_shows
-      - tv-fallback
-    delay: 3 days
+    series:
+      settings:
+        Best:
+          target: 720p+ hdtv+
+          timeframe: 12 hours
+          quality: 720p+ dvdscr+
+        Better:
+          target: 720p+ dvdscr+
+          timeframe: 3 days
+          quality: 480p+ webrip+
+        Average:
+          target: webrip+
+          timeframe: 5 days
+          quality: preair+
 
 
   # Task for the tv-premieres plugin
@@ -451,7 +420,7 @@ tasks:
     preset:
       - movies-global
       - movies-queued
-    quality: 1080p bluray h264 !mp3
+    quality: 1080p+ bluray+ h264+ !mp3
 
 
   My_Movies-720p:
@@ -459,14 +428,14 @@ tasks:
     preset:
       - movies-global
       - movies-queued
-    quality: 720p+ bluray xvid-h264 !mp3
+    quality: 720p+ webdl+ xvid+ !mp3
     delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
 
 
   # These task implement the movies-auto preset
   Auto_Movies-1080p:
     priority: 130
-    quality: 1080p+ bluray !10bit
+    quality: 1080p+ bluray+ h264+ !mp3
     preset:
       - movies-global
       - movies-auto
@@ -475,33 +444,10 @@ tasks:
 
   Auto_Movies-720p:
     priority: 140
-    quality: 720p+ bluray !10bit
+    quality: 720p+ webdl+ xvid+ !mp3
     preset:
       - movies-global
       - movies-auto
     set:
       label: movies-auto
     delay: 4 days # Wait 4 days for a 1080p movie before trying downloading 720p
-
-
-  # This task 'discovers' movies from Rotten Tomatoes and my movie queue
-  # and searches for them
-  Discovered_Movies-1080p:
-    priority: 150
-    interval: 24 hours # Only once every day (I have Flexget run every hour)
-    quality: 1080p+ bluray !10bit
-    preset:
-      - movies-global
-      - movies-auto
-      - movies-discover
-
-  Discovered_Movies-720p:
-    priority: 160
-    interval: 24 hours # Only once every day (I have Flexget run every hour)
-    quality: 720p+ bluray !10bit
-    preset:
-      - movies-global
-      - movies-auto
-      - movies-discover
-    delay: 4 days # Wait 4 days for a 1080p movie before trying downloading 720p
-
