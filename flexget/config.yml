@@ -73,7 +73,6 @@ presets:
         - '*.avi'
         - '*.mkv'
         - '*.mpg'
-        - '*.mpeg'
         - '*.mp4'
         - '*.r0*'
         - '*.part0*'
@@ -83,6 +82,8 @@ presets:
     domain_delay:
       bt-chat.com: 5 seconds
       torrentz.eu: 5 seconds
+    # The Pirate Bay ssl certs always fail
+    verify_ssl_certificates: no
     # Ignore torrents with only magnet links, they don't play well with BT-Guard
     magnets: no
     # A couple of people didn't change this when they tried out my configs, so I
@@ -112,7 +113,7 @@ presets:
       - rss: { url: 'http://ezrss.it/feed/', silent: yes }                      # EZRSS
       - rss: { url: 'http://showrss.karmorra.info/feeds/all.rss', silent: yes } # Karmorra (All)
       - rss: { url: 'http://rss.bt-chat.com/?group=3', silent: yes }            # BT-Chat (EZTV)
-      - rss: { url: 'http://rss.thepiratebay.org/208', silent: yes }            # The Pirate Bay (Highres - TV shows)
+      - rss: { url: 'https://rss.thepiratebay.se/208', silent: yes }            # The Pirate Bay (Highres - TV shows)
     # Impose reasonable size constraints
     content_size:
       max: 4000
@@ -121,9 +122,9 @@ presets:
     # or are currently downloading
     exists_series:
       - "/raid/videos/TV Shows/"
-      - "/raid/downloads/TV Shows/"
-      - "/raid/downloads/staging/tv_shows/"
-      - "/raid/downloads/staging/tv_premieres/"
+      - "/raid/videos/TV Premieres/"
+      - "/raid/videos/staging/tv_shows/"
+      - "/raid/videos/staging/tv_premieres/"
       - "/home/deluge/downloads/"
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
@@ -132,7 +133,7 @@ presets:
     set:
       # Rename the "content file" to something nice
       content_filename: >
-        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {% if series_id_type == 'ep' and thetvdb_lookup_season_offset|default(False) %}{{ "S%0.2dE%0.2d"|format((series_season + thetvdb_lookup_season_offset),series_episode) }}{% else %}{{ series_id }}{% endif %}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
+        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {{ tvdb_ep_id|default(series_id) }}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
       label: tv
 
 
@@ -144,7 +145,7 @@ presets:
     # end up in the correct folder
     set:
       movedone: >
-        /raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}/{% endif %}
+        /raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ tvdb_season|default(series_season) }}/{% endif %}
       queuetotop: yes
     # This is a custom plugin, it is part of my rar-unpacking method,
     # it changes 'movedone' based on the regexp in the key
@@ -204,7 +205,7 @@ presets:
     # Add to deluge, but don't queue to top (My_TV_Shows are more important)
     # and put in a different location
     set:
-      movedone: "/raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ series_season }}"
+      movedone: "/raid/videos/TV Premieres/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ tvdb_season|default(series_season) }}"
       queuetotop: no
       label: tv-premiere
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
@@ -221,10 +222,10 @@ presets:
         timeframe: 8 hours
       from:
         listdir:
-          - "/raid/downloads/TV Shows/"
+          - "/raid/videos/TV Premieres/"
     set:
       movedone: >
-        /raid/downloads/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season +  thetvdb_lookup_season_offset|default(0)}}/{% endif %}
+        /raid/videos/TV Premieres/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ tvdb_season|default(series_season) }}/{% endif %}
       queuetotop: no
       label: tv-premiere-track
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
@@ -241,7 +242,7 @@ presets:
     inputs:
       - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
       - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
-      - rss: { url: 'http://rss.thepiratebay.org/207', silent: yes }           # The Pirate Bay (Highres - Movies)
+      - rss: { url: 'https://rss.thepiratebay.se/207', silent: yes }           # The Pirate Bay (Highres - Movies)
     # Some feeds might include TV Shows, ignore them
     regexp:
       reject:
@@ -265,15 +266,14 @@ presets:
     exists_movie:
       - /raid/videos/Movies/
       - /raid/videos/SDMovies/
-      - /raid/downloads/Movies/
-      - /raid/downloads/staging/movies
+      - /raid/videos/staging/movies
       - /home/deluge/downloads/
     # Download propers, since they will have the same content_filename,
     # lower/non-propers will be overwritten
     proper_movies: yes
     set:
       # Give folders/files nice names
-      movedone: "/raid/downloads/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})"
+      movedone: "/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})"
       content_filename: |
         {{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
@@ -291,6 +291,7 @@ presets:
 
   # This preset uses the movie queue to find movies from various sources
   movies-queued:
+    include: [ private/movies-discover.yml ]
     movie_queue: yes
     discover:
       what:
@@ -307,6 +308,7 @@ presets:
   
   # This preset uses rottentomatoes lists to find movies from various sources
   movies-discover:
+    include: [ private/movies-discover.yml ]
     disable_plugin: inputs
     discover:
       what:

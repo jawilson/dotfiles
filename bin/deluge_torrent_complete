@@ -6,7 +6,7 @@ from subprocess import call
 
 LOG_FILE='/home/deluge/.flexget/torrent_complete.log'
 DOWNLOAD_PATH='/home/deluge/downloads/completed'
-STAGING_PATH='/raid/downloads/staging'
+STAGING_PATH='/raid/videos/staging'
 XBMC_HOST='Carina.singularity.net'
 # If you're using a local checkout of Flexget, use flexget_vanilla.
 # Otherwise use the one in your system
