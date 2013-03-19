@@ -1,0 +1,10 @@
+#!/bin/sh
+
+STAGING_PATH='/raid/videos/staging'
+
+unstaged=$(find $STAGING_PATH -mindepth 1 -type f -mtime +2 -print)
+
+if [ "x$unstaged" != "x" ]; then
+    echo "The following files haven't been staged for more that 2 days:"
+    printf "$unstaged\n"
+fi
