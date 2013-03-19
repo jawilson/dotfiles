@@ -67,6 +67,8 @@ series:
     - The Boondocks
     - The Cleveland Show
     - The IT Crowd
+    - The Newsroom (2012):
+        name_regexp: ^the.newsroom(.2012)?
     - The Simpsons
     - The Venture Bros:
         name_regexp: ^the.venture.bro(ther)?s

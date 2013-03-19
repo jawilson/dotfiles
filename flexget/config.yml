@@ -263,19 +263,12 @@ presets:
     # 'movedone' based on the regexp in the key
     content_sort:
       '*.rar': '/home/deluge/downloads/completed/movies/'
- 
 
-  # This preset runs feeds through my very specific custom filter
-  movies-auto:
+
+  # Keep all the discover settings in one place
+  movies-discover:
     include: [ private/movies-discover.yml ]
-    interval: 2 hours # run less often since we'll be manuall searching sites
-    my_movie_filter: yes
     discover:
-      what:
-        - rottentomatoes_list:
-            dvds:
-              - top_rentals
-              - new_releases
       from:
         - flexget_archive: yes
         - torrentz: verified
@@ -283,6 +276,19 @@ presets:
             category: "highres movies"
             sort_by: seeds
       type: movies
+
+
+  # This preset runs feeds through my very specific custom filter
+  movies-auto:
+    interval: 2 hours # run less often since we'll be manuall searching sites
+    my_movie_filter: yes
+    preset: movies-discover
+    discover:
+      what:
+        - rottentomatoes_list:
+            dvds:
+              - top_rentals
+              - new_releases
     set:
       queuetotop: no
       label: movies-auto
@@ -291,16 +297,10 @@ presets:
   # This preset uses the movie queue to find movies from various sources
   movies-queued:
     movie_queue: yes
+    preset: movies-discover
     discover:
       what:
         - emit_movie_queue: yes
-      from:
-        - flexget_archive: yes
-        - torrentz: verified
-        - piratebay:
-            category: "highres movies"
-            sort_by: seeds
-      type: movies
     set:
       label: my-movies
 
@@ -420,7 +420,7 @@ tasks:
     preset:
       - movies-global
       - movies-queued
-    quality: 1080p+ bluray+ h264+ !mp3
+    quality: 1080p+ bluray+ h264+ dts|dd5.1
 
 
   My_Movies-720p:
@@ -435,7 +435,7 @@ tasks:
   # These task implement the movies-auto preset
   Auto_Movies-1080p:
     priority: 130
-    quality: 1080p+ bluray+ h264+ !mp3
+    quality: 1080p+ bluray+ h264+ dts|dd5.1
     preset:
       - movies-global
       - movies-auto
