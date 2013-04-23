@@ -65,7 +65,10 @@ presets:
         - \[TNTVillage\]: {from: title}
         - \[facepalm\]: {from: title}
         - \bASAP\b: {from: title}
-    torrent_alive: 40 # Require at least 40 seeds of any torrent
+    # Require at least 40 seeds of any torrent
+    torrent_alive:
+      min_seeds: 10
+      reject_for: 3 hours
     # Filter by filenames. Allow multiple video types and rar packs (but note if there is just a
     # single .rar file it won't be accepted)
     content_filter:
@@ -135,7 +138,7 @@ presets:
     set:
       # Rename the "content file" to something nice
       content_filename: >
-        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {{ tvdb_ep_id|default(series_id) }}{% if ep_name|default(False) %} - {{ ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
+        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {{ tvdb_ep_id|default(series_id) }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
       label: tv
 
 
@@ -158,26 +161,26 @@ presets:
   # I'm always up for new shows, but some I genres I just can't stand. This
   # preset grabs all of the premieres except for some genres
   tv-premieres:
-    # The entry has to have the series_genres field so I can filter by it
+    # The entry has to have the tvdb_genres field so I can filter by it
     require_field:
-      - series_genres
-      - ep_air_date
-    # Block these genres if they exist in the list of series_genres at all
+      - tvdb_genres
+      - tvdb_first_air_date
+    # Block these genres if they exist in the list of tvdb_genres at all
     regexp:
       reject:
-        - documentary: {from: series_genres}
-        - talk show: {from: series_genres}
-        - game show: {from: series_genres}
-        - reality: {from: series_genres}
-        - children: {from: series_genres}
-        - home and garden: {from: series_genres}
+        - documentary: {from: tvdb_genres}
+        - talk show: {from: tvdb_genres}
+        - game show: {from: tvdb_genres}
+        - reality: {from: tvdb_genres}
+        - children: {from: tvdb_genres}
+        - home and garden: {from: tvdb_genres}
     if:
       # Block these genres only if they are the ONLY genre listed in
-      # series_genres. For example, this will not block a show that's both
+      # tvdb_genres. For example, this will not block a show that's both
       # "Comedy" and "Drama" but it will block a show that is just "Drama"
-      - "series_genres == ['Drama']": reject
+      - "tvdb_genres == ['Drama']": reject
       # Block premieres that weren't within the last 60 days
-      - ep_air_date != None and ep_air_date < now - timedelta(days=60): reject
+      - tvdb_first_air_date != None and tvdb_first_air_date < now - timedelta(days=60): reject
     # Accept all series permieres
     series_premiere:
       target: 720p+ hdtv+
@@ -373,7 +376,7 @@ tasks:
       settings:
         Best:
           target: 720p+ hdtv+
-          timeframe: 12 hours
+          timeframe: 5 days
           quality: 720p+ dvdscr+
         Better:
           target: 720p+ dvdscr+
@@ -381,7 +384,7 @@ tasks:
           quality: 480p+ webrip+
         Average:
           target: webrip+
-          timeframe: 5 days
+          timeframe: 12 hours
           quality: preair+
 
 
