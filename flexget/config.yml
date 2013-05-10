@@ -352,6 +352,8 @@ tasks:
       - regexp
       - content_size
       - torrent_alive
+    # Mark movies as seen
+    movie_queue: yes
     plugin_priority:
       exec: 0
     listdir: /home/atlanta800/Dropbox/torrents/Movies

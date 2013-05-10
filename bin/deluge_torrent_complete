@@ -40,6 +40,8 @@ if os.isatty(sys.stdin.fileno()):
 
 if len(sys.argv) != 4:
     log.error('%s called with %d arguments, it requires 3.' % (sys.argv[0],(len(sys.argv)-1)))
+    log.info('This script was made to be called from the Execute plugin in deluge. Please')
+    log.info('see http://dev.deluge-torrent.org/wiki/Plugins/Execute for more information')
     sys.exit(-1)
 
 torrent_id=sys.argv[1]
