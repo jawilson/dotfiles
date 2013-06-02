@@ -281,7 +281,6 @@ presets:
         - piratebay:
             category: "highres movies"
             sort_by: seeds
-      type: movies
 
 
   # This preset runs feeds through my very specific custom filter
@@ -411,12 +410,13 @@ tasks:
 
   # This task queues all of the movies in my IMDB watchlist
   IMDB_Movie_Queue:
+    include: [ private/imdb-movie-queue.yml ] # Contains IMDB username/password for auto_remove
     priority: 100 # Always run before My_Movies task
     preset: no_global # None of the global presets make sense here
     interval: 2 hours # Only check every 2 hours (I have Flexget run every hour)
     imdb_list:
-      user_id: ur7174817
       list: watchlist
+      auto_remove: [ accepted, rejected ] # keep my watchlist clean
     accept_all: yes
     queue_movies: { force: no } # Output entries to movie queue (with any quality)
 
