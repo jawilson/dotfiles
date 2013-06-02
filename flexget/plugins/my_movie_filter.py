@@ -23,9 +23,9 @@ class MyMovieFilter(object):
 
 
     # Minimum allowable score of any type including offset
-    global_min_score = 45
+    global_min_score = 50
     # Prefer greater than this score
-    ideal_min_score = 70
+    ideal_min_score = 72
 
     # How much to weigh low/high scores when there is a desparity
     weight_low = 0.15
@@ -49,7 +49,7 @@ class MyMovieFilter(object):
     imdb_genres_accept_except = \
         ['animation', 'family', 'horror', 'romance', 'biography']
     imdb_genres_accept = \
-        {'action': 60, 
+        {'action': 65,
          'sci-fi': 65,
          'war': 66,
          'crime': 70,

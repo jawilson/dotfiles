@@ -165,6 +165,9 @@ presets:
     require_field:
       - tvdb_genres
       - tvdb_first_air_date
+    # Make sure plenty of people are seeding it, otherwise it may not be that good
+    torrent_alive:
+      min_seeds: 50
     # Block these genres if they exist in the list of tvdb_genres at all
     regexp:
       reject:
