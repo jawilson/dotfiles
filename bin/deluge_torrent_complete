@@ -10,7 +10,7 @@ STAGING_PATH='/raid/videos/staging'
 XBMC_HOST='Carina.singularity.net'
 # If you're using a local checkout of Flexget, use flexget_vanilla.
 # Otherwise use the one in your system
-FLEXGET_COMMAND='python /home/deluge/Flexget/flexget_vanilla.py --logfile '\
+FLEXGET_COMMAND='/home/deluge/Flexget/bin/flexget --logfile '\
         '/home/deluge/.flexget/flexget-sorting.log'
 FLEXGET_SORTING_CONFIG='/home/deluge/.flexget/sorting.yml'
 FLEXGET_TASK_PREFIX='Sort_Unpacked_'
