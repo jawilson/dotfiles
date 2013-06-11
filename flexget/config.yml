@@ -227,6 +227,7 @@ presets:
   # as well as some other configurations.
   movies-global:
     include: [ private/movies-global.yml ]
+    interval: 1 hour # I have flexget run every half hour, that's really only necessary for TV Shows
     inputs:
       - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
       - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
@@ -354,6 +355,7 @@ tasks:
       - regexp
       - content_size
       - torrent_alive
+      - interval
     # Mark movies as seen
     movie_queue: yes
     plugin_priority:
@@ -413,7 +415,7 @@ tasks:
     include: [ private/imdb-movie-queue.yml ] # Contains IMDB username/password for auto_remove
     priority: 100 # Always run before My_Movies task
     preset: no_global # None of the global presets make sense here
-    interval: 2 hours # Only check every 2 hours (I have Flexget run every hour)
+    interval: 2 hours # Only check every 2 hours (I have Flexget run every half hour)
     imdb_list:
       list: watchlist
       auto_remove: [ accepted, rejected ] # keep my watchlist clean

@@ -82,7 +82,7 @@ series:
     # I love the daily show, but I'm more interested in just watching it than video quality
     - The Daily Show with Jon Stewart:
         name_regexp: ^the.daily.show(.with.jon.stewart)?
-        #identified_by: date
-        identified_by: auto
         # I always like to watch Stewart the next morning, so don't wait too long
+        timeframe: 2 hours
+    - The Colbert Report:
         timeframe: 2 hours
