@@ -2,7 +2,7 @@
 import sys
 import os
 import logging, logging.handlers
-from subprocess import call
+from subprocess import call, check_output
 
 LOG_FILE='/home/deluge/.flexget/torrent_complete.log'
 DOWNLOAD_PATH='/home/deluge/downloads/completed'
@@ -40,6 +40,7 @@ if os.isatty(sys.stdin.fileno()):
 
 if len(sys.argv) != 4:
     log.error('%s called with %d arguments, it requires 3.' % (sys.argv[0],(len(sys.argv)-1)))
+    log.info('Usage: '+sys.argv[0]+' <torrent_id> <torrent_name> <torrent_path>')
     log.info('This script was made to be called from the Execute plugin in deluge. Please')
     log.info('see http://dev.deluge-torrent.org/wiki/Plugins/Execute for more information')
     sys.exit(-1)
@@ -53,7 +54,7 @@ log.debug("%s called with torrent_id='%s', torrent_name='%s', torrent_path='%s'.
 
 def chain():
     log.debug("Updating XBMC Library")
-    ret=call('/usr/bin/xbmc-send --host='+XBMC_HOST+' --action="XBMC.updatelibrary(video)"', shell=True)
+    ret = call('/usr/bin/xbmc-send --host='+XBMC_HOST+' --action="XBMC.updatelibrary(video)"', shell=True)
     if ret != 0:
         log.warning('Update XBMC command returned non-zero value %d.' % ret)
     sys.exit(0)
@@ -73,6 +74,26 @@ for path, task in FLEXGET_PATH_TASK.items():
             ret = call(cmd, shell=True)
             if ret != 0:
                 log.warning('Unrar command returned non-zero value %d.' % ret)
+
+        cmd='find "'+STAGING_PATH+path+torrent_id+'" -type f -print0 | xargs -0 du -b | sort -nr | '\
+            'head -1'
+        try:
+            log.debug('Shelling out: %s' % cmd)
+            main_file_size, main_file = check_output(cmd, shell=True).split()
+            main_file_size = int(main_file_size)
+            cmd = 'du -b "'+STAGING_PATH+path+torrent_id+'"'
+            log.debug('Shelling out: %s' % cmd)
+            total_size = int(check_output(cmd, shell=True).split()[0])
+            if main_file_size > (total_size * 0.9):
+                new_name = os.path.join(os.path.dirname(main_file), torrent_name+'.'+main_file.split('.')[-1])
+                log.debug('Renaming %s to %s because it is >90%% of the unpacked torrent' %
+                        (os.path.basename(main_file),  os.path.basename(new_name)))
+                os.rename(main_file, new_name)
+            else:
+                log.warning('Couldn\'t find any files that were >90% of the unpacked torrent')
+        except:
+            log.error('Failed attempting to rename the main unpacked file: %s' % sys.exc_info()[0])
+            raise
 
         cmd=FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --task '+FLEXGET_TASK_PREFIX+task+\
             (' --disable-advancement' if 'tv' in path else '')
