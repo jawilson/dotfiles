@@ -336,7 +336,7 @@ tasks:
     listdir: /home/atlanta800/Dropbox/torrents/TV
     exec:
       on_output:
-        for_accepted: rm "/home/atlanta800/Dropbox/torrents/TV/{{title}}"
+        for_accepted: rm "/home/atlanta800/Dropbox/torrents/TV/{{title}}.torrent"
     accept_all: yes
     set:
       label: local-tv
