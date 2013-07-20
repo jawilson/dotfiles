@@ -2,7 +2,7 @@
 import sys
 import os
 import logging, logging.handlers
-from subprocess import call, check_output
+import subprocess
 
 LOG_FILE='/home/deluge/.flexget/torrent_complete.log'
 DOWNLOAD_PATH='/home/deluge/downloads/completed'
@@ -47,14 +47,14 @@ if len(sys.argv) != 4:
 
 torrent_id=sys.argv[1]
 torrent_name=sys.argv[2]
-torrent_path=sys.argv[3]
+torrent_path=(sys.argv[3] if (sys.argv[3][-1] == '/') else sys.argv[3]+'/')
 
 log.debug("%s called with torrent_id='%s', torrent_name='%s', torrent_path='%s'." % (sys.argv[0],
     torrent_id, torrent_name, torrent_path))
 
 def chain():
     log.debug("Updating XBMC Library")
-    ret = call('/usr/bin/xbmc-send --host='+XBMC_HOST+' --action="XBMC.updatelibrary(video)"', shell=True)
+    ret = subprocess.call('/usr/bin/xbmc-send --host='+XBMC_HOST+' --action="XBMC.updatelibrary(video)"', shell=True)
     if ret != 0:
         log.warning('Update XBMC command returned non-zero value %d.' % ret)
     sys.exit(0)
@@ -67,23 +67,27 @@ for path, task in FLEXGET_PATH_TASK.items():
     if DOWNLOAD_PATH+path in torrent_path:
         log.info('Processing %s as part of task %s.' % (torrent_name,task))
 
-        for root, dirs, files in os.walk(torrent_path+'/'+torrent_name, topdown=False):
+        for root, dirs, files in os.walk(torrent_path+torrent_name, topdown=False):
             cmd='find "'+root+'" -maxdepth 1 -type f -regex ".*\.\(\part[0-9]+\.\)?r\([0-9]+\|ar\)$" '\
                 '| head -1 | xargs -I {} unrar x -o+ "{}" '+STAGING_PATH+path+torrent_id+'/'
             log.debug('Shelling out: %s' % cmd)
-            ret = call(cmd, shell=True)
+            ret = subprocess.call(cmd, shell=True)
             if ret != 0:
                 log.warning('Unrar command returned non-zero value %d.' % ret)
 
-        cmd='find "'+STAGING_PATH+path+torrent_id+'" -type f -print0 | xargs -0 du -b | sort -nr | '\
-            'head -1'
+        cmd=['-c', 'find "'+STAGING_PATH+path+torrent_id+'" -type f -print0 | xargs -0 du -b | sort -nr | '\
+            'head -1']
         try:
             log.debug('Shelling out: %s' % cmd)
-            main_file_size, main_file = check_output(cmd, shell=True).split()
+            # check_ouptut is not available in python 2.6
+            #main_file_size, main_file = subprocess.check_output(cmd, shell=True).split()
+            main_file_size, main_file = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split()
             main_file_size = int(main_file_size)
             cmd = 'du -b "'+STAGING_PATH+path+torrent_id+'"'
             log.debug('Shelling out: %s' % cmd)
-            total_size = int(check_output(cmd, shell=True).split()[0])
+            # check_ouptut is not available in python 2.6
+            #total_size = int(subprocess.check_output(cmd, shell=True).split()[0])
+            total_size = int(subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True).communicate()[0].split()[0])
             if main_file_size > (total_size * 0.9):
                 new_name = os.path.join(os.path.dirname(main_file), torrent_name+'.'+main_file.split('.')[-1])
                 log.debug('Renaming %s to %s because it is >90%% of the unpacked torrent' %
@@ -98,7 +102,7 @@ for path, task in FLEXGET_PATH_TASK.items():
         cmd=FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --task '+FLEXGET_TASK_PREFIX+task+\
             (' --disable-advancement' if 'tv' in path else '')
         log.debug('Shelling out: %s' % cmd)
-        ret = call(cmd, shell=True)
+        ret = subprocess.call(cmd, shell=True)
         if ret != 0:
             log.warning('Flexget command returned non-zero value %d.' % ret)
 
