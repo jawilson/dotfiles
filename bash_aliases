@@ -1,9 +1,13 @@
 # ls
-alias "ls"="ls --color -h --group-directories-first"
-alias "ll"="ls -l"
+alias ls='ls --color=auto -h --group-directories-first'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
 
 # grep
-alias "grep"="grep --color"
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 # flexget
 alias "flexget"="~/Flexget/bin/flexget --logfile ~/Flexget/flexget.log"
@@ -16,4 +20,4 @@ alias "flexget-sort-movies"="~/Flexget/bin/flexget --logfile /home/deluge/.flexg
 alias "ack"="ack-grep"
 
 # git
-alias git-pretty-graph="git log --graph --pretty=oneline --abbrev-commit --decorate"
+alias gdiff='git diff --no-index'

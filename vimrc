@@ -25,6 +25,12 @@ filetype indent on
 set autoindent
 set showmatch
 
+" Spelling
+if v:version >= 700
+    set spelllang=en
+    set spellfile=~/.vim/spellfile.add
+endif
+
 " Mouse options
 "set mouse=a
 "set mousemodel=popup
@@ -47,18 +53,19 @@ au FileType c set omnifunc=ccomplete#Complete tw=100
 au FileType make set noexpandtab shiftwidth=8 tw=100
 au FileType python set et sw=4 sts=4 ts=4 tw=100 ai
 au FileType html,xhtml set tw=0
-au FileType tex SPCheck
-au FileType tex let dialect='US'
-au BufRead,BufNewFile *.bb set tw=0
+au FileType tex set spell tw=100
+au BufRead,BufNewFile *.bb set tw=100
+au BufRead,BufNewFile *.dox,*.dox.in set tw=100 filetype=doxygen spell
 au Syntax {cpp,c,idl} runtime syntax/doxygen.vim
 
-au BufRead,BufNewFile PKGBUILD set ts=2 sts=2 et sw=2
+au BufRead,BufNewFile PKGBUILD set ts=4 sts=4 et sw=4
 au BufNewFile,BufRead .Xdefaults* set filetype=xdefaults
 
 " Key mappings
 nnoremap <silent> <F7> :Explore<CR>
 "map <silent> <F7> :TMiniBufExplorer<CR>
-nnoremap <silent> <F8> :TlistToggle<CR>
+"nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <F8> :setl noai nocin nosi inde=<CR>
 nnoremap <silent> <F9> :tabnew<CR>
 nnoremap <silent> <F10> :tabp<CR>
 nnoremap <silent> <F11> :tabn<CR>
@@ -137,4 +144,3 @@ let g:SuperTabDefaultCompletionType = "<C-P>"
 let g:SuperTabRetainCompletionType = 1
 let g:SuperTabMappingForward = '<s-tab>'
 let g:SuperTabMappingBackward = '<s-c-tab>'
-
