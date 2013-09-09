@@ -3,6 +3,9 @@
 # Created by: Jeff Wilson <jeff@jeffalwilson.com>
 # Available from: https://github.com/atlanta800/dotfiles
 #
+# Some settings in this config require changes in my fork of Flexget which
+# is available here: https://github.com/atlanta800/Flexget
+#
 # For various reasons I've moved some settings into a private subfolder. The
 # files are:
 #   * private/global.yml
@@ -11,7 +14,8 @@
 # These files are not necessary to use this cofiguration, simply remove the
 # 'include' plugin references and you should be fine. You'll also want to check
 # for a few places that I've commented out sections that I've moved to these
-# config files.
+# config files. I've also added redacted versions of the private files to
+# reference if you'd like to do the same.
 #
 # == Rar-unpacking ==
 # My entire setup results in a single video file (.mkv, .mp4, etc) in the final
@@ -89,7 +93,7 @@ presets:
       torrentz.eu: 5 seconds
     # The Pirate Bay ssl certs always fail
     verify_ssl_certificates: no
-    # Ignore torrents with only magnet links, they don't play well with BT-Guard
+    # Size and seed restrictions require real torrents
     magnets: no
     # A couple of people didn't change this when they tried out my configs, so I
     # moved it to private/global.yml, uncomment here to get email notificians
@@ -186,9 +190,8 @@ presets:
       - tvdb_first_air_date != None and tvdb_first_air_date < now - timedelta(days=60): reject
     # Accept all series permieres
     series_premiere:
-      target: 720p+ hdtv+
-      timeframe: 3 days
-      quality: webrip+
+      timeframe: 1 days
+      quality: 720p+ hdtv+
     # Add to deluge, but don't queue to top (My_TV_Shows are more important)
     # and put in a different location
     set:
@@ -363,7 +366,7 @@ tasks:
     listdir: /home/atlanta800/Dropbox/torrents/Movies
     exec:
       on_output:
-        for_accepted: rm "/home/atlanta800/Dropbox/torrents/Movies/{{title}}"
+        for_accepted: rm "/home/atlanta800/Dropbox/torrents/Movies/{{title}}.torrent"
     accept_all: yes
     set:
       label: local-movies
@@ -423,6 +426,22 @@ tasks:
     queue_movies: { force: no } # Output entries to movie queue (with any quality)
 
 
+  # Cleans movies from the movie queue that we already have
+  Clean_Movie_Queue:
+    manual: yes
+    interval: 2 days # doesn't need to be run often
+    preset: no_global # None of the global presets make sense here
+    disable_builtins: [seen]
+    accept_all: yes
+    imdb_lookup: no
+    listdir:
+      - /raid/videos/Movies/
+      - /raid/videos/SDMovies/
+      - /raid/videos/staging/movies
+      - /home/deluge/downloads/
+    movie_queue: yes
+
+
   # The next two tasks download the queue from the previous task effectively implementing
   # a 2 day timeframe for 1080p movies, then falls back to 720p
   My_Movies-1080p:
@@ -439,7 +458,9 @@ tasks:
       - movies-global
       - movies-queued
     quality: 720p+ webdl+ xvid+ !mp3
-    delay: 2 days # Wait 2 days for a 1080p movie before trying downloading 720p
+    torrent_alive:
+      min_seeds: 5
+    delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p
 
 
   # These task implement the movies-auto preset
@@ -454,10 +475,10 @@ tasks:
 
   Auto_Movies-720p:
     priority: 140
-    quality: 720p+ webdl+ xvid+ !mp3
+    quality: 720p+ dvdrip+ xvid+ !mp3
     preset:
       - movies-global
       - movies-auto
     set:
       label: movies-auto
-    delay: 4 days # Wait 4 days for a 1080p movie before trying downloading 720p
+    delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p

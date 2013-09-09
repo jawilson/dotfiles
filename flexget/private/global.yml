@@ -1,0 +1,18 @@
+# This is just a redacted example of what I have in my private directory,
+# you'll obviously need to modify for your own needs
+email:
+  from: xxx@xxx.xxx.xxx
+  to: xxx@xxx.xxx
+domain_delay:
+  www.privatetracker.org: 10 seconds
+  rss.privatetracker.org: 10 minutes
+# Use deluge defaults for private trackers, otherwise be considerate
+if:
+  - "'privatetracker' in url":
+      deluge:
+        main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
+        port: 58847
+  - "'privatetracker' not in url":
+      deluge:
+        main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
+        port: 58846

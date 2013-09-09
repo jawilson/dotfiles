@@ -1,0 +1,7 @@
+discover:
+  from:
+    - privatetracker:
+        rss_key: xxx
+        username: xxx
+        password: "xxx"
+        category: ['xxx', 'xxx', 'xxx', 'xxx', 'xxx']

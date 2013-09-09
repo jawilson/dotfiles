@@ -1,0 +1,8 @@
+inputs:
+  - rss: { url: 'http://rss.privatetracker.org/xxx', other_fields: [category] }
+if:
+  - "has_field('category')":
+      regexp:
+        reject_excluding:
+          - '^(xxx|xxx|xxx|xxx|xxx)$': {from: category}
+rottentomatoes_lookup: xxx # My personal RT API key
