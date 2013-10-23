@@ -229,6 +229,7 @@ presets:
   # We keep all of the RSS feeds that list movie-related torrents here
   # as well as some other configurations.
   movies-global:
+    tmdb_lookup: no # It's broken, see: http://flexget.com/ticket/2123
     include: [ private/movies-global.yml ]
     interval: 1 hour # I have flexget run every half hour, that's really only necessary for TV Shows
     inputs:

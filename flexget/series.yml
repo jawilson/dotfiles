@@ -30,6 +30,7 @@ series:
   Better:
     - 2 Broke Girls
     - 30 Rock
+    - Marvels Agents Of S H I E L D
     - Allen Gregory
     - American Dad!:
         # Similar to The Office (US), see http://flexget.com/wiki/Plugins/series/closematch for info
@@ -77,6 +78,8 @@ series:
     - Tosh.0
     - Two and a Half Men
     - Whitney
+    - Whose Line Is It Anyway:
+        begin: S09E00 # I've seen the old stuff but apparently the revival is decent
   # And this is everything else, quality doesn't matter that much
   Average:
     # I love the daily show, but I'm more interested in just watching it than video quality
