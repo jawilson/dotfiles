@@ -229,7 +229,6 @@ presets:
   # We keep all of the RSS feeds that list movie-related torrents here
   # as well as some other configurations.
   movies-global:
-    tmdb_lookup: no # It's broken, see: http://flexget.com/ticket/2123
     include: [ private/movies-global.yml ]
     interval: 1 hour # I have flexget run every half hour, that's really only necessary for TV Shows
     inputs:
@@ -429,17 +428,12 @@ tasks:
 
   # Cleans movies from the movie queue that we already have
   Clean_Movie_Queue:
-    manual: yes
-    interval: 2 days # doesn't need to be run often
+    interval: 1 week # doesn't need to be run often
     preset: no_global # None of the global presets make sense here
-    disable_builtins: [seen]
     accept_all: yes
-    imdb_lookup: no
     listdir:
       - /raid/videos/Movies/
       - /raid/videos/SDMovies/
-      - /raid/videos/staging/movies
-      - /home/deluge/downloads/
     movie_queue: yes
 
 
@@ -450,7 +444,7 @@ tasks:
     preset:
       - movies-global
       - movies-queued
-    quality: 1080p+ bluray+ h264+ dts|dd5.1
+    quality: 1080p+ bluray+ h264+ dtshd+
 
 
   My_Movies-720p:
@@ -467,7 +461,7 @@ tasks:
   # These task implement the movies-auto preset
   Auto_Movies-1080p:
     priority: 130
-    quality: 1080p+ bluray+ h264+ dts|dd5.1
+    quality: 1080p+ bluray+ h264+ dtshd+
     preset:
       - movies-global
       - movies-auto
