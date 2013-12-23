@@ -244,7 +244,8 @@ presets:
         - \baac2: {from: title} # No 2 channel audio
     # Force proper_movies to run after regexp to avoid unnecessary imdb_lookup
     plugin_priority:
-      if: 173
+      regexp: 176
+      if: 177
       proper_movies: 171
     # Impose reasonable size constraints
     content_size:
@@ -307,9 +308,18 @@ presets:
   movies-queued:
     movie_queue: yes
     preset: movies-discover
+    disable_plugin:
+      - seen_movies
     discover:
       what:
         - emit_movie_queue: yes
+      from:
+        - torrentz:
+            reputation: verified
+            extra_terms: "movie* hd"
+        - piratebay:
+            category: "highres movies"
+            sort_by: seeds
     set:
       label: my-movies
 
@@ -421,7 +431,7 @@ tasks:
     interval: 2 hours # Only check every 2 hours (I have Flexget run every half hour)
     imdb_list:
       list: watchlist
-      auto_remove: [ accepted, rejected ] # keep my watchlist clean
+      #auto_remove: [ accepted, rejected ] # keep my watchlist clean
     accept_all: yes
     queue_movies: { force: no } # Output entries to movie queue (with any quality)
 
@@ -430,6 +440,9 @@ tasks:
   Clean_Movie_Queue:
     interval: 1 week # doesn't need to be run often
     preset: no_global # None of the global presets make sense here
+    disable_builtins: [seen, seen_info_hash]
+    disable_plugin:
+      - seen_movies
     accept_all: yes
     listdir:
       - /raid/videos/Movies/

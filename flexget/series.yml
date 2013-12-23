@@ -48,6 +48,7 @@ series:
     - Breaking Bad
     - "Cosmos - A Space-Time Odyssey":
         name_regexp: ^cosmos.+a.space.time.odyssey
+    - Dads (2013)
     - Eastbound & Down:
         name_regexp: ^east.?bound(.and|.&)?.down
     - Family Guy
