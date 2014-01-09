@@ -37,7 +37,7 @@ tasks:
       # Don't actually filter
       parse_only: yes
     # Don't attempt to move if we don't have valid metadata
-    require_field: [series_id]
+    require_field: [series_name, series_id]
     move:
       # Folder to move to
       to: >
@@ -57,7 +57,7 @@ tasks:
       # Don't actually filter
       parse_only: yes
     # Don't attempt to move if we don't have valid metadata
-    require_field: [series_id]
+    require_field: [series_name, series_id]
     move:
       # Folder to move to
       to: >
@@ -72,10 +72,12 @@ tasks:
     find:
       path: '/raid/videos/staging/movies/'
     imdb_lookup: yes
-    require_field: [imdb_url]
+    tmdb_lookup: yes
+    rottentomatoes_lookup: yes
+    require_field: [movie_name, movie_year]
     move:
       to: >
-        /raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})/
+        /raid/videos/Movies/{{ movie_name|replace('/', '_')|replace(':', ' -') }} ({{ movie_year }})/
       filename: >
-        {{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}.{{ location[-3:] }}
+        {{ movie_name|replace('/', '_')|replace(':', ' -') }} ({{ movie_year }}) - {{ quality }}.{{ location[-3:] }}
       clean_source: 1000

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+FLEXGET_LOG='/home/deluge/.flexget/flexget.log'
+
+if test `find ${FLEXGET_LOG} -mmin +240`; then
+    echo -n "Flexget appears to have not run for "
+    echo -n "$(expr $(expr $(date +%s) - $(stat -c %Y ${FLEXGET_LOG})) / 3600)"
+    echo " hours."
+fi
