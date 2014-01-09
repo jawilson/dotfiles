@@ -148,8 +148,7 @@ presets:
 
   # These are the shows I regularly watch
   tv-my_shows:
-    # I've broken out my series lists into a seperate yml to clean up my config
-    include: [ series.yml ]
+    include: [ private/tv-my_shows.yml ]
     # Add accepted entries to Deluge, queue them to the top and make sure they
     # end up in the correct folder
     set:
@@ -337,6 +336,10 @@ tasks:
       - regexp
       - content_size
       - torrent_alive
+    import_series:
+      from:
+        trakt_list:
+          series: watchlist
     all_series:
       parse_only: yes
     plugin_priority:
@@ -381,25 +384,75 @@ tasks:
   # all of the necessary rss sources and a few extra configs
 
   # There are 3 My_TV Shows tasks, the first, tries to get the most wanted qualities
-  My_TV_Shows:
+  My_TV_Shows-Favorite:
     priority: 10
     preset:
       - tv-global
       - tv-my_shows
-    series:
+    import_series:
+      from:
+        trakt_list:
+          custom: Favorite TV
       settings:
-        Best:
-          target: 720p+ hdtv+
-          timeframe: 5 days
-          quality: 720p+ dvdscr+
-        Better:
-          target: 720p+ dvdscr+
-          timeframe: 3 days
-          quality: 480p+ webrip+
-        Average:
-          target: webrip+
-          timeframe: 12 hours
-          quality: preair+
+        target: 720p+ hdtv+
+        timeframe: 5 days
+        quality: 720p+ dvdscr+
+    series:
+      - Top Gear:
+          # Do not, under any circumstances, download the US version, it sucks
+          name_regexp: ^top.gear(?!.us)
+      - Marvels Agents Of S.H.I.E.L.D.:
+          name_regexp: ^marvel(')?s.agents.of.(s.h.i.e.l.d.?|shield)
+      - The Newsroom (2012):
+          name_regexp: ^the.newsroom(.2012)?
+
+  My_TV_Shows-Following:
+    priority: 11
+    preset:
+      - tv-global
+      - tv-my_shows
+    import_series:
+      from:
+        trakt_list:
+          custom: Following TV
+      settings:
+        target: 720p+ dvdscr+
+        timeframe: 3 days
+        quality: 480p+ webrip+
+    series:
+      - American Dad!:
+          name_regexp: ^american.dad(!)?
+          set:
+            thetvdb_lookup_season_offset: 1
+      - Aqua Teen Hunger Force:
+          name_regexp: ^aqua.((teen.hunger.force)|(unit.patrol.squad.1)|(something.you.know.whatever))
+      - Archer (2009):
+          name_regexp: ^archer(.2009)?
+      - "Cosmos - A Space-Time Odyssey":
+          name_regexp: ^cosmos.+a.space.time.odyssey
+      - Eastbound & Down:
+          name_regexp: ^east.?bound(.and|.&)?.down
+      - Last Man Standing (US):
+          name_regexp: ^last.man.standing(.us)?
+      - The Venture Bros:
+          name_regexp: ^the.venture.bro(ther)?s
+
+  My_TV_Shows-Daily:
+    priority: 12
+    preset:
+      - tv-global
+      - tv-my_shows
+    import_series:
+      from:
+        trakt_list:
+          custom: Daily TV
+      settings:
+        target: webrip+
+        timeframe: 12 hours
+        quality: preair+
+    series:
+      - The Daily Show with Jon Stewart:
+          name_regexp: ^the.daily.show(.with.jon.stewart)?
 
 
   # Task for the tv-premieres plugin
@@ -427,6 +480,8 @@ tasks:
     imdb_list:
       list: watchlist
       #auto_remove: [ accepted, rejected ] # keep my watchlist clean
+    trakt_list:
+      custom: Movie Queue
     accept_all: yes
     queue_movies: yes
 
