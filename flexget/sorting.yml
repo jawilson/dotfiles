@@ -5,7 +5,7 @@
 # This config file is not a standard Flexget config, it is used
 # to sort my unrared movies and TV shows into their proper place
 #
-presets:
+templates:
   global:
     # Each feed must be run manually
     manual: yes
@@ -15,6 +15,7 @@ presets:
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
     find:
+      path: '/tmp'
       # We are looking for any video files that were extracted
       regexp: '.*\.(avi|mkv|mpg|mp4)$'
       recursive: yes

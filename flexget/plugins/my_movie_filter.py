@@ -1,7 +1,9 @@
+from __future__ import unicode_literals, division, absolute_import
 import logging
 from datetime import timedelta, datetime
 from math import fabs
-from flexget.plugin import register_plugin, priority
+from flexget import plugin
+from flexget.event import event
 from flexget.utils.log import log_once
 
 log = logging.getLogger('my_movie_filter')
@@ -99,7 +101,7 @@ class MyMovieFilter(object):
         return True
 
 
-    @priority(0) # Make filter run after other filters, but before exists_movies
+    @plugin.priority(0) # Make filter run after other filters, but before exists_movies
     def on_task_filter(self, task, config):
         log.debug('Running custom filter')
         for entry in task.entries:
@@ -252,12 +254,12 @@ class MyMovieFilter(object):
             if reasons and not force_accept:
                 msg = 'Didn\'t accept `%s` because of rule(s) %s' % \
                     (entry.get('rt_name', None) or entry['title'], ', '.join(reasons))
-                if task.manager.options.debug:
+                if task.options.debug:
                     log.debug(msg)
                 else:
                     if score_offset != 0:
                         msg = 'Offset score by %s. %s' % (score_offset, msg)
-                    if task.manager.options.quiet:
+                    if task.options.quiet:
                         log_once(msg, log)
                     else:
                         log.info(msg)
@@ -266,4 +268,6 @@ class MyMovieFilter(object):
                 entry.accept()
 
 
-register_plugin(MyMovieFilter, 'my_movie_filter', api_ver=2)
+@event('plugin.register')
+def register_plugin():
+    plugin.register(MyMovieFilter, 'my_movie_filter', api_ver=2)

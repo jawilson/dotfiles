@@ -1,7 +1,9 @@
+from __future__ import unicode_literals, division, absolute_import
 import logging
 import posixpath
 from fnmatch import fnmatch
-from flexget.plugin import register_plugin, priority
+from flexget import plugin
+from flexget.event import event
 
 log = logging.getLogger('content_sort')
 
@@ -42,15 +44,16 @@ class FilterContentSort(object):
             if files:
                 entry['content_files'] = files
 
-    @priority(149)
-    def on_task_modify(self, task):
-        if task.manager.options.test or task.manager.options.learn:
+    @plugin.priority(149)
+    def on_task_modify(self, task, config):
+        if task.options.test or task.options.learn:
             log.info('Plugin is partially disabled with --test and --learn because content filename information may not be available')
             return
-        config = task.config.get('content_sort')
         for entry in task.accepted:
             # TODO: I don't know if we can parse filenames from nzbs, just do torrents for now
             self.parse_torrent_files(entry)
             self.process_entry(task, entry, config)
 
-register_plugin(FilterContentSort, 'content_sort')
+@event('plugin.register')
+def register_plugin():
+    plugin.register(FilterContentSort, 'content_sort', api_ver=2)

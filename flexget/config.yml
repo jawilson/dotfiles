@@ -41,7 +41,7 @@
 #       for new files)
 #
 
-presets:
+templates:
 
   global:
     include: [ private/global.yml ]
@@ -110,7 +110,7 @@ presets:
     #  main_file_only: yes
 
 
-  # This preset is a "global" preset for all TV-related tasks.
+  # This template is a "global" template for all TV-related tasks.
   # We keep all of the RSS feeds that list tv-related torrents here
   # as well as where to check existing shows.
   tv-global:
@@ -148,7 +148,14 @@ presets:
 
   # These are the shows I regularly watch
   tv-my_shows:
-    include: [ private/tv-my_shows.yml ]
+    #include: [ private/tv-my_shows.yml ]
+    configure_series:
+      from:
+        trakt_list: &trakt_settings
+          username: xxxx
+          password: xxxx
+          api_key: xxxx
+          custom: none
     # Add accepted entries to Deluge, queue them to the top and make sure they
     # end up in the correct folder
     set:
@@ -162,7 +169,7 @@ presets:
 
 
   # I'm always up for new shows, but some I genres I just can't stand. This
-  # preset grabs all of the premieres except for some genres
+  # template grabs all of the premieres except for some genres
   tv-premieres:
     # The entry has to have the tvdb_genres field so I can filter by it
     require_field:
@@ -205,7 +212,7 @@ presets:
 
   # If a premier was grabbed, keep on tracking it until the directory is (re)moved
   tv-premieres-track:
-    import_series:
+    configure_series:
       settings:
         target: 720p+ hdtv+
         timeframe: 3 days
@@ -224,12 +231,11 @@ presets:
       '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
 
-  # This preset is a "global" preset for all movie-related tasks.
+  # This template is a "global" template for all movie-related tasks.
   # We keep all of the RSS feeds that list movie-related torrents here
   # as well as some other configurations.
   movies-global:
     include: [ private/movies-global.yml ]
-    interval: 1 hour # I have flexget run every half hour, that's really only necessary for TV Shows
     inputs:
       - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
       - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
@@ -287,14 +293,15 @@ presets:
         - piratebay:
             category: "highres movies"
             sort_by: seeds
+      what: [ filler: yes ]
 
 
-  # This preset runs feeds through my very specific custom filter
+  # This template runs feeds through my very specific custom filter
   movies-auto:
-    interval: 2 hours # run less often since we'll be manuall searching sites
     my_movie_filter: yes
-    preset: movies-discover
+    template: movies-discover
     discover:
+      from: [ filler: yes ]
       what:
         - rottentomatoes_list:
             dvds:
@@ -305,15 +312,16 @@ presets:
       label: movies-auto
 
 
-  # This preset uses the movie queue to find movies from various sources
+  # This template uses the movie queue to find movies from various sources
   movies-queued:
     movie_queue: yes
-    preset: movies-discover
+    template: movies-discover
     disable_plugin:
       - seen_movies
     discover:
       what:
         - emit_movie_queue: yes
+      from: [ filler: yes ]
     set:
       label: my-movies
 
@@ -326,20 +334,18 @@ tasks:
   # accepted, then the original file is deleted
   Local_Torrents-TV:
     priority: 1
-    preset:
+    template:
       - tv-global
       - tv-my_shows
     disable_builtins: [seen, seen_info_hash]
     disable_plugin:
+      - configure_series
+      - trakt_list
       - inputs
       - exists_series
       - regexp
       - content_size
       - torrent_alive
-    import_series:
-      from:
-        trakt_list:
-          series: watchlist
     all_series:
       parse_only: yes
     plugin_priority:
@@ -356,17 +362,17 @@ tasks:
   # Same as above but for movies
   Local_Torrents-Movies:
     priority: 2
-    preset:
+    template:
       - movies-global
     disable_builtins: [seen, seen_info_hash]
     disable_plugin:
+      - configure_series
       - inputs
       - exists_movie
       - seen_movies
       - regexp
       - content_size
       - torrent_alive
-      - interval
     # Mark movies as seen
     movie_queue: yes
     plugin_priority:
@@ -380,18 +386,19 @@ tasks:
       label: local-movies
 
 
-  # All of the TV-related tasks pull in the tv-global preset, this gives
+  # All of the TV-related tasks pull in the tv-global template, this gives
   # all of the necessary rss sources and a few extra configs
 
   # There are 3 My_TV Shows tasks, the first, tries to get the most wanted qualities
   My_TV_Shows-Favorite:
     priority: 10
-    preset:
+    template:
       - tv-global
       - tv-my_shows
-    import_series:
+    configure_series:
       from:
         trakt_list:
+          <<: *trakt_settings
           custom: Favorite TV
       settings:
         target: 720p+ hdtv+
@@ -408,12 +415,13 @@ tasks:
 
   My_TV_Shows-Following:
     priority: 11
-    preset:
+    template:
       - tv-global
       - tv-my_shows
-    import_series:
+    configure_series:
       from:
         trakt_list:
+          <<: *trakt_settings
           custom: Following TV
       settings:
         target: 720p+ dvdscr+
@@ -439,12 +447,13 @@ tasks:
 
   My_TV_Shows-Daily:
     priority: 12
-    preset:
+    template:
       - tv-global
       - tv-my_shows
-    import_series:
+    configure_series:
       from:
         trakt_list:
+          <<: *trakt_settings
           custom: Daily TV
       settings:
         target: webrip+
@@ -458,7 +467,7 @@ tasks:
   # Task for the tv-premieres plugin
   Series_Premieres:
     priority: 40
-    preset:
+    template:
       - tv-global
       - tv-premieres
 
@@ -466,7 +475,7 @@ tasks:
   # Task for the tv-premieres-track plugin
   Series_Premieres_Track:
     priority: 50
-    preset:
+    template:
       - tv-global
       - tv-premieres-track
 
@@ -475,12 +484,12 @@ tasks:
   Movie_Queue:
     include: [ private/movie-queue.yml ] # Contains IMDB/trakt.tv username/password
     priority: 100 # Always run before My_Movies task
-    preset: no_global # None of the global presets make sense here
-    interval: 2 hours # Only check every 2 hours (I have Flexget run every half hour)
+    template: no_global # None of the global templates make sense here
     imdb_list:
       list: watchlist
       #auto_remove: [ accepted, rejected ] # keep my watchlist clean
     trakt_list:
+      <<: *trakt_settings
       custom: Movie Queue
     accept_all: yes
     queue_movies: yes
@@ -488,8 +497,7 @@ tasks:
 
   # Cleans movies from the movie queue that we already have
   Clean_Movie_Queue:
-    interval: 1 week # doesn't need to be run often
-    preset: no_global # None of the global presets make sense here
+    template: no_global # None of the global templates make sense here
     disable_builtins: [seen, seen_info_hash]
     disable_plugin:
       - seen_movies
@@ -497,14 +505,23 @@ tasks:
     listdir:
       - /raid/videos/Movies/
       - /raid/videos/SDMovies/
+    imdb_lookup: yes
+    tmdb_lookup: yes
+    rottentomatoes_lookup: yes
+    require_field: [movie_name, movie_year]
     movie_queue: yes
-
+    trakt_remove:
+      username: xxxx
+      password: xxxx
+      api_key: xxxx
+      type: movies
+      list: Movie Queue
 
   # The next two tasks download the queue from the previous task effectively implementing
   # a 2 day timeframe for 1080p movies, then falls back to 720p
   My_Movies-1080p:
     priority: 110
-    preset:
+    template:
       - movies-global
       - movies-queued
     quality: 1080p+ bluray+ h264+ dtshd+
@@ -512,7 +529,7 @@ tasks:
 
   My_Movies-720p:
     priority: 120
-    preset:
+    template:
       - movies-global
       - movies-queued
     quality: 720p+ webdl+ xvid+ !mp3
@@ -521,11 +538,11 @@ tasks:
     delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p
 
 
-  # These task implement the movies-auto preset
+  # These task implement the movies-auto template
   Auto_Movies-1080p:
     priority: 130
     quality: 1080p+ bluray+ h264+ dtshd+
-    preset:
+    template:
       - movies-global
       - movies-auto
     set:
@@ -534,9 +551,44 @@ tasks:
   Auto_Movies-720p:
     priority: 140
     quality: 720p+ dvdrip+ xvid+ !mp3
-    preset:
+    template:
       - movies-global
       - movies-auto
     set:
       label: movies-auto
     delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p
+
+
+schedules:
+
+  # Local
+  - tasks: [ 'Local_Torrents-*' ]
+    interval:
+      minutes: 10
+
+  #
+  # Series
+  #
+  - tasks: [ 'My_TV_Shows-*', 'Series_Premieres_Track' ]
+    interval:
+      minutes: 30
+
+  - tasks: [ 'Series_Premieres' ]
+    interval:
+      hours: 2
+
+  #
+  # Movies
+  #
+  - tasks: [ 'Movie_Queue', 'My_Movies-*' ]
+    interval:
+      hours: 1
+
+  - tasks: [ 'Auto_Movies-*' ]
+    interval:
+      hours: 2
+
+  - tasks: [ 'Clean_Movie_Queue' ]
+    interval:
+      weeks: 1
+      on_day: tuesday
