@@ -99,7 +99,7 @@ for path, task in FLEXGET_PATH_TASK.items():
             log.error('Failed attempting to rename the main unpacked file: %s' % sys.exc_info()[0])
             raise
 
-        cmd=FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' --task '+FLEXGET_TASK_PREFIX+task+\
+        cmd=FLEXGET_COMMAND+' -c '+FLEXGET_SORTING_CONFIG+' execute --task '+FLEXGET_TASK_PREFIX+task+\
             (' --disable-advancement' if 'tv' in path else '')
         log.debug('Shelling out: %s' % cmd)
         ret = subprocess.call(cmd, shell=True)
