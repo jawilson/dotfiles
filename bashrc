@@ -121,6 +121,13 @@ fi
 
 export EDITOR=vim
 
+if [ -d ${HOME}/bin ]; then
+    export PATH="${HOME}/bin:${PATH}"
+fi
+if [ -d ${HOME}/.bin ]; then
+    export PATH="${HOME}/.bin:${PATH}"
+fi
+
 # IceCream/ccache configuration
 if [ -x /usr/bin/ccache ]; then
     export PATH="/usr/lib/ccache:${PATH}"
