@@ -2,6 +2,9 @@
 
 STAGING_PATH='/raid/videos/staging'
 
+# Clean out empty directories
+find $STAGING_PATH -mindepth 2 -empty -type d -delete
+
 unstaged=$(find $STAGING_PATH -mindepth 1 -type f -mtime +2 -print)
 
 if [ "x$unstaged" != "x" ]; then

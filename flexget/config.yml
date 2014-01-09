@@ -282,7 +282,9 @@ presets:
     discover:
       from:
         - flexget_archive: yes
-        - torrentz: verified
+        - torrentz:
+            reputation: verified
+            extra_terms: "movie* hd"
         - piratebay:
             category: "highres movies"
             sort_by: seeds
@@ -313,13 +315,6 @@ presets:
     discover:
       what:
         - emit_movie_queue: yes
-      from:
-        - torrentz:
-            reputation: verified
-            extra_terms: "movie* hd"
-        - piratebay:
-            category: "highres movies"
-            sort_by: seeds
     set:
       label: my-movies
 
@@ -424,8 +419,8 @@ tasks:
 
 
   # This task queues all of the movies in my IMDB watchlist
-  IMDB_Movie_Queue:
-    include: [ private/imdb-movie-queue.yml ] # Contains IMDB username/password for auto_remove
+  Movie_Queue:
+    include: [ private/movie-queue.yml ] # Contains IMDB/trakt.tv username/password
     priority: 100 # Always run before My_Movies task
     preset: no_global # None of the global presets make sense here
     interval: 2 hours # Only check every 2 hours (I have Flexget run every half hour)
@@ -433,7 +428,7 @@ tasks:
       list: watchlist
       #auto_remove: [ accepted, rejected ] # keep my watchlist clean
     accept_all: yes
-    queue_movies: { force: no } # Output entries to movie queue (with any quality)
+    queue_movies: yes
 
 
   # Cleans movies from the movie queue that we already have
