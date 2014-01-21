@@ -69,6 +69,7 @@ templates:
         - \[TNTVillage\]: {from: title}
         - \[facepalm\]: {from: title}
         - \bASAP\b: {from: title}
+        - the.day.of.the.doctor                               # The following are titles that caused me issues from plugins
     # Require at least 40 seeds of any torrent
     torrent_alive:
       min_seeds: 10
@@ -148,7 +149,6 @@ templates:
 
   # These are the shows I regularly watch
   tv-my_shows:
-    #include: [ private/tv-my_shows.yml ]
     configure_series:
       from:
         trakt_list: &trakt_settings
@@ -293,6 +293,7 @@ templates:
         - piratebay:
             category: "highres movies"
             sort_by: seeds
+      interval: 2 hours
       what: [ filler: yes ]
 
 
@@ -334,6 +335,10 @@ tasks:
   # accepted, then the original file is deleted
   Local_Torrents-TV:
     priority: 1
+    include:
+      - series-favorite.yml
+      - series-following.yml
+      - series-daily.yml
     template:
       - tv-global
       - tv-my_shows
@@ -346,6 +351,7 @@ tasks:
       - regexp
       - content_size
       - torrent_alive
+    filler: yes # To avoid warnings about non-functional input
     all_series:
       parse_only: yes
     plugin_priority:
@@ -373,6 +379,7 @@ tasks:
       - regexp
       - content_size
       - torrent_alive
+    filler: yes # To avoid warnings about non-functional input
     # Mark movies as seen
     movie_queue: yes
     plugin_priority:
@@ -392,6 +399,7 @@ tasks:
   # There are 3 My_TV Shows tasks, the first, tries to get the most wanted qualities
   My_TV_Shows-Favorite:
     priority: 10
+    include: [ series-favorite.yml ]
     template:
       - tv-global
       - tv-my_shows
@@ -404,17 +412,10 @@ tasks:
         target: 720p+ hdtv+
         timeframe: 5 days
         quality: 720p+ dvdscr+
-    series:
-      - Top Gear:
-          # Do not, under any circumstances, download the US version, it sucks
-          name_regexp: ^top.gear(?!.us)
-      - Marvels Agents Of S.H.I.E.L.D.:
-          name_regexp: ^marvel(')?s.agents.of.(s.h.i.e.l.d.?|shield)
-      - The Newsroom (2012):
-          name_regexp: ^the.newsroom(.2012)?
 
   My_TV_Shows-Following:
     priority: 11
+    include: [ series-following.yml ]
     template:
       - tv-global
       - tv-my_shows
@@ -427,26 +428,10 @@ tasks:
         target: 720p+ dvdscr+
         timeframe: 3 days
         quality: 480p+ webrip+
-    series:
-      - American Dad!:
-          name_regexp: ^american.dad(!)?
-          set:
-            thetvdb_lookup_season_offset: 1
-      - Aqua Teen Hunger Force:
-          name_regexp: ^aqua.((teen.hunger.force)|(unit.patrol.squad.1)|(something.you.know.whatever))
-      - Archer (2009):
-          name_regexp: ^archer(.2009)?
-      - "Cosmos - A Space-Time Odyssey":
-          name_regexp: ^cosmos.+a.space.time.odyssey
-      - Eastbound & Down:
-          name_regexp: ^east.?bound(.and|.&)?.down
-      - Last Man Standing (US):
-          name_regexp: ^last.man.standing(.us)?
-      - The Venture Bros:
-          name_regexp: ^the.venture.bro(ther)?s
 
   My_TV_Shows-Daily:
     priority: 12
+    include: [ series-daily.yml ]
     template:
       - tv-global
       - tv-my_shows
@@ -459,9 +444,6 @@ tasks:
         target: webrip+
         timeframe: 12 hours
         quality: preair+
-    series:
-      - The Daily Show with Jon Stewart:
-          name_regexp: ^the.daily.show(.with.jon.stewart)?
 
 
   # Task for the tv-premieres plugin
@@ -524,7 +506,7 @@ tasks:
     template:
       - movies-global
       - movies-queued
-    quality: 1080p+ bluray+ h264+ dtshd+
+    quality: 1080p+ bluray+ h264+ !mp3 !aac
 
 
   My_Movies-720p:
@@ -532,7 +514,7 @@ tasks:
     template:
       - movies-global
       - movies-queued
-    quality: 720p+ webdl+ xvid+ !mp3
+    quality: 720p+ webdl+ xvid+ !mp3 !aac
     torrent_alive:
       min_seeds: 5
     delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p
@@ -541,7 +523,7 @@ tasks:
   # These task implement the movies-auto template
   Auto_Movies-1080p:
     priority: 130
-    quality: 1080p+ bluray+ h264+ dtshd+
+    quality: 1080p+ bluray+ h264+ !mp3 !aac
     template:
       - movies-global
       - movies-auto
@@ -550,7 +532,7 @@ tasks:
 
   Auto_Movies-720p:
     priority: 140
-    quality: 720p+ dvdrip+ xvid+ !mp3
+    quality: 720p+ dvdrip+ xvid+ !mp3 !aac
     template:
       - movies-global
       - movies-auto

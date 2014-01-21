@@ -1,0 +1,17 @@
+series:
+  - American Dad!:
+      name_regexp: ^american.dad(!)?
+      set:
+        thetvdb_lookup_season_offset: 1
+  - Aqua Teen Hunger Force:
+      name_regexp: ^aqua.((teen.hunger.force)|(unit.patrol.squad.1)|(something.you.know.whatever))
+  - Archer (2009):
+      name_regexp: ^archer(.2009)?
+  - "Cosmos - A Space-Time Odyssey":
+      name_regexp: ^cosmos.+a.space.time.odyssey
+  - Eastbound & Down:
+      name_regexp: ^east.?bound(.and|.&)?.down
+  - Last Man Standing (US):
+      name_regexp: ^last.man.standing(.us)?
+  - The Venture Bros:
+      name_regexp: ^the.venture.bro(ther)?s

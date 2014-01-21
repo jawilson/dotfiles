@@ -33,7 +33,10 @@ tasks:
     # Where to get the metadata
     thetvdb_lookup: yes
     # This is needed to get my TVDB offset values 
-    include: [series.yml]
+    include:
+      - series-favorite.yml
+      - series-following.yml
+      - series-daily.yml
     all_series:
       # Don't actually filter
       parse_only: yes

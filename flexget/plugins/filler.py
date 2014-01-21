@@ -16,14 +16,8 @@ class Filler(object):
         from flexget import validator
         return validator.factory('any')
 
-    def on_task_start(self, task, config):
-        del task.config['filler']
-
     def on_task_input(self, task, config):
-        if config:
-            return [];
-        else:
-            pass
+        task.no_entries_ok = True
 
     def on_task_output(self, task, config):
         pass

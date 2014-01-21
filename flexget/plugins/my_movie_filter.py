@@ -259,7 +259,7 @@ class MyMovieFilter(object):
                 else:
                     if score_offset != 0:
                         msg = 'Offset score by %s. %s' % (score_offset, msg)
-                    if manager.options.execute.cron:
+                    if task.options.cron:
                         log_once(msg, log)
                     else:
                         log.info(msg)

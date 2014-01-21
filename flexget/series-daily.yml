@@ -1,0 +1,3 @@
+series:
+  - The Daily Show with Jon Stewart:
+      name_regexp: ^the.daily.show(.with.jon.stewart)?
