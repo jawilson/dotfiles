@@ -1,14 +1,16 @@
 # Flexget (http://www.flexget.com) configuration file.
 #
 # Created by: Jeff Wilson <jeff@jeffalwilson.com>
-# Available from: https://github.com/atlanta800/dotfiles
+# Available from: https://github.com/jawilson/dotfiles
 #
-# Some settings in this config require changes in my fork of Flexget which
-# is available here: https://github.com/atlanta800/Flexget
+# Some settings in this config may require changes in my fork of Flexget which
+# is available in the atlanta800 branch here: https://github.com/jawilson/Flexget
 #
 # For various reasons I've moved some settings into a private subfolder. The
 # files are:
 #   * private/global.yml
+#   * private/movie-queue.yml
+#   * private/movies-discover.yml
 #   * private/movies-global.yml
 #   * private/tv-global.yml
 # These files are not necessary to use this cofiguration, simply remove the
