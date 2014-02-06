@@ -18,6 +18,9 @@ class Filler(object):
 
     def on_task_input(self, task, config):
         task.no_entries_ok = True
+        entry = Entry(title="###FILLER###", url="file:///dev/null")
+        entry.reject()
+        return [entry]
 
     def on_task_output(self, task, config):
         pass

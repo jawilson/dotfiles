@@ -358,10 +358,13 @@ tasks:
       parse_only: yes
     plugin_priority:
       exec: 0
-    listdir: /home/atlanta800/Dropbox/torrents/TV
+    find:
+      path: '/home/atlanta800/Dropbox/torrents/TV'
+      regexp: '.*\.torrent$'
+      recursive: yes
     exec:
       on_output:
-        for_accepted: rm "/home/atlanta800/Dropbox/torrents/TV/{{title}}.torrent"
+        for_accepted: rm "{{location}}"
     accept_all: yes
     set:
       label: local-tv
@@ -386,13 +389,36 @@ tasks:
     movie_queue: yes
     plugin_priority:
       exec: 0
-    listdir: /home/atlanta800/Dropbox/torrents/Movies
+    find:
+      path: '/home/atlanta800/Dropbox/torrents/Movies'
+      regexp: '.*\.torrent$'
+      recursive: yes
     exec:
       on_output:
-        for_accepted: rm "/home/atlanta800/Dropbox/torrents/Movies/{{title}}.torrent"
+        for_accepted: rm "{{location}}"
     accept_all: yes
     set:
       label: local-movies
+
+
+  # Adds music from a Dropbox folder to my Google Music library
+  # Depends on a great script available here: https://github.com/thebigmunch/gmusicapi-scripts
+  # Use a local folder (synced with Dropbox) as a source
+  # I can drop music in this folder and they are synced with Dropbox, always
+  # accepted, then the original file is deleted
+  Google_Music_Sync:
+    priority: 3
+    disable_builtins: [seen, seen_info_hash]
+    template: no_global # None of the global templates make sense here
+    filler: yes # To avoid warnings about non-functional input
+    find:
+      path: '/home/atlanta800/Dropbox/Media/Music'
+      regexp: '.*\.(mp3|flac|m4a|ogg)$'
+      recursive: yes
+    accept_all: yes
+    exec:
+      on_output:
+        for_accepted: '"/home/deluge/gmusicapi-scripts/gmsync.py" -q -l -m "{{location}}" && rm "{{location}}"'
 
 
   # All of the TV-related tasks pull in the tv-global template, this gives
@@ -469,8 +495,6 @@ tasks:
     include: [ private/movie-queue.yml ] # Contains IMDB/trakt.tv username/password
     priority: 100 # Always run before My_Movies task
     template: no_global # None of the global templates make sense here
-    imdb_list:
-      list: watchlist
       #auto_remove: [ accepted, rejected ] # keep my watchlist clean
     trakt_list:
       <<: *trakt_settings
@@ -546,9 +570,9 @@ tasks:
 schedules:
 
   # Local
-  - tasks: [ 'Local_Torrents-*' ]
+  - tasks: [ 'Local_Torrents-*', 'Google_Music_Sync' ]
     interval:
-      minutes: 10
+      minutes: 5
 
   #
   # Series

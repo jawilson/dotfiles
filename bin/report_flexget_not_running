@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# I could probably use "flexget-daemon status 2>&1 | grep --quiet PID"
+
 FLEXGET_LOG='/home/deluge/.flexget/flexget.log'
 
 if test `find ${FLEXGET_LOG} -mmin +240`; then
