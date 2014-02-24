@@ -11,3 +11,7 @@ These are config files to set up a system the way I like it.
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jawilson/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jawilson/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
