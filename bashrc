@@ -112,7 +112,7 @@ fi
 # Avoid re-appending settings in screen sessions
 if [ -n "$STY" ]; then
     # Ensure ccache isn't set up in OE build session
-    if [ "${STY#*.}" = oe || "${STY#*.}" = devshell ]; then
+    if [[ "${STY#*.}" = oe || "${STY#*.}" = devshell ]]; then
         export PATH="$(echo $PATH | sed -r 's,[^:]+ccache[^:]*:,,g')"
         unset CCACHE_PREFIX
     fi
