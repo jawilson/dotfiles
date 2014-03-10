@@ -17,3 +17,5 @@
     diverge  = ![ "$2" ] && HEAD=$2 || HEAD=HEAD && git diff $(git merge-base --octopus $1 $HEAD)..$HEAD
     ldiverge = ![ "$2" ] && HEAD=$2 || HEAD=HEAD && git show $(git merge-base --octopus $1 $HEAD)..$HEAD
     tarball = ![ "$3" ] && NAME=$3 || NAME=$(basename $(git rev-parse --show-toplevel)) && [ "$2" ] && REF=$2 || REF=HEAD && OUTPUT=$1/$NAME-$(git describe $REF | sed 's,^v,,').tar.gz && git archive --prefix=$NAME/ --output=$OUTPUT $REF^{tree} && readlink -m $OUTPUT && true
+[credential]
+	helper = cache
