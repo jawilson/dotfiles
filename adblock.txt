@@ -3,19 +3,25 @@
 ! Title: Jeff's Adblock List
 ! Last modified: 10 Mar 2014 17:36 EST
 
-
 @@|http://*.cbssports.com
-turntable.fm##DIV[class="screen-link funtimes"]
-www.youtube.com##DIV[id="alerts"]
-en.wikipedia.org##DIV[class="cn-fundraising"]
+
+www.google.com##DIV[class="gb_2"]
+www.google.com##DIV[class="ads-adcard"]
+www.google.com##DIV[class="ads-card ads-card-v2 cards-card-hideable-smooth-animation cards-collapsed"]
+mail.google.com##DIV[class="gb_2"]
+
 trakt.tv##DIV[id="large-banner-ad"]
 trakt.tv##DIV[id="small-banner-ad"]
-mail.google.com##DIV[class="gb_2"]
-facebook.com##DIV[id="pagelet_ego_pane"]
-
-www.youtube.com##DIV[id="ticker"][class="ytg-base remind-identity"]
-www.cplusplus.com##DIV[class="C_DonateBox"]
-www.cplusplus.com##DIV[class="C_DonateBox"]
-trakt.tv##DIV[id="small-banner-bottom-ad"]
-trakt.tv##DIV[id="small-banner-bottom-ad"]
 trakt.tv##DIV[id="large-banner-bottom-ad"]
+trakt.tv##DIV[id="small-banner-bottom-ad"]
+
+www.youtube.com##DIV[id="alerts"]
+www.youtube.com##DIV[id="ticker"][class="ytg-base remind-identity"]
+www.youtube.com##DIV[id="confirmBox"][class="yt-alert yt-alert-default yt-alert-warn  "]
+
+www.cplusplus.com##DIV[class="C_DonateBox"]
+www.cplusplus.com##DIV[class="C_DonateBox"]
+
+en.wikipedia.org##DIV[class="cn-fundraising"]
+
+facebook.com##DIV[id="pagelet_ego_pane"]
