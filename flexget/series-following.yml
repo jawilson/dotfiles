@@ -1,17 +1,37 @@
 series:
   - American Dad!:
       name_regexp: ^american.dad(!)?
+      season_offset: 1
+      begin: S10E01
       set:
-        thetvdb_lookup_season_offset: 1
-  - Aqua Teen Hunger Force:
-      name_regexp: ^aqua.((teen.hunger.force)|(unit.patrol.squad.1)|(something.you.know.whatever))
+        series_name: "American Dad"
+  - Aqua TV Show Show:
+      name_regexp: ^aqua.((teen.hunger.force)|(unit.patrol.squad.1)|(something.you.know.whatever)|(tv.show.show))
+      set:
+        series_name: "Aqua Teen Hunger Force"
+        tvdb_series_name: "{{ series_name }}"
   - Archer (2009):
       name_regexp: ^archer(.2009)?
-  - "Cosmos - A Space-Time Odyssey":
-      name_regexp: ^cosmos.+a.space.time.odyssey
-  - Eastbound & Down:
-      name_regexp: ^east.?bound(.and|.&)?.down
-  - Last Man Standing (US):
-      name_regexp: ^last.man.standing(.us)?
-  - The Venture Bros:
-      name_regexp: ^the.venture.bro(ther)?s
+  - Last Man Standing (2011):
+      name_regexp: ^last.man.standing(.us)?(.2011)?
+  - Last Week Tonight With John Oliver:
+      identified_by: date
+  - "It's Always Sunny in Philadelphia":
+      begin: S07E01
+  - MythBusters:
+      begin: S11E01
+  - South Park:
+      begin: S15E01
+  - "The Venture Bros.":
+      name_regexp: ^the.venture.bro(ther)?s\.?
+  - The Simpsons:
+      begin: S23E01
+  - Two and a Half Men:
+      begin: S09E01
+if:
+  - "series_name == 'American Dad'":
+      set:
+        tvdb_series_name: "{{ series_name }}"
+  - "series_name == 'Aqua Teen Hunger Force'":
+      set:
+        tvdb_series_name: "{{ series_name }}"

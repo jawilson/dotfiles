@@ -1,8 +1,13 @@
 series:
+  - "Cosmos: A Spacetime Odyssey":
+      name_regexp: ^cosmos.+a.space.time.odyssey
   - Top Gear:
       # Do not, under any circumstances, download the US version, it sucks
       name_regexp: ^top.gear(?!.us)
-  - Marvels Agents Of S.H.I.E.L.D.:
+      begin: S17E06
+  - "Marvel's Agents of S.H.I.E.L.D.":
       name_regexp: ^marvel(')?s.agents.of.(s.h.i.e.l.d.?|shield)
   - The Newsroom (2012):
       name_regexp: ^the.newsroom(.2012)?
+  - Parks and Recreation:
+      begin: S05E01

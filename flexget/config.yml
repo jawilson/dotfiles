@@ -6,10 +6,22 @@
 # For more information, see the README.md
 #
 
+secrets: secretfile.yml # Use the secrets plugin to separately store credentials, etc
 templates:
 
   global:
-    include: [ private/global.yml ]
+    email:
+      from: '{{ secrets.email.from }}'
+      to: '{{ secrets.email.to }}'
+    if:
+      - "'torrentleech' in url":
+          deluge:
+            main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
+            port: 58847
+      - "'torrentleech' not in url":
+          deluge:
+            main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
+            port: 58846
     # Make there's 50GB free before adding more downloads
     free_space:
       path: /raid
@@ -55,40 +67,34 @@ templates:
     # Limit the frequency of requests to domains so they don't complain about
     # using a bot
     domain_delay:
+      www.torrentleech.org: 10 seconds
+      rss.torrentleech.org: 10 minutes
       bt-chat.com: 5 seconds
-      torrentz.eu: 5 seconds
+      torrentz.eu: 10 seconds
     # The Pirate Bay ssl certs always fail
     verify_ssl_certificates: no
     # Size and seed restrictions require real torrents
     magnets: no
-    # A couple of people didn't change this when they tried out my configs, so I
-    # moved it to private/global.yml, uncomment here to get email notificians
-    #email:
-    #  from: user@your.domain
-    #  to: your@email.address
-    # Deluge is configured in my private configs, but I'm leaving this for
-    # clarity and completeness uncomment it so that your torrents are added to
-    # deluge (or replace it with your target).
-    #deluge:
-    # # Ignore all but the file that is >90% of the torrent if it exists
-    # # You will most likely want to combine this with the 'DeletePartials' 
-    # # Deluge plugin
-    #  main_file_only: yes
-
 
   # This template is a "global" template for all TV-related tasks.
   # We keep all of the RSS feeds that list tv-related torrents here
   # as well as where to check existing shows.
   tv-global:
-    include: [ private/tv-global.yml ]
     # This is a TON of feeds, you probably don't need so many, but why not?
     inputs:
-      - rss: { url: 'http://www.torlock.com/television/rss.xml', silent: yes }  # TorLock (TV)
-      - rss: { url: 'http://torrentz.eu/feed_verified?q=tv', silent: yes }      # Torrentz (Verified only, TV)
+      - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
+    #  - rss: { url: 'http://www.torlock.com/television/rss.xml', silent: yes }  # TorLock (TV)
+    #  - rss: { url: 'http://torrentz.eu/feed_verified?q=tv', silent: yes }      # Torrentz (Verified only, TV)
       - rss: { url: 'http://ezrss.it/feed/', silent: yes }                      # EZRSS
-      - rss: { url: 'http://showrss.karmorra.info/feeds/all.rss', silent: yes } # Karmorra (All)
-      - rss: { url: 'http://rss.bt-chat.com/?group=3', silent: yes }            # BT-Chat (EZTV)
-      - rss: { url: 'https://rss.thepiratebay.se/208', silent: yes }            # The Pirate Bay (Highres - TV shows)
+    #  - rss: { url: 'http://showrss.karmorra.info/feeds/all.rss', silent: yes } # Karmorra (All)
+    #  - rss: { url: 'http://rss.bt-chat.com/?group=3', silent: yes }            # BT-Chat (EZTV)
+    #  - rss: { url: 'https://rss.thepiratebay.se/208', silent: yes }            # The Pirate Bay (Highres - TV shows)
+    if:
+      - "has_field('category')":
+          regexp:
+            reject_excluding:
+              - '^Episodes( HD)?$': {from: category}
+    archive: [tv]
     # Impose reasonable size constraints
     content_size:
       max: 5000
@@ -106,106 +112,54 @@ templates:
     # Add accepted entries to Deluge and make sure they end up in the correct
     # folder with a nice name
     set:
+      queuetotop: yes
+      movedone: >
+        /raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       # Rename the "content file" to something nice
       content_filename: >
-        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {{ tvdb_ep_id|default(series_id) }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
+        {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}
       label: tv
-
-
-  # These are the shows I regularly watch
-  tv-my_shows:
-    configure_series:
-      from:
-        trakt_list: &trakt_settings
-          username: xxxx
-          password: xxxx
-          api_key: xxxx
-          custom: none
-    # Add accepted entries to Deluge, queue them to the top and make sure they
-    # end up in the correct folder
-    set:
-      movedone: >
-        /raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ tvdb_season|default(series_season) }}/{% endif %}
-      queuetotop: yes
     # This is a custom plugin, it is part of my rar-unpacking method,
     # it changes 'movedone' based on the regexp in the key
     content_sort:
       '*.rar': '/home/deluge/downloads/completed/tv_shows/'
 
 
-  # I'm always up for new shows, but some I genres I just can't stand. This
-  # template grabs all of the premieres except for some genres
-  tv-premieres:
-    # The entry has to have the tvdb_genres field so I can filter by it
-    require_field:
-      - tvdb_genres
-      - tvdb_first_air_date
-    # Make sure plenty of people are seeding it, otherwise it may not be that good
-    torrent_alive:
-      min_seeds: 50
-    # Block these genres if they exist in the list of tvdb_genres at all
-    regexp:
-      reject:
-        - documentary: {from: tvdb_genres}
-        - talk show: {from: tvdb_genres}
-        - game show: {from: tvdb_genres}
-        - reality: {from: tvdb_genres}
-        - children: {from: tvdb_genres}
-        - home and garden: {from: tvdb_genres}
-    if:
-      # Block these genres only if they are the ONLY genre listed in
-      # tvdb_genres. For example, this will not block a show that's both
-      # "Comedy" and "Drama" but it will block a show that is just "Drama"
-      - "tvdb_genres == ['Drama']": reject
-      # Block premieres that weren't within the last 60 days
-      - tvdb_first_air_date != None and tvdb_first_air_date < now - timedelta(days=60): reject
-    # Accept all series permieres
-    series_premiere:
-      timeframe: 1 days
-      quality: 720p+ hdtv+
-    # Add to deluge, but don't queue to top (My_TV_Shows are more important)
-    # and put in a different location
-    set:
-      movedone: "/raid/videos/TV Premieres/{{ series_name|replace('/', '_')|replace(':', ' -') }}/Season {{ tvdb_season|default(series_season) }}"
-      queuetotop: no
-      label: tv-premiere
-    # This is a custom plugin, it is part of my rar-unpacking method, it changes
-    # 'movedone' based on the regexp in the key
-    content_sort:
-      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
-
-
-  # If a premier was grabbed, keep on tracking it until the directory is (re)moved
-  tv-premieres-track:
-    configure_series:
-      settings:
-        target: 720p+ hdtv+
-        timeframe: 3 days
-        quality: webrip+
+  tv-shows-find:
+    discover:
+      no_entries_ok: yes
+      what: [filler: yes]
       from:
-        listdir:
-          - "/raid/videos/TV Premieres/"
-    set:
-      movedone: >
-        /raid/videos/TV Premieres/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ tvdb_season|default(series_season) }}/{% endif %}
-      queuetotop: no
-      label: tv-premiere-track
-    # This is a custom plugin, it is part of my rar-unpacking method, it changes
-    # 'movedone' based on the regexp in the key
-    content_sort:
-      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
-
+        - torrentleech:
+            rss_key: '{{ secrets.torrentleech.rss_key }}'
+            username: '{{ secrets.torrentleech.username }}'
+            password: '{{ secrets.torrentleech.password }}'
+            category: ['Episodes HD', 'Episodes']
+        - flexget_archive: [tv]
+        #- publichd:
+        #    category: ['HDTV', 'SDTV', 'TV WEB-DL']
+        #- kat:
+        #    category: tv
+        #    verified: yes
 
   # This template is a "global" template for all movie-related tasks.
   # We keep all of the RSS feeds that list movie-related torrents here
   # as well as some other configurations.
   movies-global:
-    include: [ private/movies-global.yml ]
     inputs:
-      - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
-      - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
-      - rss: { url: 'https://rss.thepiratebay.se/207', silent: yes }           # The Pirate Bay (Highres - Movies)
+      - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
+    #  - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
+    #  - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
+    #  - rss: { url: 'https://rss.thepiratebay.se/207', silent: yes }           # The Pirate Bay (Highres - Movies)
     # Some feeds might include TV Shows, ignore them
+    if:
+      - "has_field('category')":
+          regexp:
+            reject_excluding:
+              - '^(HD|BDRip|DVDRip.DVDScreener|DVD-R|Documentaries)$': {from: category}
+    # Rotten Tomatoes is broken, possibly forever :(
+    #rottentomatoes_lookup: yes
+    archive: [movies]
     regexp:
       reject:
         - s\d+e\d+: {from: title}
@@ -222,9 +176,6 @@ templates:
       max: 20000
       min: 1000
     imdb_lookup: yes
-    # A Rotten Tomatoes API key is set in my private config, but I'm leaving
-    # this here for clarity and completeness.
-    #rottentomatoes_lookup: yes
     seen_movies: strict # Don't download movies we've already seen
     # Check for already downloaded or currently downloading movies
     exists_movie:
@@ -248,31 +199,39 @@ templates:
 
   # Keep all the discover settings in one place
   movies-discover:
-    include: [ private/movies-discover.yml ]
     discover:
       from:
-        - flexget_archive: yes
-        - torrentz:
-            reputation: verified
-            extra_terms: "movie* hd"
-        - piratebay:
-            category: "highres movies"
-            sort_by: seeds
-      interval: 2 hours
-      what: [ filler: yes ]
+        - torrentleech:
+            rss_key: '{{ secrets.torrentleech.rss_key }}'
+            username: '{{ secrets.torrentleech.username }}'
+            password: '{{ secrets.torrentleech.password }}'
+            category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
+        - flexget_archive: [movies]
+        #- publichd:
+        #    category: ['BluRay 1080p', 'BluRay 720p']
+        - kat:
+            category: movies
+            verified: yes
+        #- torrentz:
+        #    reputation: verified
+        #    extra_terms: "movie* hd"
+        #- piratebay:
+        #    category: "highres movies"
+        #    sort_by: seeds
+      what: [ filler: yes ] # Always produce entries
 
 
   # This template runs feeds through my very specific custom filter
   movies-auto:
     my_movie_filter: yes
-    template: movies-discover
-    discover:
-      from: [ filler: yes ]
-      what:
-        - rottentomatoes_list:
-            dvds:
-              - top_rentals
-              - new_releases
+    #template: movies-discover
+    #discover:
+    #  from: [ filler: yes ]
+    #  what:
+    #    - rottentomatoes_list:
+    #        dvds:
+    #          - top_rentals
+    #          - new_releases
     set:
       queuetotop: no
       label: movies-auto
@@ -287,7 +246,17 @@ templates:
     discover:
       what:
         - emit_movie_queue: yes
-      from: [ filler: yes ]
+      from: [ filler: yes ] # Always produce entries
+    trakt_remove: # Remove from trakt.tv list when we accept an item
+      username: '{{ secrets.trakt.username }}'
+      password: '{{ secrets.trakt.password }}'
+      api_key: '{{ secrets.trakt.api_key }}'
+      list: Movie Queue
+    trakt_add: # Add accepted item to trakt.tv queue
+      username: '{{ secrets.trakt.username }}'
+      password: '{{ secrets.trakt.password }}'
+      api_key: '{{ secrets.trakt.api_key }}'
+      list: watchlist
     set:
       label: my-movies
 
@@ -298,7 +267,7 @@ tasks:
   # Use a local folder (synced with Dropbox) as a source
   # I can drop torrents in this folder and they are synced with Dropbox, always
   # accepted, then the original file is deleted
-  Local_Torrents-TV:
+  Local-Torrents-TV:
     priority: 1
     include:
       - series-favorite.yml
@@ -306,8 +275,7 @@ tasks:
       - series-daily.yml
     template:
       - tv-global
-      - tv-my_shows
-    disable_builtins: [seen, seen_info_hash]
+    disable_builtins: [seen, seen_info_hash, retry_failed]
     disable_plugin:
       - configure_series
       - trakt_list
@@ -316,7 +284,6 @@ tasks:
       - regexp
       - content_size
       - torrent_alive
-    filler: yes # To avoid warnings about non-functional input
     all_series:
       parse_only: yes
     plugin_priority:
@@ -325,6 +292,8 @@ tasks:
       path: '/home/atlanta800/Dropbox/torrents/TV'
       regexp: '.*\.torrent$'
       recursive: yes
+    no_entries_ok: yes
+    verify_ssl_certificates: no
     exec:
       on_output:
         for_accepted: rm "{{location}}"
@@ -334,32 +303,32 @@ tasks:
 
 
   # Same as above but for movies
-  Local_Torrents-Movies:
+  Local-Torrents-Movies:
     priority: 2
     template:
       - movies-global
-    disable_builtins: [seen, seen_info_hash]
+      - movies-queued
+    disable_builtins: [seen, seen_info_hash, retry_failed]
     disable_plugin:
-      - configure_series
+      - discover
       - inputs
       - exists_movie
       - seen_movies
       - regexp
       - content_size
       - torrent_alive
-    filler: yes # To avoid warnings about non-functional input
-    # Mark movies as seen
-    movie_queue: yes
     plugin_priority:
       exec: 0
     find:
       path: '/home/atlanta800/Dropbox/torrents/Movies'
       regexp: '.*\.torrent$'
       recursive: yes
+    no_entries_ok: yes
     exec:
       on_output:
         for_accepted: rm "{{location}}"
     accept_all: yes
+    verify_ssl_certificates: no
     set:
       label: local-movies
 
@@ -369,15 +338,15 @@ tasks:
   # Use a local folder (synced with Dropbox) as a source
   # I can drop music in this folder and they are synced with Dropbox, always
   # accepted, then the original file is deleted
-  Google_Music_Sync:
+  Google-Music-Sync:
     priority: 3
     disable_builtins: [seen, seen_info_hash]
     template: no_global # None of the global templates make sense here
-    filler: yes # To avoid warnings about non-functional input
     find:
       path: '/home/atlanta800/Dropbox/Media/Music'
       regexp: '.*\.(mp3|flac|m4a|ogg)$'
       recursive: yes
+    no_entries_ok: yes
     accept_all: yes
     exec:
       on_output:
@@ -388,86 +357,225 @@ tasks:
   # all of the necessary rss sources and a few extra configs
 
   # There are 3 My_TV Shows tasks, the first, tries to get the most wanted qualities
-  My_TV_Shows-Favorite:
+  My-TV-Shows:
     priority: 10
+    include:
+      - series-favorite.yml
+      - series-following.yml
+      - series-daily.yml
+    template: [tv-global]
+    sequence:
+      - configure_series:
+          settings:
+            target: 720p+ hdtv+
+            timeframe: 5 days
+            quality: 720p+ dvdscr+
+            tracking: backfill
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: Favorite TV
+      - configure_series:
+          settings:
+            target: 720p+ dvdscr+
+            timeframe: 3 days
+            quality: 480p+ webrip+
+            tracking: backfill
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: Following TV
+      - configure_series:
+          settings:
+            target: webrip+
+            timeframe: 12 hours
+            quality: preair+
+            tracking: backfill
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: Daily TV
+
+
+  My-TV-Shows-Find-Next-Favorite:
+    template: [tv-global, tv-shows-find]
+    disable_plugin: inputs
+    discover:
+      no_entries_ok: yes
+      interval: 2 hours
+      what:
+        - trakt_emit:
+            username: '{{ secrets.trakt.username }}'
+            password: '{{ secrets.trakt.password }}'
+            api_key: '{{ secrets.trakt.api_key }}'
+            context: collected
+            position: next
+            list: Favorite TV
+            aired_only:
+              timeframe: 1 day
+      from: [filler: yes]
     include: [ series-favorite.yml ]
-    template:
-      - tv-global
-      - tv-my_shows
-    configure_series:
-      from:
-        trakt_list:
-          <<: *trakt_settings
-          custom: Favorite TV
-      settings:
-        target: 720p+ hdtv+
-        timeframe: 5 days
-        quality: 720p+ dvdscr+
+    all_series:
+      target: 720p+ hdtv+
+      timeframe: 5 days
+      quality: 720p+ dvdscr+
+      tracking: backfill
 
-  My_TV_Shows-Following:
-    priority: 11
+
+  My-TV-Shows-Find-Next-Following:
+    template: [tv-global, tv-shows-find]
+    disable_plugin: inputs
+    discover:
+      no_entries_ok: yes
+      interval: 2 hours
+      what:
+        - trakt_emit:
+            username: '{{ secrets.trakt.username }}'
+            password: '{{ secrets.trakt.password }}'
+            api_key: '{{ secrets.trakt.api_key }}'
+            list: Following TV
+      from: [filler: yes]
     include: [ series-following.yml ]
+    all_series:
+      target: 720p+ dvdscr+
+      timeframe: 3 days
+      quality: 480p+ webrip+
+      tracking: backfill
+
+  My-TV-Shows-Find-Missing:
     template:
       - tv-global
-      - tv-my_shows
-    configure_series:
-      from:
-        trakt_list:
-          <<: *trakt_settings
-          custom: Following TV
-      settings:
-        target: 720p+ dvdscr+
-        timeframe: 3 days
-        quality: 480p+ webrip+
+      - tv-shows-find
+    disable_plugin: inputs
+    discover:
+      what:
+        - emit_series:
+            backfill: yes
+      from: [filler: yes]
+    include:
+      - series-favorite.yml
+      - series-following.yml
+    sequence:
+      - configure_series:
+          settings:
+            target: 720p+ hdtv+
+            timeframe: 5 days
+            quality: 720p+ dvdscr+
+            tracking: backfill
+            propers: no
+            upgrade: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: Favorite TV
+      - configure_series:
+          settings:
+            target: 720p+ dvdscr+
+            timeframe: 3 days
+            quality: 480p+ webrip+
+            tracking: backfill
+            propers: no
+            upgrade: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: Following TV
 
-  My_TV_Shows-Daily:
-    priority: 12
-    include: [ series-daily.yml ]
-    template:
-      - tv-global
-      - tv-my_shows
-    configure_series:
-      from:
-        trakt_list:
-          <<: *trakt_settings
-          custom: Daily TV
-      settings:
-        target: webrip+
-        timeframe: 12 hours
-        quality: preair+
 
-
-  # Task for the tv-premieres plugin
-  Series_Premieres:
+  # I'm always up for new shows, but some I genres I just can't stand. This
+  # task grabs all of the premieres except for some genres
+  Series-Premieres:
     priority: 40
     template:
       - tv-global
-      - tv-premieres
+    # The entry has to have the tvdb_genres field so I can filter by it
+    require_field:
+      - tvdb_genres
+      - tvdb_first_air_date
+    # Make sure plenty of people are seeding it, otherwise it may not be that good
+    torrent_alive:
+      min_seeds: 50
+    # Block these genres if they exist in the list of tvdb_genres at all
+    regexp:
+      reject:
+        - documentary: {from: tvdb_genres}
+        - talk show: {from: tvdb_genres}
+        - game show: {from: tvdb_genres}
+        - reality: {from: tvdb_genres}
+        - crime: {from: tvdb_genres}
+        - children: {from: tvdb_genres}
+        - home and garden: {from: tvdb_genres}
+    if:
+      # Block these genres only if they are the ONLY genre listed in
+      # tvdb_genres. For example, this will not block a show that's both
+      # "Comedy" and "Drama" but it will block a show that is just "Drama"
+      - "tvdb_genres == ['Drama']": reject
+      # Block premieres that weren't within the last 60 days
+      - tvdb_first_air_date and tvdb_first_air_date < now - timedelta(days=60): reject
+    # Accept all series permieres
+    series_premiere:
+      timeframe: 1 days
+      quality: 720p+ hdtv+
+    # Add to deluge, but don't queue to top (My_TV_Shows are more important)
+    # and put in a different location
+    set:
+      movedone: >
+        /raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+      queuetotop: no
+      label: tv-premiere
+    # This is a custom plugin, it is part of my rar-unpacking method, it changes
+    # 'movedone' based on the regexp in the key
+    content_sort:
+      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
-
-  # Task for the tv-premieres-track plugin
-  Series_Premieres_Track:
+  # If a premier was grabbed, keep on tracking it until the directory is (re)moved
+  Series-Premieres-Track:
     priority: 50
     template:
       - tv-global
-      - tv-premieres-track
+    configure_series:
+      settings:
+        target: 720p+ hdtv+
+        timeframe: 3 days
+        quality: webrip+
+      from:
+        listdir:
+          - "/raid/videos/TV Premieres/"
+    set:
+      movedone: >
+        /raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+      queuetotop: no
+      label: tv-premiere-track
+    content_sort:
+      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
 
   # This task queues all of the movies in my IMDB watchlist
-  Movie_Queue:
-    include: [ private/movie-queue.yml ] # Contains IMDB/trakt.tv username/password
-    priority: 100 # Always run before My_Movies task
+  Movie-Queue:
+    priority: 100 # Always run before My-Movies task
     template: no_global # None of the global templates make sense here
-      #auto_remove: [ accepted, rejected ] # keep my watchlist clean
     trakt_list:
-      <<: *trakt_settings
+      username: '{{ secrets.trakt.username }}'
+      password: '{{ secrets.trakt.password }}'
+      api_key: '{{ secrets.trakt.api_key }}'
       custom: Movie Queue
+    no_entries_ok: yes
     accept_all: yes
     queue_movies: yes
 
 
   # Cleans movies from the movie queue that we already have
-  Clean_Movie_Queue:
+  Clean_Movie-Queue:
     template: no_global # None of the global templates make sense here
     disable_builtins: [seen, seen_info_hash]
     disable_plugin:
@@ -478,19 +586,20 @@ tasks:
       - /raid/videos/SDMovies/
     imdb_lookup: yes
     tmdb_lookup: yes
-    rottentomatoes_lookup: yes
+    #rottentomatoes_lookup: grpnfqq4k8jye56qdwjwsxdx # My personal RT API key
+    #rottentomatoes_lookup: yes
     require_field: [movie_name, movie_year]
     movie_queue: yes
     trakt_remove:
-      username: xxxx
-      password: xxxx
-      api_key: xxxx
-      type: movies
+      username: '{{ secrets.trakt.username }}'
+      password: '{{ secrets.trakt.password }}'
+      api_key: '{{ secrets.trakt.api_key }}'
       list: Movie Queue
+
 
   # The next two tasks download the queue from the previous task effectively implementing
   # a 2 day timeframe for 1080p movies, then falls back to 720p
-  My_Movies-1080p:
+  My-Movies-1080p:
     priority: 110
     template:
       - movies-global
@@ -498,7 +607,7 @@ tasks:
     quality: 1080p+ bluray+ h264+ !mp3 !aac
 
 
-  My_Movies-720p:
+  My-Movies-720p:
     priority: 120
     template:
       - movies-global
@@ -510,7 +619,7 @@ tasks:
 
 
   # These task implement the movies-auto template
-  Auto_Movies-1080p:
+  Auto-Movies-1080p:
     priority: 130
     quality: 1080p+ bluray+ h264+ !mp3 !aac
     template:
@@ -519,7 +628,7 @@ tasks:
     set:
       label: movies-auto
 
-  Auto_Movies-720p:
+  Auto-Movies-720p:
     priority: 140
     quality: 720p+ dvdrip+ xvid+ !mp3 !aac
     template:
@@ -532,34 +641,41 @@ tasks:
 
 schedules:
 
+  #
   # Local
-  - tasks: [ 'Local_Torrents-*', 'Google_Music_Sync' ]
+  #
+  - tasks: [ 'Local-Torrents-*', 'Google-Music-Sync' ]
     interval:
-      minutes: 5
+      minutes: 15
 
   #
   # Series
   #
-  - tasks: [ 'My_TV_Shows-*', 'Series_Premieres_Track' ]
+  - tasks: [ 'My-TV-Shows-Find-Next-*' ]
     interval:
-      minutes: 30
-
-  - tasks: [ 'Series_Premieres' ]
+      hours: 2
+  - tasks: [ 'My-TV-Shows', 'Series-Premieres-Track' ]
+    interval:
+      minutes: 15
+  - tasks: [ 'My-TV-Shows-Find-Missing' ]
+    interval:
+      days: 1
+  - tasks: [ 'Series-Premieres' ]
     interval:
       hours: 2
 
   #
   # Movies
   #
-  - tasks: [ 'Movie_Queue', 'My_Movies-*' ]
+  - tasks: [ 'Movie-Queue', 'My-Movies-*' ]
     interval:
       hours: 1
 
-  - tasks: [ 'Auto_Movies-*' ]
+  - tasks: [ 'Auto-Movies-*' ]
     interval:
       hours: 2
 
-  - tasks: [ 'Clean_Movie_Queue' ]
+  - tasks: [ 'Clean_Movie-Queue' ]
     interval:
       weeks: 1
       on_day: tuesday

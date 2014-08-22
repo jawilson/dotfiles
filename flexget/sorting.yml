@@ -10,7 +10,7 @@ templates:
     # Each feed must be run manually
     manual: yes
     # Disable seen, alway process files
-    disable_builtins: [seen]
+    disable_builtins: [seen, remember_rejected]
     accept_all: yes
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
@@ -32,7 +32,7 @@ tasks:
       path: '/raid/videos/staging/tv_shows/'
     # Where to get the metadata
     thetvdb_lookup: yes
-    # This is needed to get my TVDB offset values 
+    # This is needed to get my season offset values
     include:
       - series-favorite.yml
       - series-following.yml
@@ -41,14 +41,14 @@ tasks:
       # Don't actually filter
       parse_only: yes
     # Don't attempt to move if we don't have valid metadata
-    require_field: [series_name, series_id]
+    require_field: [tvdb_series_name, series_id]
     move:
       # Folder to move to
       to: >
-        /raid/videos/TV Shows/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ tvdb_season|default(series_season) }}/{% endif %}
+        /raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       # Filename (inside of folder) to move to
       filename: >
-        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {{ tvdb_ep_id|default(series_id) }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
+        {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
       clean_source: 40
 
   Sort_Unpacked_TV_Premieres:
@@ -60,15 +60,23 @@ tasks:
     all_series:
       # Don't actually filter
       parse_only: yes
+      # parse_only still filters propers
+      propers: yes
     # Don't attempt to move if we don't have valid metadata
-    require_field: [series_name, series_id]
+    require_field: [tvdb_series_name, series_id]
+    # Troublesome series
+    series:
+      - "Youre the Worst":
+          name_regexp: ^you'?re.the.worst
+          set:
+            tvdb_id: 281776
     move:
       # Folder to move to
       to: >
-        /raid/videos/TV Premieres/{{ series_name|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ tvdb_season|default(series_season) }}/{% endif %}
+        /raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       # Filename (inside of folder) to move to
       filename: >
-        {{ series_name|replace('/', '_')|replace(':', ' -') }} - {{ tvdb_ep_id|default(series_id) }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
+        {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
       clean_source: 40
 
   # Same as above
@@ -77,7 +85,8 @@ tasks:
       path: '/raid/videos/staging/movies/'
     imdb_lookup: yes
     tmdb_lookup: yes
-    rottentomatoes_lookup: yes
+    #rottentomatoes_lookup: yes
+    proper_movies: yes
     require_field: [movie_name, movie_year]
     move:
       to: >
