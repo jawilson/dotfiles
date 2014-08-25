@@ -6,7 +6,8 @@
 # For more information, see the README.md
 #
 
-secrets: secretfile.yml # Use the secrets plugin to separately store credentials, etc
+# Use the secrets plugin to separately store credentials, etc
+secrets: secretfile.yml
 templates:
 
   global:
@@ -575,7 +576,7 @@ tasks:
 
 
   # Cleans movies from the movie queue that we already have
-  Clean_Movie-Queue:
+  Clean-Movie-Queue:
     template: no_global # None of the global templates make sense here
     disable_builtins: [seen, seen_info_hash]
     disable_plugin:

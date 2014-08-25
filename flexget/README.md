@@ -5,18 +5,11 @@ Available from: https://github.com/jawilson/dotfiles
 
 I try to keep this configuration in sync with whatever version my fork of Flexget (available at https://github.com/jawilson/Flexget) is at.
 
-For various reasons I've moved some settings into a private subfolder. The files are:
-  * ``private/global.yml``
-  * ``private/movie-queue.yml``
-  * ``private/movies-discover.yml``
-  * ``private/movies-global.yml``
-  * ``private/tv-global.yml``
-
-These files are not necessary to use this cofiguration, simply remove the ``include:`` plugin references and you should be fine. You'll also want to check for a few places that I've commented out sections that I've moved to these config files. I've also added redacted versions of the private files to reference if you'd like to do the same.
+I'm using the [secrets](http://flexget.com/wiki/Plugins/secrets) plugin to hide my private credentials for various plugns. If you want to do this as well, you will need to create a ``secretfile.yml`` file in the same directory as your ``config.yml``.
 
 ## Rar-unpacking
 
-My entire setup results in a single video file (``.mkv``, ``.mp4``, etc) in the final destination with a nice name regardless if it's packed in a rar or not.  
+My entire setup results in a single video file (``.mkv``, ``.mp4``, etc) in the final destination with a nice name regardless if it's packed in a rar or not.
 Here's the gist of how it works:
   1. Flexget accepts the torrent regardless if it's a rar-pack or not
   2. My custom ``content_sort plugin`` (available in this repository) changes the ``move_done`` value if the torrent contains a ``.rar``
@@ -27,6 +20,3 @@ Here's the gist of how it works:
   7. ``deluge_torrent_complete`` calls flexget with a completely separate config, ``sorting.yml`` (also available in this repository)
   8. The ``sorting.yml`` config checks for files in the 'staging' location from step #6 and renames and moves the files to their appropriate final location
   9. ``deluge_torrent_complete`` tells my XBMC server to update the library (scan for new files)
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jawilson/dotfiles/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
