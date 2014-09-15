@@ -587,7 +587,7 @@ tasks:
       - /raid/videos/SDMovies/
     imdb_lookup: yes
     tmdb_lookup: yes
-    #rottentomatoes_lookup: grpnfqq4k8jye56qdwjwsxdx # My personal RT API key
+    # Rotten Tomatoes is broken, possibly forever :(
     #rottentomatoes_lookup: yes
     require_field: [movie_name, movie_year]
     movie_queue: yes
