@@ -37,6 +37,7 @@ tasks:
       - series-favorite.yml
       - series-following.yml
       - series-daily.yml
+      - series-ak.yml
     all_series:
       # Don't actually filter
       parse_only: yes
@@ -50,6 +51,10 @@ tasks:
       filename: >
         {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
       clean_source: 40
+    if:
+      - movedone:
+          set:
+            path: '{{ movedone }}'
 
   Sort_Unpacked_TV_Premieres:
     # Where to get the unpacked (staged) files from

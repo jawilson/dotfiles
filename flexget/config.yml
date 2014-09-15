@@ -274,6 +274,7 @@ tasks:
       - series-favorite.yml
       - series-following.yml
       - series-daily.yml
+      - series-ak.yml
     template:
       - tv-global
     disable_builtins: [seen, seen_info_hash, retry_failed]
@@ -402,6 +403,18 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               api_key: '{{ secrets.trakt.api_key }}'
               custom: Daily TV
+      - configure_series:
+          settings:
+            target: 720p+ dvdscr+
+            timeframe: 3 days
+            quality: 480p+ webrip+
+            tracking: backfill
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: AK TV
 
 
   My-TV-Shows-Find-Next-Favorite:
@@ -441,8 +454,13 @@ tasks:
             password: '{{ secrets.trakt.password }}'
             api_key: '{{ secrets.trakt.api_key }}'
             list: Following TV
+        - trakt_emit:
+            username: '{{ secrets.trakt.username }}'
+            password: '{{ secrets.trakt.password }}'
+            api_key: '{{ secrets.trakt.api_key }}'
+            list: AK TV
       from: [filler: yes]
-    include: [ series-following.yml ]
+    include: [ series-following.yml, series-ak.yml ]
     all_series:
       target: 720p+ dvdscr+
       timeframe: 3 days
@@ -462,6 +480,7 @@ tasks:
     include:
       - series-favorite.yml
       - series-following.yml
+      - series-ak.yml
     sequence:
       - configure_series:
           settings:
@@ -491,6 +510,20 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               api_key: '{{ secrets.trakt.api_key }}'
               custom: Following TV
+      - configure_series:
+          settings:
+            target: 720p+ dvdscr+
+            timeframe: 3 days
+            quality: 480p+ webrip+
+            tracking: backfill
+            propers: no
+            upgrade: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              api_key: '{{ secrets.trakt.api_key }}'
+              custom: AK TV
 
 
   # I'm always up for new shows, but some I genres I just can't stand. This
