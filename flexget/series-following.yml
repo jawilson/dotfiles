@@ -1,5 +1,5 @@
 series:
-  - American Dad!:
+  - American Dad:
       name_regexp: ^american.dad(!)?
       season_offset: 1
       begin: S10E01
@@ -15,7 +15,7 @@ series:
   - Last Man Standing (2011):
       name_regexp: ^last.man.standing(.us)?(.2011)?
   - Last Week Tonight With John Oliver:
-      identified_by: date
+      identified_by: ep
   - "It's Always Sunny in Philadelphia":
       begin: S07E01
   - MythBusters:
