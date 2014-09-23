@@ -432,7 +432,7 @@ tasks:
             position: next
             list: Favorite TV
             aired_only:
-              timeframe: 1 day
+              timeframe: 3 days
       from: [filler: yes]
     include: [ series-favorite.yml ]
     all_series:
@@ -454,11 +454,19 @@ tasks:
             password: '{{ secrets.trakt.password }}'
             api_key: '{{ secrets.trakt.api_key }}'
             list: Following TV
+            context: collected
+            position: next
+            aired_only:
+              timeframe: 3 days
         - trakt_emit:
             username: '{{ secrets.trakt.username }}'
             password: '{{ secrets.trakt.password }}'
             api_key: '{{ secrets.trakt.api_key }}'
             list: AK TV
+            context: collected
+            position: next
+            aired_only:
+              timeframe: 3 days
       from: [filler: yes]
     include: [ series-following.yml, series-ak.yml ]
     all_series:
