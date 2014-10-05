@@ -717,7 +717,7 @@ schedules:
     interval:
       hours: 2
 
-  - tasks: [ 'Clean_Movie-Queue' ]
+  - tasks: [ 'Clean-Movie-Queue' ]
     interval:
       weeks: 1
       on_day: tuesday
