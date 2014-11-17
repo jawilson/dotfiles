@@ -697,8 +697,8 @@ schedules:
     interval:
       hours: 2
   - tasks: [ 'My-TV-Shows', 'Series-Premieres-Track' ]
-    interval:
-      minutes: 15
+    schedule:
+      minute: 3,18,33,48
   - tasks: [ 'My-TV-Shows-Find-Missing' ]
     interval:
       days: 1
@@ -720,4 +720,3 @@ schedules:
   - tasks: [ 'Clean-Movie-Queue' ]
     interval:
       weeks: 1
-      on_day: tuesday
