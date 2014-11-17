@@ -11,9 +11,6 @@ secrets: secretfile.yml
 templates:
 
   global:
-    email:
-      from: '{{ secrets.email.from }}'
-      to: '{{ secrets.email.to }}'
     if:
       - "'torrentleech' in url":
           deluge:
@@ -110,6 +107,12 @@ templates:
       - "/home/deluge/downloads/"
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
+    trakt_lookup: yes
+    pushbullet:
+      apikey: '{{ secrets.pushbullet.apikey }}'
+      title: "[Flexget] {{task}}"
+      body: "{{ tvdb_series_name|default(series_name) }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name }}{% endif %}\n{{ quality }}"
+      url: "{% if trakt_series_url is defined and trakt_season is defined and trakt_episode is defined %}{{ trakt_series_url }}/season/{{ trakt_season }}/episode/{{ trakt_episode }}{% endif %}"
     # Add accepted entries to Deluge and make sure they end up in the correct
     # folder with a nice name
     set:
@@ -192,6 +195,11 @@ templates:
       movedone: "/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }})"
       content_filename: |
         {{ imdb_name|replace('/', '_')|replace(':', ' -') }} ({{ imdb_year }}) - {{ quality }}
+    pushbullet:
+      apikey: '{{ secrets.pushbullet.apikey }}'
+      title: "[Flexget] {{task}}"
+      body: "{{ imdb_name }} ({{ imdb_year }})\n{{ quality }}"
+      url: "{% if imdb_url %}{{ imdb_url }}{% endif %}"
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
