@@ -45,7 +45,7 @@ templates:
         - \[facepalm\]: {from: title}
         - \bASAP\b: {from: title}
         - the.day.of.the.doctor                               # The following are titles that caused me issues from plugins
-    # Require at least 40 seeds of any torrent
+    # Require at least 10 seeds of any torrent
     torrent_alive:
       min_seeds: 10
       reject_for: 3 hours
