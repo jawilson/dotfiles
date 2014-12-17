@@ -48,7 +48,7 @@ templates:
     # Require at least 10 seeds of any torrent
     torrent_alive:
       min_seeds: 10
-      reject_for: 3 hours
+      reject_for: 1 day
     # Filter by filenames. Allow multiple video types and rar packs (but note if there is just a
     # single .rar file it won't be accepted)
     content_filter:
@@ -665,7 +665,7 @@ tasks:
     quality: 720p+ webdl+ xvid+ !mp3 !aac
     torrent_alive:
       min_seeds: 5
-    delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p
+    delay: 14 days # Wait 14 days for a 1080p movie before trying downloading 720p
 
 
   # These task implement the movies-auto template
@@ -686,7 +686,7 @@ tasks:
       - movies-auto
     set:
       label: movies-auto
-    delay: 7 days # Wait 7 days for a 1080p movie before trying downloading 720p
+    delay: 14 days # Wait 14 days for a 1080p movie before trying downloading 720p
 
 
 schedules:
