@@ -654,7 +654,7 @@ tasks:
     template:
       - movies-global
       - movies-queued
-    quality: 1080p+ bluray+ h264+ !mp3 !aac
+    quality: 1080p+ bluray+ h264+ truehd|dtshd|dd5.1|dts
 
 
   My-Movies-720p:
@@ -662,7 +662,7 @@ tasks:
     template:
       - movies-global
       - movies-queued
-    quality: 720p+ webdl+ xvid+ !mp3 !aac
+    quality: 720p+ webdl+ xvid+ truehd|dtshd|dd5.1|dts|ac3
     torrent_alive:
       min_seeds: 5
     delay: 14 days # Wait 14 days for a 1080p movie before trying downloading 720p
@@ -671,7 +671,7 @@ tasks:
   # These task implement the movies-auto template
   Auto-Movies-1080p:
     priority: 130
-    quality: 1080p+ bluray+ h264+ !mp3 !aac
+    quality: 1080p+ bluray+ h264+ truehd|dtshd|dd5.1|dts
     template:
       - movies-global
       - movies-auto
@@ -680,7 +680,7 @@ tasks:
 
   Auto-Movies-720p:
     priority: 140
-    quality: 720p+ dvdrip+ xvid+ !mp3 !aac
+    quality: 720p+ dvdrip+ xvid+ truehd|dtshd|dd5.1|dts|ac3
     template:
       - movies-global
       - movies-auto
