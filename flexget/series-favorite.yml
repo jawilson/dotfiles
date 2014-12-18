@@ -1,4 +1,6 @@
 series:
+  - Ascension:
+      identified_by: ep
   - "Cosmos: A Spacetime Odyssey":
       name_regexp: ^cosmos.+a.space.time.odyssey
   - Top Gear:
@@ -11,3 +13,10 @@ series:
       name_regexp: ^the.newsroom(.2012)?
   - Parks and Recreation:
       begin: S05E01
+if:
+  - "series_name == 'Ascension'":
+      manipulate:
+        - title:
+            replace:
+              regexp: 'part.(\d+)'
+              format: 'S01E0\1'
