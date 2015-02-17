@@ -57,7 +57,8 @@ log.debug("%s called with torrent_id='%s', torrent_name='%s', torrent_path='%s'.
 
 def chain():
     log.debug("Updating XBMC Library")
-    ret = subprocess.call('/usr/bin/xbmc-send --host='+XBMC_HOST+' --action="XBMC.updatelibrary(video)"', shell=True)
+    cmd = '/usr/bin/curl --data-binary \'{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}\' -H \'content-type: application/json;\' http://'+XBMC_HOST+':8080/jsonrpc'
+    ret = subprocess.call(cmd, shell=True)
     if ret != 0:
         log.warning('Update XBMC command returned non-zero value %d.' % ret)
     sys.exit(0)
