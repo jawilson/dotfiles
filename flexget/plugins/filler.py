@@ -25,7 +25,7 @@ class Filler(object):
     def on_task_output(self, task, config):
         pass
 
-    def search(self, entry, config=None):
+    def search(self, task, entry, config):
         pass
 
 @event('plugin.register')

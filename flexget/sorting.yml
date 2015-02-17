@@ -10,7 +10,7 @@ templates:
     # Each feed must be run manually
     manual: yes
     # Disable seen, alway process files
-    disable_builtins: [seen, remember_rejected, retry_failed]
+    disable: [seen, remember_rejected, retry_failed]
     accept_all: yes
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
@@ -23,7 +23,7 @@ templates:
       reject:
         - \bsample\b: {from: title}
     content_size:
-      min: 60
+      min: 55
 
 tasks:
   Sort_Unpacked_TV_Shows:
