@@ -1,6 +1,11 @@
 series:
   - Pretty Little Liars:
       begin: S05E01
+      episode_offset: 1
+      set:
+        movedone: >
+          /raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+  - The Blacklist:
       set:
         movedone: >
           /raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
