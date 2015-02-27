@@ -257,11 +257,11 @@ templates:
       what:
         - emit_movie_queue: yes
       from: [ filler: yes ] # Always produce entries
-    trakt_remove: # Remove from trakt.tv list when we accept an item
+    trakt_remove: # Remove from Trakt list when we accept an item
       username: '{{ secrets.trakt.username }}'
       password: '{{ secrets.trakt.password }}'
       list: Movie Queue
-    trakt_add: # Add accepted item to trakt.tv queue
+    trakt_add: # Add accepted item to my Trakt watchlist
       username: '{{ secrets.trakt.username }}'
       password: '{{ secrets.trakt.password }}'
       list: watchlist
@@ -610,22 +610,9 @@ tasks:
       '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
 
 
-  # This task queues all of the movies in my IMDB watchlist
-  Movie-Queue:
-    priority: 100 # Always run before My-Movies task
-    template: no_global # None of the global templates make sense here
-    trakt_list:
-      username: '{{ secrets.trakt.username }}'
-      password: '{{ secrets.trakt.password }}'
-      list: Movie Queue
-      type: movies
-    no_entries_ok: yes
-    accept_all: yes
-    movie_queue: add
-
-
-  # Cleans movies from the movie queue that we already have
+  # Cleans movies from the movie queue (and Trakt) that we already have
   Clean-Movie-Queue:
+    priority: 90
     template: no_global # None of the global templates make sense here
     disable:
       - seen
@@ -645,6 +632,20 @@ tasks:
       username: '{{ secrets.trakt.username }}'
       password: '{{ secrets.trakt.password }}'
       list: Movie Queue
+
+
+  # This task queues all of the movies in my Trakt "Movie Queue" playlist
+  Movie-Queue:
+    priority: 100 # Always run before My-Movies task
+    template: no_global # None of the global templates make sense here
+    trakt_list:
+      username: '{{ secrets.trakt.username }}'
+      password: '{{ secrets.trakt.password }}'
+      list: Movie Queue
+      type: movies
+    no_entries_ok: yes
+    accept_all: yes
+    movie_queue: add
 
 
   # The next two tasks download the queue from the previous task effectively implementing
