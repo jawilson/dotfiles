@@ -366,6 +366,24 @@ tasks:
         for_accepted: '"/home/deluge/gmusicapi-scripts/gmsync.py" -q -l -m "{{location}}" && rm "{{location}}"'
 
 
+  Sync-TV-Shows:
+    manual: yes
+    template: no_global # None of the global templates make sense here
+    find:
+      path:
+        - /raid/videos/TV Shows/
+        - /raid/videos/AK Shows/
+      regexp: '.*\.(avi|mkv|mp4|mpg)'
+      recursive: yes
+    regexp:
+      reject:
+        - \bsample\b: {from: title}
+    disable: builtins
+    all_series:
+      tracking: no
+    exec: echo "Found {{title}}" >> /dev/null
+
+
   # All of the TV-related tasks pull in the tv-global template, this gives
   # all of the necessary rss sources and a few extra configs
 
