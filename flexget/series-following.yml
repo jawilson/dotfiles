@@ -1,11 +1,11 @@
 series:
-  - American Dad:
+  - "American Dad! (2005)":
       name_regexp: ^american.dad(!)?
       season_offset: 1
       begin: S10E01
       set:
         series_name: "American Dad"
-  - Aqua TV Show Show:
+  - Aqua Teen Hunger Force (2000):
       name_regexp: ^aqua.((teen.hunger.force)|(unit.patrol.squad.1)|(something.you.know.whatever)|(tv.show.show))
       set:
         series_name: "Aqua Teen Hunger Force"
@@ -14,19 +14,20 @@ series:
       name_regexp: ^archer(.2009)?
   - Last Man Standing (2011):
       name_regexp: ^last.man.standing(.us)?(.2011)?
-  - Last Week Tonight With John Oliver:
+  - Last Week Tonight with John Oliver (2014):
       identified_by: ep
-  - "It's Always Sunny in Philadelphia":
+  - "It's Always Sunny in Philadelphia (2005)":
       begin: S07E01
-  - MythBusters:
+  - MythBusters (2003):
       begin: S11E01
-  - South Park:
+  - South Park (1997):
       begin: S15E01
-  - "The Venture Bros.":
+  - "The Venture Bros. (2004)":
       name_regexp: ^the.venture.bro(ther)?s\.?
-  - The Simpsons:
+  - The Simpsons (1989):
       begin: S23E01
-  - Two and a Half Men:
+      alternate_name: The Simpsons
+  - Two and a Half Men (2003):
       begin: S09E01
 if:
   - "series_name == 'American Dad'":

@@ -381,8 +381,48 @@ tasks:
       reject:
         - \bsample\b: {from: title}
     disable: builtins
-    all_series:
-      tracking: no
+    include:
+      - series-favorite.yml
+      - series-following.yml
+      - series-daily.yml
+      - series-ak.yml
+    sequence:
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: Favorite TV
+              type: shows
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: Following TV
+              type: shows
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: Daily TV
+              type: shows
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: AK TV
+              type: shows
     exec: echo "Found {{title}}" >> /dev/null
 
 

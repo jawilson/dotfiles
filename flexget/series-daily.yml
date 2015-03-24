@@ -1,5 +1,6 @@
 series:
-  - The Daily Show with Jon Stewart:
+  - The Daily Show with Jon Stewart (1996):
       name_regexp: ^the.daily.show(.with.jon.stewart)?
-  - The Nightly Show with Larry Wilmore:
+  - The Nightly Show with Larry Wilmore (2015):
       name_regexp: ^the.nightly.show(.with.larry.wilmore)?
+      identified_by: date

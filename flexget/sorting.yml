@@ -5,6 +5,9 @@
 # This config file is not a standard Flexget config, it is used
 # to sort my unrared movies and TV shows into their proper place
 #
+
+# Use the secrets plugin to separately store credentials, etc
+secrets: secretfile.yml
 templates:
   global:
     # Each feed must be run manually
@@ -38,6 +41,43 @@ tasks:
       - series-following.yml
       - series-daily.yml
       - series-ak.yml
+    sequence:
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: Favorite TV
+              type: shows
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: Following TV
+              type: shows
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: Daily TV
+              type: shows
+      - configure_series:
+          settings:
+            tracking: no
+          from:
+            trakt_list:
+              username: '{{ secrets.trakt.username }}'
+              password: '{{ secrets.trakt.password }}'
+              list: AK TV
+              type: shows
     all_series:
       # Don't actually filter
       parse_only: yes
