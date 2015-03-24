@@ -81,6 +81,7 @@ templates:
     # This is a TON of feeds, you probably don't need so many, but why not?
     inputs:
       - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
+      - rss: 'https://kickass.to/usearch/verified%3A1%20category%3Atv/?rss=1'   # Kickass (TV)
     #  - rss: { url: 'http://www.torlock.com/television/rss.xml', silent: yes }  # TorLock (TV)
     #  - rss: { url: 'http://torrentz.eu/feed_verified?q=tv', silent: yes }      # Torrentz (Verified only, TV)
     #  - rss: { url: 'http://ezrss.it/feed/', silent: yes }                      # EZRSS
@@ -140,11 +141,11 @@ templates:
             password: '{{ secrets.torrentleech.password }}'
             category: ['Episodes HD', 'Episodes']
         - flexget_archive: [tv]
-        #- publichd:
-        #    category: ['HDTV', 'SDTV', 'TV WEB-DL']
-        #- kat:
-        #    category: tv
-        #    verified: yes
+        - publichd:
+            category: ['HDTV', 'SDTV', 'TV WEB-DL']
+        - kat:
+            category: tv
+            verified: yes
 
   # This template is a "global" template for all movie-related tasks.
   # We keep all of the RSS feeds that list movie-related torrents here
@@ -152,6 +153,7 @@ templates:
   movies-global:
     inputs:
       - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
+      - rss: 'https://kickass.to/usearch/verified%3A1%20category%3Amovies/?rss=1' # Kickass (Movies)
     #  - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
     #  - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
     #  - rss: { url: 'https://rss.thepiratebay.se/207', silent: yes }           # The Pirate Bay (Highres - Movies)
@@ -222,9 +224,9 @@ templates:
         - kat:
             category: movies
             verified: yes
-        #- torrentz:
-        #    reputation: verified
-        #    extra_terms: "movie* hd"
+        - torrentz:
+            reputation: verified
+            extra_terms: "movie* hd"
         #- piratebay:
         #    category: "highres movies"
         #    sort_by: seeds
