@@ -501,8 +501,8 @@ tasks:
             context: collected
             position: next
             list: Favorite TV
-            aired_only:
-              timeframe: 3 days
+            #aired_only:
+            #  timeframe: 3 days
       from: [filler: yes]
     include: [ series-favorite.yml ]
     all_series:
@@ -525,16 +525,16 @@ tasks:
             list: Following TV
             context: collected
             position: next
-            aired_only:
-              timeframe: 3 days
+            #aired_only:
+            #  timeframe: 3 days
         - trakt_emit:
             username: '{{ secrets.trakt.username }}'
             password: '{{ secrets.trakt.password }}'
             list: AK TV
             context: collected
             position: next
-            aired_only:
-              timeframe: 3 days
+            #aired_only:
+            #  timeframe: 3 days
       from: [filler: yes]
     include: [ series-following.yml, series-ak.yml ]
     all_series:
@@ -547,7 +547,7 @@ tasks:
     template:
       - tv-global
       - tv-shows-find
-    disable: inputs
+    disable: inputs, est_movies
     discover:
       what:
         - emit_series:
