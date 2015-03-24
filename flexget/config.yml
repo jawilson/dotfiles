@@ -375,7 +375,7 @@ tasks:
       path:
         - /raid/videos/TV Shows/
         - /raid/videos/AK Shows/
-      regexp: '.*\.(avi|mkv|mp4|mpg)'
+      regexp: '.*\.(avi|mkv|mp4|mpg|m4v)$'
       recursive: yes
     regexp:
       reject:

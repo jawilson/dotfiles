@@ -17,7 +17,7 @@ templates:
     find:
       path: '/tmp'
       # We are looking for any video files that were extracted
-      regexp: '.*\.(avi|mkv|mpg|mp4)$'
+      regexp: '.*\.(avi|mkv|mpg|mp4|m4v)$'
       recursive: yes
     regexp:
       reject:
