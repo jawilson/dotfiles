@@ -465,7 +465,7 @@ tasks:
       - configure_series:
           settings:
             target: webrip+
-            timeframe: 12 hours
+            timeframe: 4 hours
             quality: preair+
             tracking: backfill
           from:
