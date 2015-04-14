@@ -19,3 +19,5 @@
     tarball = ![ "$3" ] && NAME=$3 || NAME=$(basename $(git rev-parse --show-toplevel)) && [ "$2" ] && REF=$2 || REF=HEAD && OUTPUT=$1/$NAME-$(git describe $REF | sed 's,^v,,').tar.gz && git archive --prefix=$NAME/ --output=$OUTPUT $REF^{tree} && readlink -m $OUTPUT && true
 [credential]
 	helper = cache
+[push]
+	default = simple
