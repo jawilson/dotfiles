@@ -22,3 +22,6 @@ alias "ack"="ack-grep"
 
 # git
 alias gdiff='git diff --no-index'
+
+# screen
+alias screen='rm -f $HOME/.ssh-auth-sock; ln -sf $SSH_AUTH_SOCK $HOME/.ssh-auth-sock; env SSH_AUTH_SOCK=$HOME/.ssh-auth-sock screen'
