@@ -14,15 +14,19 @@ templates:
     if:
       - "'torrentleech' in url":
           deluge:
+            username: '{{ secrets.deluge.username }}'
+            password: '{{ secrets.deluge.password }}'
             main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
             port: 58847
       - "'torrentleech' not in url":
           deluge:
+            username: '{{ secrets.deluge.username }}'
+            password: '{{ secrets.deluge.password }}'
             main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
             port: 58846
     # Make there's 50GB free before adding more downloads
     free_space:
-      path: /raid
+      path: /media/raid
       space: 50000
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
@@ -101,11 +105,11 @@ templates:
     # Prevent from downloading shows that were aquired manually
     # or are currently downloading
     exists_series:
-      - "/raid/videos/TV Shows/"
-      - "/raid/videos/TV Premieres/"
-      - "/raid/videos/staging/tv_shows/"
-      - "/raid/videos/staging/tv_premieres/"
-      - "/home/deluge/downloads/"
+      - "/media/raid/videos/TV Shows/"
+      - "/media/raid/videos/TV Premieres/"
+      - "/media/raid/videos/staging/tv_shows/"
+      - "/media/raid/videos/staging/tv_premieres/"
+      - "/media/raid/deluge/downloads/"
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
@@ -119,7 +123,7 @@ templates:
     set:
       queuetotop: yes
       movedone: >
-        /raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+        /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       # Rename the "content file" to something nice
       content_filename: >
         {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}
@@ -127,7 +131,7 @@ templates:
     # This is a custom plugin, it is part of my rar-unpacking method,
     # it changes 'movedone' based on the regexp in the key
     content_sort:
-      '*.rar': '/home/deluge/downloads/completed/tv_shows/'
+      '*.rar': '/media/raid/deluge/downloads/completed/tv_shows/'
 
 
   tv-shows-find:
@@ -186,16 +190,16 @@ templates:
     seen_movies: strict # Don't download movies we've already seen
     # Check for already downloaded or currently downloading movies
     exists_movie:
-      - /raid/videos/Movies/
-      - /raid/videos/SDMovies/
-      - /raid/videos/staging/movies
-      - /home/deluge/downloads/
+      - /media/raid/videos/Movies/
+      - /media/raid/videos/SDMovies/
+      - /media/raid/videos/staging/movies
+      - /media/raid/deluge/downloads/
     # Download propers, since they will have the same content_filename,
     # lower/non-propers will be overwritten
     proper_movies: yes
     set:
       # Give folders/files nice names
-      movedone: "/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
+      movedone: "/media/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
       content_filename: |
         {{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}
     pushbullet:
@@ -206,7 +210,7 @@ templates:
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
-      '*.rar': '/home/deluge/downloads/completed/movies/'
+      '*.rar': '/media/raid/deluge/downloads/completed/movies/'
 
 
   # Keep all the discover settings in one place
@@ -302,7 +306,7 @@ tasks:
     plugin_priority:
       exec: 0
     find:
-      path: '/home/atlanta800/Dropbox/torrents/TV'
+      path: '/home/jawilson/Dropbox/torrents/TV'
       regexp: '.*\.torrent$'
       recursive: yes
     no_entries_ok: yes
@@ -335,7 +339,7 @@ tasks:
     plugin_priority:
       exec: 0
     find:
-      path: '/home/atlanta800/Dropbox/torrents/Movies'
+      path: '/home/jawilson/Dropbox/torrents/Movies'
       regexp: '.*\.torrent$'
       recursive: yes
     no_entries_ok: yes
@@ -358,14 +362,14 @@ tasks:
     disable: [seen, seen_info_hash]
     template: no_global # None of the global templates make sense here
     find:
-      path: '/home/atlanta800/Dropbox/Media/Music'
+      path: '/home/jawilson/Dropbox/Media/Music'
       regexp: '.*\.(mp3|flac|m4a|ogg)$'
       recursive: yes
     no_entries_ok: yes
     accept_all: yes
     exec:
       on_output:
-        for_accepted: '"/home/deluge/gmusicapi-scripts/gmsync.py" -q -l -m "{{location}}" && rm "{{location}}"'
+        for_accepted: '"/media/jawilson/src/gmusicapi-scripts/gmsync.py" -q -l -m "{{location}}" && rm "{{location}}"'
 
 
   Sync-TV-Shows:
@@ -373,8 +377,8 @@ tasks:
     template: no_global # None of the global templates make sense here
     find:
       path:
-        - /raid/videos/TV Shows/
-        - /raid/videos/AK Shows/
+        - /media/raid/videos/TV Shows/
+        - /media/raid/videos/AK Shows/
       regexp: '.*\.(avi|mkv|mp4|mpg|m4v)$'
       recursive: yes
     regexp:
@@ -640,13 +644,13 @@ tasks:
     # and put in a different location
     set:
       movedone: >
-        /raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+        /media/raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       queuetotop: no
       label: tv-premiere
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
-      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
+      '*.rar': '/media/raid/deluge/downloads/completed/tv_premieres/'
 
   # If a premier was grabbed, keep on tracking it until the directory is (re)moved
   Series-Premieres-Track:
@@ -660,14 +664,14 @@ tasks:
         quality: webrip+
       from:
         listdir:
-          - "/raid/videos/TV Premieres/"
+          - "/media/raid/videos/TV Premieres/"
     set:
       movedone: >
-        /raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+        /media/raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       queuetotop: no
       label: tv-premiere-track
     content_sort:
-      '*.rar': '/home/deluge/downloads/completed/tv_premieres/'
+      '*.rar': '/media/raid/deluge/downloads/completed/tv_premieres/'
 
 
   # Cleans movies from the movie queue (and Trakt) that we already have
@@ -680,8 +684,8 @@ tasks:
       - seen_movies
     accept_all: yes
     listdir:
-      - /raid/videos/Movies/
-      - /raid/videos/SDMovies/
+      - /media/raid/videos/Movies/
+      - /media/raid/videos/SDMovies/
     imdb_lookup: yes
     tmdb_lookup: yes
     # Rotten Tomatoes is broken, possibly forever :(
