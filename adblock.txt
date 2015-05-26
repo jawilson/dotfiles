@@ -14,10 +14,17 @@ trakt.tv##DIV[id="large-banner-ad"]
 trakt.tv##DIV[id="small-banner-ad"]
 trakt.tv##DIV[id="large-banner-bottom-ad"]
 trakt.tv##DIV[id="small-banner-bottom-ad"]
+trakt.tv##DIV[id="huckster-desktop-wrapper"]
+trakt.tv##A[href="/vip"]
 
 www.youtube.com##DIV[id="alerts"]
 www.youtube.com##DIV[id="ticker"][class="ytg-base remind-identity"]
 www.youtube.com##DIV[id="confirmBox"][class="yt-alert yt-alert-default yt-alert-warn  "]
+
+wwws.mint.com##A[class="accounts-adv"]
+wwws.mint.com##TR[id="transaction-deal-row"][class="deals"]
+wwws.mint.com##DIV[id="advice-top-container"]
+wwws.mint.com##DIV[class="replace-with-iframe-below-header"]
 
 www.cplusplus.com##DIV[class="C_DonateBox"]
 www.cplusplus.com##DIV[class="C_DonateBox"]
