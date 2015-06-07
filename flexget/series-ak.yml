@@ -1,7 +1,6 @@
 series:
   - Pretty Little Liars (2010):
       begin: S05E01
-      episode_offset: 1
       set:
         tvdb_id: 146711
         movedone: >
