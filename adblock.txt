@@ -5,9 +5,6 @@
 
 @@|http://*.cbssports.com
 
-www.google.com##DIV[class="ads-adcard"]
-www.google.com##DIV[class="ads-card ads-card-v2 cards-card-hideable-smooth-animation cards-collapsed"]
-
 trakt.tv##DIV[id="large-banner-ad"]
 trakt.tv##DIV[id="small-banner-ad"]
 trakt.tv##DIV[id="large-banner-bottom-ad"]
