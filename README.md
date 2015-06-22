@@ -7,5 +7,5 @@ These are config files to set up a system the way I like it.
 
     git clone git://github.com/jawilson/dotfiles ~/.dotfiles
     cd ~/.dotfiles
-    git submodules update --init
+    git submodule update --init
     python tools/dotfiles/bin/dotfiles -R $PWD -s
