@@ -26,3 +26,6 @@
 	path = vim/bundle/unite.vim
 	url = https://github.com/Shougo/unite.vim.git
 	branch = master
+[submodule "tools/dotfiles"]
+	path = tools/dotfiles
+	url = https://github.com/jbernard/dotfiles

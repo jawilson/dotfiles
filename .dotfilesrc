@@ -1,0 +1,15 @@
+[dotfiles]
+ignore = [
+    '.git',
+    '.gitignore',
+    '.gitmodules',
+    'README.md',
+    'LICENSE',
+    'SwitchyRules.txt',
+    'adblock.txt',
+    '*.log*',
+    '*.sqlite',
+    '*.swp',
+    '*~']
+packages = [
+    'flexget']
