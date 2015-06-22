@@ -189,7 +189,6 @@ templates:
       min: 1000
     imdb_lookup: yes
     trakt_lookup: yes
-    seen_movies: strict # Don't download movies we've already seen
     # Check for already downloaded or currently downloading movies
     exists_movie:
       - /media/raid/videos/Movies/
@@ -226,8 +225,8 @@ templates:
             password: '{{ secrets.torrentleech.password }}'
             category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
         - flexget_archive: [movies]
-        #- publichd:
-        #    category: ['BluRay 1080p', 'BluRay 720p']
+        - publichd:
+            category: ['BluRay 1080p', 'BluRay 720p']
         - kat:
             category: movies
             verified: yes
