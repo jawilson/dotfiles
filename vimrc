@@ -95,6 +95,9 @@ cnoremap <c-d> <ESC>
 " Toggle line numbers
 nnoremap <leader>n :setlocal number!<cr>
 
+" Enable tagbar
+nnoremap <leader>t :TagbarToggle<cr>
+
 " Tabs
 nnoremap <leader>( :tabprev<cr>
 nnoremap <leader>) :tabnext<cr>
