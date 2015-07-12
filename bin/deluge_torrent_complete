@@ -58,11 +58,6 @@ log.debug("%s called with torrent_id='%s', torrent_name='%s', torrent_path='%s'.
     torrent_id, torrent_name, torrent_path))
 
 def chain():
-    log.debug("Updating XBMC Library")
-    cmd = '/usr/bin/curl --data-binary \'{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}\' -H \'content-type: application/json;\' http://'+XBMC_HOST+':8080/jsonrpc'
-    ret = subprocess.call(cmd, shell=True)
-    if ret != 0:
-        log.warning('Update XBMC command returned non-zero value %d.' % ret)
     log.debug("Updating Plex Library")
     cmd = '/usr/bin/curl http://'+PLEX_HOST+':32400/library/sections/2/refresh?X-Plex-Token='+X_PLEX_TOKEN
     ret = subprocess.call(cmd, shell=True)
