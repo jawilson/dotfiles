@@ -87,7 +87,7 @@ templates:
     # This is a TON of feeds, you probably don't need so many, but why not?
     inputs:
       - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
-      - rss: 'https://kickass.to/usearch/verified%3A1%20category%3Atv/?rss=1'   # Kickass (TV)
+      - rss: 'https://kat.cr/usearch/verified%3A1%20category%3Atv/?rss=1'   # Kickass (TV)
     #  - rss: { url: 'http://www.torlock.com/television/rss.xml', silent: yes }  # TorLock (TV)
     #  - rss: { url: 'http://torrentz.eu/feed_verified?q=tv', silent: yes }      # Torrentz (Verified only, TV)
     #  - rss: { url: 'http://ezrss.it/feed/', silent: yes }                      # EZRSS
@@ -115,6 +115,7 @@ templates:
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
+    require_field: [series_name, series_id]
     pushbullet:
       apikey: '{{ secrets.pushbullet.apikey }}'
       title: "[Flexget] {{task}}"
@@ -159,7 +160,7 @@ templates:
   movies-global:
     inputs:
       - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
-      - rss: 'https://kickass.to/usearch/verified%3A1%20category%3Amovies/?rss=1' # Kickass (Movies)
+      - rss: 'https://kat.cr/usearch/verified%3A1%20category%3Amovies/?rss=1' # Kickass (Movies)
     #  - rss: { url: 'http://www.torlock.com/movies/rss.xml', silent: yes }     # TorLock (Movies)
     #  - rss: { url: 'http://torrentz.eu/feed_verified?q=movies', silent: yes } # Torrentz (Verified Movies)
     #  - rss: { url: 'https://rss.thepiratebay.se/207', silent: yes }           # The Pirate Bay (Highres - Movies)
@@ -435,7 +436,7 @@ tasks:
   # All of the TV-related tasks pull in the tv-global template, this gives
   # all of the necessary rss sources and a few extra configs
 
-  # There are 3 My_TV Shows tasks, the first, tries to get the most wanted qualities
+  # There are 3 My-TV Shows tasks, the first, tries to get the most wanted qualities
   My-TV-Shows:
     priority: 10
     include:
@@ -507,7 +508,7 @@ tasks:
             context: collected
             position: next
             list: Favorite TV
-            aired_timeframe: 3 days
+            aired_timeframe: 14 days
       from: [filler: yes]
     include: [ series-favorite.yml ]
     all_series:
@@ -530,14 +531,14 @@ tasks:
             list: Following TV
             context: collected
             position: next
-            aired_timeframe: 3 days
+            aired_timeframe: 14 days
         - trakt_emit:
             username: '{{ secrets.trakt.username }}'
             password: '{{ secrets.trakt.password }}'
             list: AK TV
             context: collected
             position: next
-            aired_timeframe: 3 days
+            aired_timeframe: 14 days
       from: [filler: yes]
     include: [ series-following.yml, series-ak.yml ]
     all_series:
@@ -771,9 +772,9 @@ schedules:
   - tasks: [ 'My-TV-Shows', 'Series-Premieres-Track' ]
     schedule:
       minute: 3,18,33,48
-  - tasks: [ 'My-TV-Shows-Find-Missing' ]
-    interval:
-      days: 1
+  #- tasks: [ 'My-TV-Shows-Find-Missing' ]
+  #  interval:
+  #    days: 3
   - tasks: [ 'Series-Premieres' ]
     interval:
       hours: 2
@@ -785,9 +786,9 @@ schedules:
     interval:
       hours: 1
 
-  - tasks: [ 'Auto-Movies-*' ]
-    interval:
-      hours: 2
+  #- tasks: [ 'Auto-Movies-*' ]
+  #  interval:
+  #    hours: 2
 
   - tasks: [ 'Clean-Movie-Queue' ]
     interval:

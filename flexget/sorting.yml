@@ -26,7 +26,7 @@ templates:
       reject:
         - \bsample\b: {from: title}
     content_size:
-      min: 55
+      min: 52
 
 tasks:
   Sort_Unpacked_TV_Shows:
