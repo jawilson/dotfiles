@@ -193,7 +193,6 @@ templates:
     # Check for already downloaded or currently downloading movies
     exists_movie:
       - /media/raid/videos/Movies/
-      - /media/raid/videos/SDMovies/
       - /media/raid/videos/staging/movies
       - /media/raid/deluge/downloads/
     # Download propers, since they will have the same content_filename,
@@ -685,7 +684,6 @@ tasks:
     accept_all: yes
     listdir:
       - /media/raid/videos/Movies/
-      - /media/raid/videos/SDMovies/
     imdb_lookup: yes
     tmdb_lookup: yes
     # Rotten Tomatoes is broken, possibly forever :(
