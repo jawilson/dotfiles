@@ -51,6 +51,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Favorite TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             tracking: no
@@ -60,6 +61,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Following TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             tracking: no
@@ -69,6 +71,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Daily TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             tracking: no
@@ -78,6 +81,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: AK TV
               type: shows
+              strip_dates: yes
     all_series:
       # Don't actually filter
       parse_only: yes

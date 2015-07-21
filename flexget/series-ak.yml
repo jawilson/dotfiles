@@ -1,11 +1,12 @@
 series:
-  - Pretty Little Liars (2010):
+  - Pretty Little Liars:
       begin: S05E01
       set:
         tvdb_id: 146711
         movedone: >
           /raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
-  - The Blacklist (2013):
+  - The Blacklist:
+      begin: S02E01
       set:
         tvdb_id: 266189
         movedone: >

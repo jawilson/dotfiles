@@ -1,7 +1,6 @@
 series:
-  - Aqua Teen Hunger Force (2000):
+  - Aqua Teen Hunger Force:
       alternate_name:
-          - Aqua Teen Hunger Force
           - Aqua Unit Patrol Squad 1
           - Aqua Something You Know Whatever
           - Aqua TV Show Show
@@ -13,21 +12,22 @@ series:
   - Archer (2009):
       name_regexp: ^archer(.2009)?
   - Last Man Standing (2011):
+      alternate_name:
+          - Last Man Standing (US)
       name_regexp: ^last.man.standing(.us)?(.2011)?
-  - Last Week Tonight with John Oliver (2014):
+  - Last Week Tonight with John Oliver:
       identified_by: ep
       set:
         tvdb_id: 278518
-  - "It's Always Sunny in Philadelphia (2005)":
+  - "It's Always Sunny in Philadelphia":
       begin: S07E01
-  - MythBusters (2003):
+  - MythBusters:
       begin: S11E01
-  - South Park (1997):
+  - South Park:
       begin: S15E01
-  - "The Venture Bros. (2004)":
+  - "The Venture Bros.":
       name_regexp: ^the.venture.bro(ther)?s\.?
-  - The Simpsons (1989):
+  - The Simpsons:
       begin: S23E01
-      alternate_name: The Simpsons
-  - Two and a Half Men (2003):
-      begin: S09E01
+  - Tosh.0:
+      begin: S03E07

@@ -1,20 +1,20 @@
 series:
-  - Ascension (2014):
+  - Ascension:
       identified_by: ep
-  - "Cosmos: A Spacetime Odyssey (2014)":
+  - "Cosmos: A Spacetime Odyssey":
       name_regexp: ^cosmos.+a.space.time.odyssey
-  - Top Gear (2002):
+  - Top Gear:
       # Do not, under any circumstances, download the US version, it sucks
       name_regexp: ^top.gear(?!.us)
       begin: S17E06
-  - "Marvel's Agents of S.H.I.E.L.D. (2013)":
+  - "Marvel's Agents of S.H.I.E.L.D.":
       name_regexp: ^marvel(')?s.agents.of.(s.h.i.e.l.d.?|shield)
   - The Newsroom (2012):
       name_regexp: ^the.newsroom(.2012)?
-  - Parks and Recreation (2009):
+  - Parks and Recreation:
       begin: S05E01
 if:
-  - "series_name == 'Ascension (2014)'":
+  - "series_name == 'Ascension'":
       manipulate:
         - title:
             replace:

@@ -403,6 +403,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Favorite TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             tracking: no
@@ -412,6 +413,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Following TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             tracking: no
@@ -421,6 +423,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Daily TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             tracking: no
@@ -430,6 +433,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: AK TV
               type: shows
+              strip_dates: yes
     exec: echo "Found {{ series_name }} - {{ series_id }} ({{ location }})" >> /dev/null
 
 
@@ -457,6 +461,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Favorite TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             target: 720p+ dvdscr+
@@ -469,6 +474,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Following TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             target: webrip+
@@ -481,6 +487,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Daily TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             target: 720p+ dvdscr+
@@ -493,6 +500,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: AK TV
               type: shows
+              strip_dates: yes
 
 
   My-TV-Shows-Find-Next-Favorite:
@@ -547,6 +555,7 @@ tasks:
       quality: 480p+ webrip+
       tracking: backfill
 
+
   My-TV-Shows-Find-Missing:
     template:
       - tv-global
@@ -576,6 +585,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Favorite TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             target: 720p+ dvdscr+
@@ -590,6 +600,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: Following TV
               type: shows
+              strip_dates: yes
       - configure_series:
           settings:
             target: 720p+ dvdscr+
@@ -604,6 +615,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: AK TV
               type: shows
+              strip_dates: yes
 
 
   # I'm always up for new shows, but some I genres I just can't stand. This
