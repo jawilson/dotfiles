@@ -37,6 +37,7 @@ templates:
     regexp:
       reject:
         - (s|d)ub(s|bed)?\b: {from: title}                    # Block any subbed/dubbed/etc videos
+        - \bspanish\b: {from: title}                          # Spanish releases kept cropping up
         - \b(duo|tri|quadri|tetra|penta)logy\b: {from: title} # Block series, only accept one at a time
         - \b3-?D\b: {from: title}                             # I don't have any 3D displays
         - \btrailer\b: {from: title}                          # I've gotten a few trailers that matched as movies. VERY annoying
@@ -429,7 +430,7 @@ tasks:
               password: '{{ secrets.trakt.password }}'
               list: AK TV
               type: shows
-    exec: echo "Found {{title}}" >> /dev/null
+    exec: echo "Found {{ series_name }} - {{ series_id }} ({{ location }})" >> /dev/null
 
 
   # All of the TV-related tasks pull in the tv-global template, this gives
