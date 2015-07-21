@@ -783,9 +783,9 @@ schedules:
   - tasks: [ 'My-TV-Shows', 'Series-Premieres-Track' ]
     schedule:
       minute: 3,18,33,48
-  #- tasks: [ 'My-TV-Shows-Find-Missing' ]
-  #  interval:
-  #    days: 3
+  - tasks: [ 'My-TV-Shows-Find-Missing' ]
+    interval:
+      days: 3
   - tasks: [ 'Series-Premieres' ]
     interval:
       hours: 2
