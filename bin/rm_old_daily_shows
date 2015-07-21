@@ -1,10 +1,23 @@
 #/bin/sh
 
-# This script deletes any Daily Show episodes that are over 21 days old.
+# This script deletes old episodes of series that airs (somewhat) daily
 
-the_daily_show="/raid/videos/TV Shows/The Daily Show with Jon Stewart/"
-the_colbert_report="/raid/videos/TV Shows/The Colbert Report/"
+TV_ROOT="/media/raid/videos/TV Shows"
 
-find "$the_daily_show" -mindepth 1 -maxdepth 1 -not -name ".actors" -not -name *.tbn -not -name *.jpg -not -name tvshow.nfo -mtime +31 -exec rm -rf "{}" \;
-find "$the_colbert_report" -mindepth 1 -maxdepth 1 -not -name ".actors" -not -name *.tbn -not -name *.jpg -not -name tvshow.nfo -mtime +14 -exec rm -rf "{}" \;
+daily_show="$TV_ROOT/The Daily Show with Jon Stewart/"
+nightly_show="$TV_ROOT/The Nightly Show with Larry Wilmore/"
+late_show="$TV_ROOT/Late Show with Stephen Colbert/"
+
+delete_old () {
+    if [ -d "$1" ]
+    then
+        find "$1" -mindepth 1 -maxdepth 1 -not -name ".actors" -not -name *.tbn -not -name *.jpg -not -name tvshow.nfo -mtime +$2 -exec rm -rf "{}" \;
+    fi
+}
+
+#find "$the_daily_show" -mindepth 1 -maxdepth 1 -not -name ".actors" -not -name *.tbn -not -name *.jpg -not -name tvshow.nfo -mtime +31 -exec rm -rf "{}" \;
+
+delete_old "$daily_show" 31
+delete_old "$nightly_show" 31
+delete_old "$late_show" 31
 
