@@ -355,26 +355,6 @@ tasks:
       label: local-movies
 
 
-  # Adds music from a Dropbox folder to my Google Music library
-  # Depends on a great script available here: https://github.com/thebigmunch/gmusicapi-scripts
-  # Use a local folder (synced with Dropbox) as a source
-  # I can drop music in this folder and they are synced with Dropbox, always
-  # accepted, then the original file is deleted
-  Google-Music-Sync:
-    priority: 3
-    disable: [seen, seen_info_hash]
-    template: no_global # None of the global templates make sense here
-    find:
-      path: '/home/jawilson/Dropbox/Media/Music'
-      regexp: '.*\.(mp3|flac|m4a|ogg)$'
-      recursive: yes
-    no_entries_ok: yes
-    accept_all: yes
-    exec:
-      on_output:
-        for_accepted: '"/media/jawilson/src/gmusicapi-scripts/gmsync.py" -q -l -m "{{location}}" && rm "{{location}}"'
-
-
   Sync-TV-Shows:
     manual: yes
     template: no_global # None of the global templates make sense here
@@ -770,7 +750,7 @@ schedules:
   #
   # Local
   #
-  - tasks: [ 'Local-Torrents-*', 'Google-Music-Sync' ]
+  - tasks: [ 'Local-Torrents-*' ]
     interval:
       minutes: 15
 
