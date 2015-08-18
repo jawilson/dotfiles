@@ -23,6 +23,8 @@ series:
       begin: S07E01
   - MythBusters:
       begin: S11E01
+      season_offset: 1
+      episode_offset: -6
   - South Park:
       begin: S15E01
   - "The Venture Bros.":
