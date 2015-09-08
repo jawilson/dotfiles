@@ -1,19 +1,20 @@
 series:
-  - Aqua Teen Hunger Force:
+  - Aqua Teen Hunger Force Forever:
       alternate_name:
           - Aqua Unit Patrol Squad 1
           - Aqua Something You Know Whatever
           - Aqua TV Show Show
-          - Aqua Teen Hunger Force Forever
+          - Aqua Teen Hunger Force
           - ATHF
       set:
         tvdb_id: 77120
         tvdb_series_name: "Aqua Teen Hunger Force"
-  - Archer (2009):
-      name_regexp: ^archer(.2009)?
+  - Archer:
+      alternate_name: [Archer (2009)]
+      set:
+        tvdb_series_name: "Archer (2009)"
   - Last Man Standing (2011):
-      alternate_name:
-          - Last Man Standing (US)
+      alternate_name: [Last Man Standing (US)]
       name_regexp: ^last.man.standing(.us)?(.2011)?
   - Last Week Tonight with John Oliver:
       identified_by: ep
