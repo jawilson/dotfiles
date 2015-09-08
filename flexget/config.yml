@@ -113,6 +113,9 @@ templates:
       - "/media/raid/videos/staging/tv_shows/"
       - "/media/raid/videos/staging/tv_premieres/"
       - "/media/raid/deluge/downloads/"
+    thexem:
+      source: scene
+      destination: tvdb
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
@@ -368,6 +371,9 @@ tasks:
       reject:
         - \bsample\b: {from: title}
     disable: builtins
+    thexem:
+      source: tvdb
+      destination: scene
     include:
       - series-favorite.yml
       - series-following.yml
