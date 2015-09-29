@@ -152,8 +152,6 @@ templates:
             password: '{{ secrets.torrentleech.password }}'
             category: ['Episodes HD', 'Episodes']
         - flexget_archive: [tv]
-        - publichd:
-            category: ['HDTV', 'SDTV', 'TV WEB-DL']
         - kat:
             category: tv
             verified: yes
@@ -229,8 +227,6 @@ templates:
             password: '{{ secrets.torrentleech.password }}'
             category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
         - flexget_archive: [movies]
-        - publichd:
-            category: ['BluRay 1080p', 'BluRay 720p']
         - kat:
             category: movies
             verified: yes
