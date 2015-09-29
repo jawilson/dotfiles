@@ -1,6 +1,6 @@
 series:
-  - The Daily Show with Jon Stewart:
-      name_regexp: ^the.daily.show(.with.jon.stewart)?
+  - The Daily Show with Trevor Noah:
+      name_regexp: ^the.daily.show(.with.trevor.noah)?
   - The Nightly Show with Larry Wilmore:
       name_regexp: ^the.nightly.show(.with.larry.wilmore)?
       identified_by: date
