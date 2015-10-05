@@ -118,7 +118,7 @@ templates:
       destination: tvdb
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
-    trakt_lookup: yes
+    #trakt_lookup: yes # Deprecated
     require_field: [series_name, series_id]
     pushbullet:
       apikey: '{{ secrets.pushbullet.apikey }}'
@@ -191,7 +191,7 @@ templates:
       max: 20000
       min: 1000
     imdb_lookup: yes
-    trakt_lookup: yes
+    #trakt_lookup: yes # Deprecated
     # Check for already downloaded or currently downloading movies
     exists_movie:
       - /media/raid/videos/Movies/
