@@ -307,10 +307,11 @@ tasks:
       parse_only: yes
     plugin_priority:
       exec: 0
-    find:
+    filesystem:
       path: '/home/jawilson/Dropbox/torrents/TV'
-      regexp: '.*\.torrent$'
       recursive: yes
+      retrieve: files
+      regexp: '.*\.torrent$'
     no_entries_ok: yes
     verify_ssl_certificates: no
     exec:
@@ -340,10 +341,11 @@ tasks:
       - torrent_alive
     plugin_priority:
       exec: 0
-    find:
+    filesystem:
       path: '/home/jawilson/Dropbox/torrents/Movies'
-      regexp: '.*\.torrent$'
       recursive: yes
+      retrieve: files
+      regexp: '.*\.torrent$'
     no_entries_ok: yes
     exec:
       on_output:
@@ -357,12 +359,13 @@ tasks:
   Sync-TV-Shows:
     manual: yes
     template: no_global # None of the global templates make sense here
-    find:
+    filesystem:
       path:
         - /media/raid/videos/TV Shows/
         - /media/raid/videos/AK Shows/
-      regexp: '.*\.(avi|mkv|mp4|mpg|m4v)$'
       recursive: yes
+      retrieve: files
+      regexp: '.*\.(avi|mkv|mp4|mpg|m4v)$'
     regexp:
       reject:
         - \bsample\b: {from: title}
@@ -657,8 +660,10 @@ tasks:
         timeframe: 3 days
         quality: webrip+
       from:
-        listdir:
-          - "/media/raid/videos/TV Premieres/"
+        filesystem:
+          path: "/media/raid/videos/TV Premieres/"
+          recursive: no
+          retrieve: dirs
     set:
       movedone: >
         /media/raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
@@ -677,8 +682,10 @@ tasks:
       - seen_info_hash
       - seen_movies
     accept_all: yes
-    listdir:
-      - /media/raid/videos/Movies/
+    filesystem:
+      path: /media/raid/videos/Movies/
+      recursive: no
+      retrieve: dirs
     imdb_lookup: yes
     tmdb_lookup: yes
     # Rotten Tomatoes is broken, possibly forever :(
