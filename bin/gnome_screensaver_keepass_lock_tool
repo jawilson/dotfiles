@@ -1,0 +1,32 @@
+#!/bin/sh
+
+PID_FILE="${HOME}/.keepass_lock.pid"
+SLEEP_TIME=300
+
+rm -f $PID_FILE
+
+dbus-monitor --session "type='signal',interface='org.gnome.ScreenSaver'" | \
+(
+  while true; do
+    read X
+
+    if [ -e $PID_FILE ]; then
+        old_pid=`cat $PID_FILE`
+        rm -f $PID_FILE
+        kill -s 0 $old_pid >/dev/null 2>&1
+        running=$?
+        if [ $running -eq 0 ]; then
+            kill $old_pid
+        fi
+    fi
+
+    if echo "$X" | grep -q "boolean true"; then
+        /bin/sh -c "sleep $SLEEP_TIME; /usr/bin/keepass2 --lock-all;" &
+        echo -n $! > $PID_FILE
+
+    elif echo "$X" | grep -q "boolean false"; then
+        #/usr/bin/keepass2 --unlock-all;
+        continue;
+    fi
+  done
+)
