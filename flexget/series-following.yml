@@ -13,9 +13,10 @@ series:
       alternate_name: [Archer (2009)]
       set:
         tvdb_series_name: "Archer (2009)"
-  - Last Man Standing (2011):
-      alternate_name: [Last Man Standing (US)]
-      name_regexp: ^last.man.standing(.us)?(.2011)?
+  - Last Man Standing:
+      alternate_name:
+          - Last Man Standing (US)
+          - Last Man Standing (2011)
   - Last Week Tonight with John Oliver:
       identified_by: ep
       set:

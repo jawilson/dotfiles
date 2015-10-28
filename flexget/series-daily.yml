@@ -1,8 +1,11 @@
 series:
-  - The Daily Show with Trevor Noah:
+  - The Daily Show:
+      alternate_name:
+          - The Daily Show with Trevor Noah
       name_regexp: ^the.daily.show(.with.trevor.noah)?
   - The Nightly Show with Larry Wilmore:
       name_regexp: ^the.nightly.show(.with.larry.wilmore)?
       identified_by: date
   - The Late Show with Stephen Colbert:
+      name_regexp: ^((the.)?late.show.with.)?stephen.colbert
       identified_by: date
