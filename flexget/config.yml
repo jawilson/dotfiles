@@ -370,6 +370,7 @@ tasks:
       reject:
         - \bsample\b: {from: title}
     disable: builtins
+    thetvdb_lookup: yes
     thexem:
       source: tvdb
       destination: scene
