@@ -26,3 +26,6 @@ alias gitroot='cd "$(git rev-parse --show-toplevel)"'
 
 # screen
 alias screen='rm -f $HOME/.ssh-auth-sock; ln -sf $SSH_AUTH_SOCK $HOME/.ssh-auth-sock; env SSH_AUTH_SOCK=$HOME/.ssh-auth-sock screen'
+
+#awk
+alias dedup="awk '!seen[$0]++'"
