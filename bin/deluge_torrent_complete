@@ -81,19 +81,21 @@ for path, task in FLEXGET_PATH_TASK.items():
             if ret != 0:
                 log.warning('Unrar command returned non-zero value %d.' % ret)
 
-        cmd=['-c', 'find "'+STAGING_PATH+path+torrent_id+'" -type f -print0 | xargs -0 du -b | sort -nr | '\
-            'head -1']
+        cmd='find "'+STAGING_PATH+path+torrent_id+'" -type f -print0 | xargs -0 du -b | sort -nr | '\
+            'head -1'
         try:
             log.debug('Shelling out: %s' % cmd)
             # check_ouptut is not available in python 2.6
             #main_file_size, main_file = subprocess.check_output(cmd, shell=True).split()
             main_file_size, main_file = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split()
             main_file_size = int(main_file_size)
+            log.debug('Main file size: %d' % main_file_size)
             cmd = 'du -b "'+STAGING_PATH+path+torrent_id+'"'
             log.debug('Shelling out: %s' % cmd)
             # check_ouptut is not available in python 2.6
             #total_size = int(subprocess.check_output(cmd, shell=True).split()[0])
-            total_size = int(subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, shell=True).communicate()[0].split()[0])
+            total_size = int(subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split()[0])
+            log.debug('Total size: %d' % total_size)
             if main_file_size > (total_size * 0.9):
                 new_name = os.path.join(os.path.dirname(main_file), torrent_name+'.'+main_file.split('.')[-1])
                 log.debug('Renaming %s to %s because it is >90%% of the unpacked torrent' %
