@@ -17,7 +17,7 @@ templates:
     accept_all: yes
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
-    find:
+    filesystem:
       path: '/tmp'
       # We are looking for any video files that were extracted
       regexp: '.*\.(avi|mkv|mpg|mp4|m4v)$'
@@ -31,7 +31,7 @@ templates:
 tasks:
   Sort_Unpacked_TV_Shows:
     # Where to get the unpacked (staged) files from
-    find:
+    filesystem:
       path: '/media/raid/videos/staging/tv_shows/'
     thexem:
       source: scene
@@ -101,7 +101,7 @@ tasks:
 
   Sort_Unpacked_TV_Premieres:
     # Where to get the unpacked (staged) files from
-    find:
+    filesystem:
       path: '/media/raid/videos/staging/tv_premieres/'
     # Where to get the metadata
     thetvdb_lookup: yes
@@ -129,7 +129,7 @@ tasks:
 
   # Same as above
   Sort_Unpacked_Movies:
-    find:
+    filesystem:
       path: '/media/raid/videos/staging/movies/'
     imdb_lookup: yes
     tmdb_lookup: yes
