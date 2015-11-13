@@ -50,8 +50,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Favorite TV
               type: shows
               strip_dates: yes
@@ -60,8 +59,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Following TV
               type: shows
               strip_dates: yes
@@ -70,8 +68,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Daily TV
               type: shows
               strip_dates: yes
@@ -80,8 +77,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: AK TV
               type: shows
               strip_dates: yes

@@ -118,7 +118,7 @@ templates:
       destination: tvdb
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
-    #trakt_lookup: yes # Deprecated
+    trakt_lookup: yes
     require_field: [series_name, series_id]
     pushbullet:
       apikey: '{{ secrets.pushbullet.apikey }}'
@@ -191,7 +191,7 @@ templates:
       max: 20000
       min: 1000
     imdb_lookup: yes
-    #trakt_lookup: yes # Deprecated
+    trakt_lookup: yes
     # Check for already downloaded or currently downloading movies
     exists_movie:
       - /media/raid/videos/Movies/
@@ -266,12 +266,10 @@ templates:
         - emit_movie_queue: yes
       from: [ filler: yes ] # Always produce entries
     trakt_remove: # Remove from Trakt list when we accept an item
-      username: '{{ secrets.trakt.username }}'
-      password: '{{ secrets.trakt.password }}'
+      account: '{{ secrets.trakt.account }}'
       list: Movie Queue
     trakt_add: # Add accepted item to my Trakt watchlist
-      username: '{{ secrets.trakt.username }}'
-      password: '{{ secrets.trakt.password }}'
+      account: '{{ secrets.trakt.account }}'
       list: watchlist
     set:
       label: my-movies
@@ -385,8 +383,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Favorite TV
               type: shows
               strip_dates: yes
@@ -395,8 +392,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Following TV
               type: shows
               strip_dates: yes
@@ -405,8 +401,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Daily TV
               type: shows
               strip_dates: yes
@@ -415,8 +410,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: AK TV
               type: shows
               strip_dates: yes
@@ -443,8 +437,7 @@ tasks:
             tracking: backfill
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Favorite TV
               type: shows
               strip_dates: yes
@@ -456,8 +449,7 @@ tasks:
             tracking: backfill
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Following TV
               type: shows
               strip_dates: yes
@@ -469,8 +461,7 @@ tasks:
             tracking: backfill
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Daily TV
               type: shows
               strip_dates: yes
@@ -482,8 +473,7 @@ tasks:
             tracking: backfill
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: AK TV
               type: shows
               strip_dates: yes
@@ -497,8 +487,7 @@ tasks:
       interval: 2 hours
       what:
         - trakt_emit:
-            username: '{{ secrets.trakt.username }}'
-            password: '{{ secrets.trakt.password }}'
+            account: '{{ secrets.trakt.account }}'
             context: collected
             position: next
             list: Favorite TV
@@ -520,15 +509,13 @@ tasks:
       interval: 2 hours
       what:
         - trakt_emit:
-            username: '{{ secrets.trakt.username }}'
-            password: '{{ secrets.trakt.password }}'
+            account: '{{ secrets.trakt.account }}'
             list: Following TV
             context: collected
             position: next
             aired_timeframe: 14 days
         - trakt_emit:
-            username: '{{ secrets.trakt.username }}'
-            password: '{{ secrets.trakt.password }}'
+            account: '{{ secrets.trakt.account }}'
             list: AK TV
             context: collected
             position: next
@@ -567,8 +554,7 @@ tasks:
             upgrade: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Favorite TV
               type: shows
               strip_dates: yes
@@ -582,8 +568,7 @@ tasks:
             upgrade: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: Following TV
               type: shows
               strip_dates: yes
@@ -597,8 +582,7 @@ tasks:
             upgrade: no
           from:
             trakt_list:
-              username: '{{ secrets.trakt.username }}'
-              password: '{{ secrets.trakt.password }}'
+              account: '{{ secrets.trakt.account }}'
               list: AK TV
               type: shows
               strip_dates: yes
@@ -694,8 +678,7 @@ tasks:
     require_field: [movie_name, movie_year]
     movie_queue: accept
     trakt_remove:
-      username: '{{ secrets.trakt.username }}'
-      password: '{{ secrets.trakt.password }}'
+      account: '{{ secrets.trakt.account }}'
       list: Movie Queue
 
 
@@ -704,8 +687,7 @@ tasks:
     priority: 100 # Always run before My-Movies task
     template: no_global # None of the global templates make sense here
     trakt_list:
-      username: '{{ secrets.trakt.username }}'
-      password: '{{ secrets.trakt.password }}'
+      account: '{{ secrets.trakt.account }}'
       list: Movie Queue
       type: movies
     no_entries_ok: yes
