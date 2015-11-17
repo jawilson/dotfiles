@@ -491,7 +491,7 @@ tasks:
             context: collected
             position: next
             list: Favorite TV
-            aired_timeframe: 14 days
+            aired_timeframe: 60 days
       from: [filler: yes]
     include: [ series-favorite.yml ]
     all_series:
@@ -513,13 +513,13 @@ tasks:
             list: Following TV
             context: collected
             position: next
-            aired_timeframe: 14 days
+            aired_timeframe: 60 days
         - trakt_emit:
             account: '{{ secrets.trakt.account }}'
             list: AK TV
             context: collected
             position: next
-            aired_timeframe: 14 days
+            aired_timeframe: 60 days
       from: [filler: yes]
     include: [ series-following.yml, series-ak.yml ]
     all_series:
