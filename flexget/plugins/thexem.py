@@ -73,6 +73,12 @@ class PluginTheXEM(object):
                 if episode_map['result'] == 'success':
                     try:
                         for episode_entry in episode_map['data']:
+                            if config['source'] not in episode_entry:
+                                #log.warning('TheXEM does not provide unique data on %s - %s for source %s, skipping' % (entry['series_name'], entry['series_id'], config['source']))
+                                continue
+                            if config['destination'] not in episode_entry:
+                                #log.warning('TheXEM does not provide unique data on %s - %s for destination %s, skipping' % (entry['series_name'], entry['series_id'], config['destination']))
+                                continue
                             if episode_entry[config['source']]['season'] == entry['series_season'] and episode_entry[config['source']]['episode'] == entry['series_episode']:
                                 log.debug('An XEM entry was found for %s, %s episode S%02dE%02d maps to %s episode S%02dE%02d' % (entry['series_name'], config['source'], entry['series_season'], entry['series_episode'], config['destination'], episode_entry[config['destination']]['season'], episode_entry[config['destination']]['episode']))
                                 if 'description' in entry:
@@ -84,7 +90,7 @@ class PluginTheXEM(object):
                     except:
                         log.error('Error in thexem plugin for entry %s (tvdb_id: %s)' %
                             (entry['title'], entry['tvdb_id']))
-                        log.error('Content was: %s' % response.content)
+                        log.debug('Content was: %s' % response.content)
 
 
 
