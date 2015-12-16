@@ -300,9 +300,47 @@ tasks:
       - exists_series
       - regexp
       - content_size
+      - content_filter
       - torrent_alive
     all_series:
       parse_only: yes
+    sequence:
+      - configure_series:
+          settings:
+            assume_special: true
+          from:
+            trakt_list:
+              account: '{{ secrets.trakt.account }}'
+              list: Favorite TV
+              type: shows
+              strip_dates: yes
+      - configure_series:
+          settings:
+            assume_special: true
+          from:
+            trakt_list:
+              account: '{{ secrets.trakt.account }}'
+              list: Following TV
+              type: shows
+              strip_dates: yes
+      - configure_series:
+          settings:
+            assume_special: true
+          from:
+            trakt_list:
+              account: '{{ secrets.trakt.account }}'
+              list: Daily TV
+              type: shows
+              strip_dates: yes
+      - configure_series:
+          settings:
+            assume_special: true
+          from:
+            trakt_list:
+              account: '{{ secrets.trakt.account }}'
+              list: AK TV
+              type: shows
+              strip_dates: yes
     plugin_priority:
       exec: 0
     filesystem:
@@ -336,6 +374,7 @@ tasks:
       - seen_movies
       - regexp
       - content_size
+      - content_filter
       - torrent_alive
     plugin_priority:
       exec: 0
