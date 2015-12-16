@@ -4,9 +4,9 @@
 
 TV_ROOT="/media/raid/videos/TV Shows"
 
-daily_show="$TV_ROOT/The Daily Show with Trevor Noah/"
+daily_show="$TV_ROOT/The Daily Show/"
 nightly_show="$TV_ROOT/The Nightly Show with Larry Wilmore/"
-late_show="$TV_ROOT/Late Show with Stephen Colbert/"
+late_show="$TV_ROOT/The Late Show with Stephen Colbert/"
 
 delete_old () {
     if [ -d "$1" ]
