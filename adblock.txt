@@ -1,7 +1,7 @@
 [Adblock Plus 2.0]
-! Version: 201503061410
+! Version: 201512281126
 ! Title: Jeff's Adblock List
-! Last modified: 6 Mar 2015 14:10 EST
+! Last modified: 28 Dec 2015 11:26 EST
 
 @@|http://*.cbssports.com
 
