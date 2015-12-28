@@ -1,31 +1,57 @@
 [Adblock Plus 2.0]
-! Version: 201512281126
+! Version: 201512281127
 ! Title: Jeff's Adblock List
-! Last modified: 28 Dec 2015 11:26 EST
+! Last modified: 28 Dec 2015 11:27 EST
 
+! Disabled sites
 @@|http://*.cbssports.com
+@@|https://smile.amazon.com/gp/registry/giftlist/2DAJVYN1WDPDG/ref=cm_go_nav_recip_gl?$document
+@@||torrentleech.org/$document
+@@||brooksbrothers.com/$document
 
-trakt.tv##DIV[id="large-banner-ad"]
-trakt.tv##DIV[id="small-banner-ad"]
-trakt.tv##DIV[id="large-banner-bottom-ad"]
-trakt.tv##DIV[id="small-banner-bottom-ad"]
-trakt.tv##DIV[id="huckster-desktop-wrapper"]
-trakt.tv##A[href="/vip"]
+! C++
+www.cplusplus.com##DIV[class="C_DonateBox"]
 
-www.youtube.com##DIV[id="alerts"]
-www.youtube.com##DIV[id="ticker"][class="ytg-base remind-identity"]
-www.youtube.com##DIV[id="confirmBox"][class="yt-alert yt-alert-default yt-alert-warn  "]
+! Facebook
+facebook.com##DIV[id="pagelet_ego_pane"]
+www.facebook.com##DIV[id="pagelet_canvas_nav_content"]
 
+! Geek.com
+www.geek.com##DIV[id="colorbox"]
+www.geek.com##SECTION[id="stickyleaderboard"]
+www.geek.com##SECTION[id="stickyleaderboard"][class="banner"]
+www.geek.com##DIV[id="owwotm_ila_qnzium_/4585/zd.geek/androidsection_ATF_0__container__"]
+
+! Google
+www.google.com##LI[class="ads-ad"]
+www.google.com##DIV[id="mbEnd"][class="_Ak"]
+
+! Imgur
+imgur.com##DIV[class="gpt-abp"]
+
+! Mint
 wwws.mint.com##A[class="accounts-adv"]
 wwws.mint.com##TR[id="transaction-deal-row"][class="deals"]
 wwws.mint.com##DIV[id="advice-top-container"]
 wwws.mint.com##DIV[class="replace-with-iframe-below-header"]
 
-www.cplusplus.com##DIV[class="C_DonateBox"]
-www.cplusplus.com##DIV[class="C_DonateBox"]
+! Trakt.tv
+trakt.tv##DIV[id="large-banner-ad"]
+trakt.tv##DIV[id="small-banner-ad"]
+trakt.tv##DIV[id="large-banner-bottom-ad"]
+trakt.tv##DIV[id="small-banner-bottom-ad"]
+trakt.tv##DIV[id="huckster-desktop-wrapper"]
+trakt.tv##DIV[id="huckster-sidenav"]
+trakt.tv##DIV[class="huckster-vip-square"]
+trakt.tv##A[href="/vip"]
 
+! Weather Underground
+www.wunderground.com##DIV[id="top-ad-wrapper"]
+
+! Wikipedia
 en.wikipedia.org##DIV[class="cn-fundraising"]
 
-facebook.com##DIV[id="pagelet_ego_pane"]
-
-wwws.mint.com##A[class="accounts-adv"]
+! YouTube
+www.youtube.com##DIV[id="alerts"]
+www.youtube.com##DIV[id="ticker"][class="ytg-base remind-identity"]
+www.youtube.com##DIV[id="confirmBox"][class="yt-alert yt-alert-default yt-alert-warn  "]
