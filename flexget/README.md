@@ -3,7 +3,7 @@
 Created by: [Jeff Wilson](mailto:jeff@jeffalwilson.com)  
 Available from: https://github.com/jawilson/dotfiles
 
-I try to keep this configuration in sync with whatever version my fork of Flexget (available at https://github.com/jawilson/Flexget) is at.
+I try to keep this configuration in sync with whatever version my fork of Flexget (available at https://github.com/jawilson/Flexget) is at. Due to possible changes in my fork, not all configuration items may apply to the [upstream Flexget project](https://github.com/Flexget/Flexget).
 
 I'm using the [secrets](http://flexget.com/wiki/Plugins/secrets) plugin to hide my private credentials for various plugins. If you want to do this as well, you will need to create a ``secretfile.yml`` file in the same directory as your ``config.yml``.
 
