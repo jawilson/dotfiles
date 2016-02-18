@@ -89,15 +89,11 @@ tasks:
     move:
       # Folder to move to
       to: >
-        /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+        /{% if movedone|default(False) %}{{ movedone|replace('/', '', 1) }}{% else %}media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}{% endif %}
       # Filename (inside of folder) to move to
       filename: >
         {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
       clean_source: 40
-    if:
-      - movedone:
-          set:
-            path: '{{ movedone }}'
 
   Sort_Unpacked_TV_Premieres:
     # Where to get the unpacked (staged) files from
