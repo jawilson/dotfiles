@@ -1,6 +1,7 @@
 [dotfiles]
 ignore = [
     '.git',
+    '.gitattributes',
     '.gitignore',
     '.gitmodules',
     'README.md',

@@ -6,6 +6,8 @@
 	ui = auto
 [core]
 	trustctime = false
+	editor = vim
+	filemode = false
 	#whitespace = blank-at-eol,space-before-tab,tab-in-indent,trailing-space,tabwidth=4
 [apply]
 	whitespace = fix
@@ -25,6 +27,14 @@
 	cd = !pushd $(git rev-parse --show-toplevel)
 	praise = blame
 	addnw = !sh -c 'git diff -w --no-color "$@" | git apply --cached --ignore-whitespace' -
+	last = log -1 --stat
+	cp = cherry-pick
+	cl = clone
+	st = status -sb
+	br = branch
+	unstage = reset HEAD --
+	dc = diff --cached
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %Cblue<%an>%Creset' --abbrev-commit --date=relative --all
 [credential]
 	helper = cache
 [push]
@@ -35,6 +45,10 @@
 	tool = vimdiff
 [mergetool]
 	keepBackup = false
+	keeptemporaries = false
+	keepbackups = false
+	prompt = false
+	trustexitcode = false
 [web]
 	browser = chrome
 [filter "lfs"]
