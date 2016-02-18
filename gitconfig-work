@@ -1,10 +1,14 @@
 [user]
 	name = Jeffery Wilson
-	email = jeff@jeffalwilson.com
+	email = jeff.wilson@blinemedical.com
+	signingkey = E9695B26
 [color]
 	ui = auto
 [core]
-	autocrlf = input
+	trustctime = false
+	#whitespace = blank-at-eol,space-before-tab,tab-in-indent,trailing-space,tabwidth=4
+[apply]
+	whitespace = fix
 [remote-hg]
 	hg-git-compat = true
 [help]
