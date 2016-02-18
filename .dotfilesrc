@@ -12,4 +12,6 @@ ignore = [
     '*.swp',
     '*~']
 packages = [
-    'flexget']
+    'config',
+    'flexget',
+    'oh-my-zsh']
