@@ -6,7 +6,6 @@
 ! Disabled sites
 @@|http://*.cbssports.com
 @@|https://smile.amazon.com/gp/registry/giftlist/2DAJVYN1WDPDG/ref=cm_go_nav_recip_gl?$document
-@@||torrentleech.org/$document
 @@||brooksbrothers.com/$document
 
 ! C++
