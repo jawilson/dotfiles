@@ -76,6 +76,7 @@ templates:
       rss.torrentleech.org: 10 minutes
       bt-chat.com: 5 seconds
       torrentz.eu: 10 seconds
+      thexem.de: 10 seconds
     # The Pirate Bay ssl certs always fail
     verify_ssl_certificates: no
     # Size and seed restrictions require real torrents
@@ -113,9 +114,10 @@ templates:
       - "/media/raid/videos/staging/tv_shows/"
       - "/media/raid/videos/staging/tv_premieres/"
       - "/media/raid/deluge/downloads/"
-    thexem:
-      source: scene
-      destination: tvdb
+    # Disabl TheXEM until the plugin is rewritten
+    #thexem:
+    #  source: scene
+    #  destination: tvdb
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
@@ -408,9 +410,10 @@ tasks:
         - \bsample\b: {from: title}
     disable: builtins
     thetvdb_lookup: yes
-    thexem:
-      source: tvdb
-      destination: scene
+    # Disabl TheXEM until the plugin is rewritten
+    #thexem:
+    #  source: tvdb
+    #  destination: scene
     include:
       - series-favorite.yml
       - series-following.yml
