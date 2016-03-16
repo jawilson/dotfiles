@@ -8,7 +8,7 @@
 	trustctime = false
 	editor = vim
 	filemode = false
-	#whitespace = blank-at-eol,space-before-tab,tab-in-indent,trailing-space,tabwidth=4
+	whitespace = blank-at-eol,space-before-tab,tab-in-indent,trailing-space,tabwidth=4
 [apply]
 	whitespace = fix
 [remote-hg]
