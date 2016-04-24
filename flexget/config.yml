@@ -259,20 +259,23 @@ templates:
 
   # This template uses the movie queue to find movies from various sources
   movies-queued:
-    movie_queue: accept
+    list_accept:
+      - movie_list: movie queue
     template: movies-discover
     disable:
       - seen_movies
     discover:
       what:
-        - emit_movie_queue: yes
+        - movie_list: movie queue
       from: [ filler: yes ] # Always produce entries
-    trakt_remove: # Remove from Trakt list when we accept an item
-      account: '{{ secrets.trakt.account }}'
-      list: Movie Queue
-    trakt_add: # Add accepted item to my Trakt watchlist
-      account: '{{ secrets.trakt.account }}'
-      list: watchlist
+    list_remove:
+      - trakt_list:
+          account: '{{ secrets.trakt.account }}'
+          list: Movie Queue
+    list_add:
+      - trakt_list: # Add accepted item to my Trakt watchlist
+          account: '{{ secrets.trakt.account }}'
+          list: watchlist
     set:
       label: my-movies
 
@@ -718,10 +721,12 @@ tasks:
     # Rotten Tomatoes is broken, possibly forever :(
     #rottentomatoes_lookup: yes
     require_field: [movie_name, movie_year]
-    movie_queue: accept
-    trakt_remove:
-      account: '{{ secrets.trakt.account }}'
-      list: Movie Queue
+    list_accept:
+      - movie_list: movie queue
+    list_remove:
+      - trakt_list:
+          account: '{{ secrets.trakt.account }}'
+          list: Movie Queue
 
 
   # This task queues all of the movies in my Trakt "Movie Queue" playlist
@@ -734,7 +739,8 @@ tasks:
       type: movies
     no_entries_ok: yes
     accept_all: yes
-    movie_queue: add
+    list_add:
+      - movie_list: movie queue
 
 
   # The next two tasks download the queue from the previous task effectively implementing
