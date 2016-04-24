@@ -13,6 +13,6 @@ series:
           /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
   - The 100:
       set:
-        tvdb_id: 2685929
+        tvdb_id: 268592
         movedone: >
           /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
