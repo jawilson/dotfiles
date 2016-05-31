@@ -1,0 +1,1 @@
+exec /usr/sbin/lightdm-session "gnome-session --session=gnome"
