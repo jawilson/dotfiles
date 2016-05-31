@@ -2,3 +2,4 @@
 *.bak
 *~
 secretfile.yml
+vim/bundle/vim-signify/doc/tags
