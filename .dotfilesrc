@@ -15,4 +15,5 @@ ignore = [
 packages = [
     'config',
     'flexget',
-    'oh-my-zsh']
+    'oh-my-zsh',
+    'ssh']

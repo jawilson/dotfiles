@@ -1,0 +1,9 @@
+Host Dark-Knight dark-knight
+    HostName Dark-Knight.singularity.net
+    User admin
+Host Faraday faraday
+    HostName Faraday.singularity.net
+    ForwardAgent yes
+Host P3Steel p3steel
+    HostName P3Steel.singularity.net
+    User pi
