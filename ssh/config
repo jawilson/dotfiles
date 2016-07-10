@@ -7,3 +7,11 @@ Host Faraday faraday
 Host P3Steel p3steel
     HostName P3Steel.singularity.net
     User pi
+Host Beagleone beagleone
+    HostName Beagleone.singularity.net
+    ForwardAgent yes
+Host wenas Wenas
+    HostName wenas.jeffalwilson.com
+Host Blue blue
+    HostName Blue.Singularity.net
+    User root
