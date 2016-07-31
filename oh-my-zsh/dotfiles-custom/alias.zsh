@@ -24,5 +24,8 @@ alias "ack"="ack-grep"
 alias gdiff='git diff --no-index'
 alias gitroot='cd "$(git rev-parse --show-toplevel)"'
 
-#awk
+# awk
 alias dedup="awk '!seen[$0]++'"
+
+# plex
+alias plexup="sudo sh -c \"rm -rf /tmp/pms && install -d /tmp/pms && wget --content-disposition https://plex.tv/downloads/latest/1\?channel\=8\&build\=linux-ubuntu-x86_64\&distro\=ubuntu\&X-Plex-Token\=ZYD6a4uHqssyqpUnKy8d --directory-prefix=/tmp/pms/ && find '/tmp/pms/' -type f | head -1 | xargs -I{} dpkg -i '{}' && rm -rf /tmp/pms\""
