@@ -81,6 +81,26 @@ templates:
     verify_ssl_certificates: no
     # Size and seed restrictions require real torrents
     magnets: no
+    slack:
+      webhook-url: '{{ secrets.slack.webhook_url }}'
+      text: "{{task}} - Download started:
+             {% if series_name is defined %}
+             {% if trakt_series_slug is defined and trakt_season is defined and trakt_episode is defined %}
+             <https://trakt.tv/shows/{{ trakt_series_slug }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}|{{tvdb_series_name|d(series_name)}} - {{series_id}}{{tvdb_ep_name|d('')}}>
+             {% else %}
+             {{tvdb_series_name|d(series_name)}} - {{series_id}}{{tvdb_ep_name|d('')}}
+             {% endif %}
+             - {{quality}}
+             {% elif imdb_name is defined %}
+             {% if imdb_url is defined %}
+             <{{imdb_url}}|{{imdb_name}} {{imdb_year}}>
+             {% else %}
+             {{imdb_name}} {{imdb_year}}
+             {% endif %}
+             - {{quality}}
+             {% else %}
+             {{title}}
+             {% endif %}"
 
   # This template is a "global" template for all TV-related tasks.
   # We keep all of the RSS feeds that list tv-related torrents here
@@ -122,11 +142,6 @@ templates:
     thetvdb_lookup: yes
     trakt_lookup: yes
     require_field: [series_name, series_id]
-    pushbullet:
-      apikey: '{{ secrets.pushbullet.apikey }}'
-      title: "[Flexget] {{task}}"
-      body: "{{ tvdb_series_name|default(series_name) }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name }}{% endif %}\n{{ quality }}"
-      url: "{% if trakt_series_slug is defined and trakt_season is defined and trakt_episode is defined %}https://trakt.tv/shows/{{ trakt_series_slug }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}{% endif %}"
     # Add accepted entries to Deluge and make sure they end up in the correct
     # folder with a nice name
     set:
@@ -208,11 +223,6 @@ templates:
       # Rename the "content file" to something nice, use leading slash to force file to top level
       content_filename: |
         /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}
-    pushbullet:
-      apikey: '{{ secrets.pushbullet.apikey }}'
-      title: "[Flexget] {{task}}"
-      body: "{{ imdb_name }} ({{ imdb_year }})\n{{ quality }}"
-      url: "{% if imdb_url %}{{ imdb_url }}{% endif %}"
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
