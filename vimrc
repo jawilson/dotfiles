@@ -121,6 +121,9 @@ nnoremap <leader>i :set list!<cr>
 " Sudo to write
 cnoremap w!! w !sudo tee % >/dev/null
 
+" Change current directory
+autocmd BufEnter * silent! lcd %:p:h
+
 " Spacing and tabbing
 set expandtab
 set smarttab
