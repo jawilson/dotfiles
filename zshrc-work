@@ -53,7 +53,7 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor root)
 # HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
+ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
@@ -83,3 +83,6 @@ export GOROOT='C:\tools\go'
 export GOPATH='C:\Users\jeff.wilson\.babun\cygwin\home\jeff.wilson\go_workspace'
 export GOBIN='C:\Users\jeff.wilson\.babun\cygwin\home\jeff.wilson\go_workspace\bin'
 export PATH=$PATH:/cygdrive/c/Users/jeff.wilson/.babun/cygwin/home/go_workspace/bin
+
+# Git is being dumb in babun
+export GITPERLLIB=/lib/perl5/vendor_perl/5.22
