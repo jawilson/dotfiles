@@ -531,6 +531,7 @@ tasks:
             position: next
             list: Favorite TV
             aired_timeframe: 60 days
+            strip_dates: yes
       from: [filler: yes]
     include: [ series-favorite.yml ]
     all_series:
@@ -553,12 +554,14 @@ tasks:
             context: collected
             position: next
             aired_timeframe: 60 days
+            strip_dates: yes
         - trakt_emit:
             account: '{{ secrets.trakt.account }}'
             list: AK TV
             context: collected
             position: next
             aired_timeframe: 60 days
+            strip_dates: yes
       from: [filler: yes]
     include: [ series-following.yml, series-ak.yml ]
     all_series:
