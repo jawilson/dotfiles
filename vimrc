@@ -103,7 +103,7 @@ nnoremap <leader>( :tabprev<cr>
 nnoremap <leader>) :tabnext<cr>
 nnoremap <leader>{ :tabnew<cr>
 nnoremap <silent> <leader>< :execute 'silent! tabmove ' . (tabpagenr()-2)<cr>
-nnoremap <silent> <leader>> :execute 'silent! tabmove ' . (tabpagenr()+1)<cr>
+nnoremap <silent> <leader>> :execute 'silent! tabmove ' . (tabpagenr())<cr>
 
 " Insert the directory of the current buffer in command line mode
 cnoremap <expr> %% getcmdtype() == ':' ? expand('%:h').'/' : '%%'
