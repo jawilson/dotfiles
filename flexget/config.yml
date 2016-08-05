@@ -161,6 +161,11 @@ templates:
             password: '{{ secrets.torrentleech.password }}'
             category: ['Episodes HD', 'Episodes']
         - flexget_archive: [tv]
+        - rarbg:
+            category: [41]
+            use_tvdb: true
+            min_seeders: 10
+
 
   # This template is a "global" template for all movie-related tasks.
   # We keep all of the RSS feeds that list movie-related torrents here
@@ -224,6 +229,9 @@ templates:
             password: '{{ secrets.torrentleech.password }}'
             category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
         - flexget_archive: [movies]
+        - rarbg:
+            category: [44, 45]
+            min_seeders: 10
       what: [ filler: yes ] # Always produce entries
 
 
