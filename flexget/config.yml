@@ -85,7 +85,7 @@ templates:
       text: >
         {{task}} - Download started:
         {%- if series_name is defined %}
-        {% set info_string = tvdb_series_name|d(series_name) ~ ' - ' ~ series_id ~ (' - ' ~ tvdb_ep_name if tvdb_ep_name|default(False)) %}
+        {% set info_string = tvdb_series_name|d(series_name) ~ ' - ' ~ series_id ~ (' - ' ~ tvdb_ep_name if tvdb_ep_name|default(False) else '') %}
         {%- if trakt_series_slug is defined and trakt_season is defined and trakt_episode is defined -%}
         <https://trakt.tv/shows/{{ trakt_series_slug }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}|{{ info_string }}>
         {%- else %}
@@ -93,9 +93,9 @@ templates:
         {%- endif %}
         - {{quality}}
         {%- elif imdb_name is defined %}
-        {%- if imdb_url is defined -%}
+        {%- if imdb_url is defined %}
         <{{imdb_url}}|{{imdb_name}} {{imdb_year}}>
-        {%- else -%}
+        {%- else %}
         {{imdb_name}} {{imdb_year}}
         {%- endif %}
         - {{quality}}
