@@ -1,5 +1,0 @@
-series:
-  - The Daily Show:
-      alternate_name:
-          - The Daily Show with Trevor Noah
-      name_regexp: ^the.daily.show(.with.trevor.noah)?
