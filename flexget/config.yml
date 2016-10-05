@@ -128,10 +128,6 @@ templates:
       - "/media/raid/videos/staging/tv_shows/"
       - "/media/raid/videos/staging/tv_premieres/"
       - "/media/raid/deluge/downloads/"
-    # Disabl TheXEM until the plugin is rewritten
-    #thexem:
-    #  source: scene
-    #  destination: tvdb
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
@@ -150,23 +146,6 @@ templates:
     # it changes 'movedone' based on the regexp in the key
     content_sort:
       '*.rar': '/media/raid/deluge/downloads/completed/tv_shows/'
-
-
-  tv-shows-find:
-    discover:
-      no_entries_ok: yes
-      what: [filler: yes]
-      from:
-        - torrentleech:
-            rss_key: '{{ secrets.torrentleech.rss_key }}'
-            username: '{{ secrets.torrentleech.username }}'
-            password: '{{ secrets.torrentleech.password }}'
-            category: ['Episodes HD', 'Episodes']
-        - flexget_archive: [tv]
-        - rarbg:
-            category: [41]
-            use_tvdb: true
-            min_seeders: 10
 
 
   # This template is a "global" template for all movie-related tasks.
@@ -237,26 +216,11 @@ templates:
       what: [ filler: yes ] # Always produce entries
 
 
-  # This template runs feeds through my very specific custom filter
-  movies-auto:
-    my_movie_filter: yes
-    #template: movies-discover
-    #discover:
-    #  from: [ filler: yes ]
-    #  what:
-    #    - rottentomatoes_list:
-    #        dvds:
-    #          - top_rentals
-    #          - new_releases
-    set:
-      queuetotop: no
-      label: movies-auto
-
-
   # This template uses the movie queue to find movies from various sources
   movies-queued:
-    list_accept:
-      - movie_list: movie queue
+    list_match:
+      from:
+        - movie_list: movie queue
     template: movies-discover
     disable:
       - seen_movies
@@ -469,161 +433,63 @@ tasks:
       - series-following.yml
       - series-daily.yml
     template: [tv-global]
+    discover:
+      what:
+        - next_trakt_episodes:
+            account: '{{ secrets.trakt.account }}'
+            context: collected
+            position: next
+            list: TV Shows
+            strip_dates: yes
+        - next_trakt_episodes:
+            account: '{{ secrets.trakt.account }}'
+            context: collected
+            position: next
+            list: AK Shows
+            strip_dates: yes
+        - next_series_episodes: yes
+      from:
+        - torrentleech:
+            rss_key: '{{ secrets.torrentleech.rss_key }}'
+            username: '{{ secrets.torrentleech.username }}'
+            password: '{{ secrets.torrentleech.password }}'
+            category: ['Episodes HD', 'Episodes']
+        - flexget_archive: [tv]
+        - rarbg:
+            category: [41]
+            use_tvdb: true
+            min_seeders: 10
     sequence:
       - configure_series:
           settings:
             target: 720p+ hdtv+
-            timeframe: 5 days
-            quality: 720p+ dvdscr+
-            tracking: backfill
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Favorite TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            target: 720p+ dvdscr+
-            timeframe: 3 days
+            timeframe: 14 days
             quality: 480p+ webrip+
             tracking: backfill
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
-              list: Following TV
+              list: TV Shows
               type: shows
               strip_dates: yes
-      - configure_series:
-          settings:
-            target: webrip+
-            timeframe: 4 hours
-            quality: preair+
-            tracking: backfill
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Daily TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            target: 720p+ dvdscr+
-            timeframe: 3 days
-            quality: 480p+ webrip+
-            tracking: backfill
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: AK TV
-              type: shows
-              strip_dates: yes
-
-
-  My-TV-Shows-Find-Next-Favorite:
-    template: [tv-global, tv-shows-find]
-    disable: inputs
-    discover:
-      no_entries_ok: yes
-      interval: 2 hours
-      what:
-        - trakt_emit:
-            account: '{{ secrets.trakt.account }}'
-            context: collected
-            position: next
-            list: Favorite TV
-            aired_timeframe: 60 days
-            strip_dates: yes
-      from: [filler: yes]
-    include: [ series-favorite.yml ]
-    all_series:
-      target: 720p+ hdtv+
-      timeframe: 5 days
-      quality: 720p+ dvdscr+
-      tracking: backfill
-
-
-  My-TV-Shows-Find-Next-Following:
-    template: [tv-global, tv-shows-find]
-    disable: inputs
-    discover:
-      no_entries_ok: yes
-      interval: 2 hours
-      what:
-        - trakt_emit:
-            account: '{{ secrets.trakt.account }}'
-            list: Following TV
-            context: collected
-            position: next
-            aired_timeframe: 60 days
-            strip_dates: yes
-        - trakt_emit:
-            account: '{{ secrets.trakt.account }}'
-            list: AK TV
-            context: collected
-            position: next
-            aired_timeframe: 60 days
-            strip_dates: yes
-      from: [filler: yes]
-    include: [ series-following.yml, series-ak.yml ]
-    all_series:
-      target: 720p+ dvdscr+
-      timeframe: 3 days
-      quality: 480p+ webrip+
-      tracking: backfill
-
-
-  My-TV-Shows-Find-Missing:
-    template:
-      - tv-global
-      - tv-shows-find
-    disable: inputs, est_movies
-    discover:
-      what:
-        - emit_series:
-            backfill: yes
-      from: [filler: yes]
-    include:
-      - series-favorite.yml
-      - series-following.yml
-      - series-ak.yml
-    sequence:
       - configure_series:
           settings:
             target: 720p+ hdtv+
-            timeframe: 5 days
-            quality: 720p+ dvdscr+
+            timeframe: 14 days
+            quality: 480p+ webrip+
             tracking: backfill
-            propers: no
-            upgrade: no
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
-              list: Favorite TV
+              list: AK Shows
               type: shows
               strip_dates: yes
       - configure_series:
           settings:
-            target: 720p+ dvdscr+
-            timeframe: 3 days
+            target: 720p+ hdtv+
+            timeframe: 14 days
             quality: 480p+ webrip+
             tracking: backfill
-            propers: no
-            upgrade: no
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Following TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            target: 720p+ dvdscr+
-            timeframe: 3 days
-            quality: 480p+ webrip+
-            tracking: backfill
-            propers: no
-            upgrade: no
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
@@ -636,8 +502,7 @@ tasks:
   # task grabs all of the premieres except for some genres
   Series-Premieres:
     priority: 40
-    template:
-      - tv-global
+    template: [tv-global]
     # The entry has to have the tvdb_genres field so I can filter by it
     require_field:
       - tvdb_genres
@@ -681,8 +546,7 @@ tasks:
   # If a premier was grabbed, keep on tracking it until the directory is (re)moved
   Series-Premieres-Track:
     priority: 50
-    template:
-      - tv-global
+    template: [tv-global]
     configure_series:
       settings:
         target: 720p+ hdtv+
@@ -720,8 +584,9 @@ tasks:
     # Rotten Tomatoes is broken, possibly forever :(
     #rottentomatoes_lookup: yes
     require_field: [movie_name, movie_year]
-    list_accept:
-      - movie_list: movie queue
+    list_match:
+      from:
+        - movie_list: movie queue
     list_remove:
       - trakt_list:
           account: '{{ secrets.trakt.account }}'
@@ -763,27 +628,6 @@ tasks:
     delay: 28 days # Wait 28 days for a 1080p movie before trying downloading 720p
 
 
-  # These task implement the movies-auto template
-  Auto-Movies-1080p:
-    priority: 130
-    quality: 1080p+ bluray+ h264+ truehd|dtshd|dd5.1|dts
-    template:
-      - movies-global
-      - movies-auto
-    set:
-      label: movies-auto
-
-  Auto-Movies-720p:
-    priority: 140
-    quality: 720p+ dvdrip+ xvid+ truehd|dtshd|dd5.1|dts|ac3
-    template:
-      - movies-global
-      - movies-auto
-    set:
-      label: movies-auto
-    delay: 14 days # Wait 14 days for a 1080p movie before trying downloading 720p
-
-
 schedules:
 
   #
@@ -796,15 +640,9 @@ schedules:
   #
   # Series
   #
-  - tasks: [ 'My-TV-Shows-Find-Next-*' ]
-    interval:
-      hours: 2
   - tasks: [ 'My-TV-Shows', 'Series-Premieres-Track' ]
     schedule:
       minute: 3,18,33,48
-  - tasks: [ 'My-TV-Shows-Find-Missing' ]
-    interval:
-      days: 3
   - tasks: [ 'Series-Premieres' ]
     interval:
       hours: 2
@@ -815,10 +653,6 @@ schedules:
   - tasks: [ 'Movie-Queue', 'My-Movies-*' ]
     interval:
       hours: 1
-
-  #- tasks: [ 'Auto-Movies-*' ]
-  #  interval:
-  #    hours: 2
 
   - tasks: [ 'Clean-Movie-Queue' ]
     interval:
