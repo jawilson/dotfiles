@@ -249,9 +249,7 @@ tasks:
   Local-Torrents-TV:
     priority: 1
     include:
-      - series-favorite.yml
-      - series-following.yml
-      - series-daily.yml
+      - series.yml
       - series-ak.yml
     template:
       - tv-global
@@ -276,25 +274,7 @@ tasks:
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
-              list: Favorite TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            assume_special: true
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Following TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            assume_special: true
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Daily TV
+              list: TV Shows
               type: shows
               strip_dates: yes
       - configure_series:
