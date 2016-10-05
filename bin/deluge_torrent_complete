@@ -7,9 +7,6 @@ import subprocess
 LOG_FILE='/home/jawilson/.flexget/torrent_complete.log'
 DOWNLOAD_PATH='/media/raid/deluge/downloads/completed'
 STAGING_PATH='/media/raid/videos/staging'
-XBMC_HOST='Carina.singularity.net'
-PLEX_HOST='Faraday.singularity.net'
-X_PLEX_TOKEN='xxxxxxxxxxxxxxxxxxxx'
 # If you're using a local checkout of Flexget, use flexget_vanilla.
 # Otherwise use the one in your system
 FLEXGET_COMMAND='/home/jawilson/src/flexget/bin/flexget --logfile '\
@@ -56,14 +53,6 @@ torrent_path=(sys.argv[3] if (sys.argv[3][-1] == '/') else sys.argv[3]+'/')
 
 log.debug("%s called with torrent_id='%s', torrent_name='%s', torrent_path='%s'." % (sys.argv[0],
     torrent_id, torrent_name, torrent_path))
-
-def chain():
-    log.debug("Updating Plex Library")
-    cmd = '/usr/bin/curl http://'+PLEX_HOST+':32400/library/sections/2/refresh?X-Plex-Token='+X_PLEX_TOKEN
-    ret = subprocess.call(cmd, shell=True)
-    if ret != 0:
-        log.warning('Update Plex command returned non-zero value %d.' % ret)
-    sys.exit(0)
 
 if DOWNLOAD_PATH not in torrent_path:
     log.debug("Torrent '%s' path (%s) not in %s, skipping unrar" % (torrent_name,torrent_path,DOWNLOAD_PATH))
@@ -113,5 +102,3 @@ for path, task in FLEXGET_PATH_TASK.items():
         ret = subprocess.call(cmd, shell=True)
         if ret != 0:
             log.warning('Flexget command returned non-zero value %d.' % ret)
-
-chain()
