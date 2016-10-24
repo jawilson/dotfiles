@@ -141,6 +141,7 @@ au FileType c,cpp,h,hpp set cindent formatoptions+=ro tw=100
 au FileType c set omnifunc=ccomplete#Complete tw=100
 au FileType make set noexpandtab shiftwidth=8 tw=100
 au FileType python set et sw=4 sts=4 ts=4 tw=100 ai
+au FileType javascript set et sw=2 sts=2 ts=2 tw=100 ai
 au FileType html,xhtml set tw=0
 au FileType tex set spell tw=100
 au FileType gitconfig set expandtab!
