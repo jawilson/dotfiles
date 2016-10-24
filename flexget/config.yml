@@ -507,6 +507,7 @@ tasks:
         target: 720p+ hdtv+
         timeframe: 3 days
         quality: webrip+
+        tracking: backfill
       from:
         filesystem:
           path: "/media/raid/videos/TV Premieres/"
