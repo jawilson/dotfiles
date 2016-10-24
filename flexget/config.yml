@@ -200,9 +200,19 @@ templates:
       '*.rar': '/media/raid/deluge/downloads/completed/movies/'
 
 
-  # Keep all the discover settings in one place
-  movies-discover:
+  # This template uses the movie queue to find movies from various sources
+  movies-queued:
+    list_match:
+      from:
+        - movie_list: movie queue
+    template: movies-discover
+    disable:
+      - seen_movies
     discover:
+      release_estimations:
+        optimistic: 30 days
+      what:
+        - movie_list: movie queue
       from:
         - torrentleech:
             rss_key: '{{ secrets.torrentleech.rss_key }}'
@@ -213,21 +223,6 @@ templates:
         - rarbg:
             category: [44, 45]
             min_seeders: 10
-      what: [ filler: yes ] # Always produce entries
-
-
-  # This template uses the movie queue to find movies from various sources
-  movies-queued:
-    list_match:
-      from:
-        - movie_list: movie queue
-    template: movies-discover
-    disable:
-      - seen_movies
-    discover:
-      what:
-        - movie_list: movie queue
-      from: [ filler: yes ] # Always produce entries
     list_remove:
       - trakt_list:
           account: '{{ secrets.trakt.account }}'
