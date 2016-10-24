@@ -40,9 +40,7 @@ tasks:
     thetvdb_lookup: yes
     # This is needed to get my season offset values
     include:
-      - series-favorite.yml
-      - series-following.yml
-      - series-daily.yml
+      - series.yml
       - series-ak.yml
     sequence:
       - configure_series:
@@ -51,25 +49,7 @@ tasks:
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
-              list: Favorite TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            tracking: no
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Following TV
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            tracking: no
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: Daily TV
+              list: TV Shows
               type: shows
               strip_dates: yes
       - configure_series:
