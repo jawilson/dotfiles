@@ -13,5 +13,8 @@ Host Beagleone beagleone
 Host wenas Wenas
     HostName wenas.jeffalwilson.com
 Host Blue blue
-    HostName Blue.Singularity.net
+    HostName Blue.singularity.net
+    User root
+Host Galactica galactica
+    HostName Galactica.singularity.net
     User root
