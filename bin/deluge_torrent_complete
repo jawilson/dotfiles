@@ -9,7 +9,7 @@ DOWNLOAD_PATH='/media/raid/deluge/downloads/completed'
 STAGING_PATH='/media/raid/videos/staging'
 # If you're using a local checkout of Flexget, use flexget_vanilla.
 # Otherwise use the one in your system
-FLEXGET_COMMAND='/home/jawilson/src/flexget/bin/flexget --logfile '\
+FLEXGET_COMMAND='/usr/local/bin/flexget --logfile '\
         '/home/jawilson/.flexget/flexget-sorting.log'
 FLEXGET_SORTING_CONFIG='/home/jawilson/.flexget/sorting.yml'
 FLEXGET_TASK_PREFIX='Sort_Unpacked_'
