@@ -278,7 +278,7 @@ tasks:
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
-              list: AK TV
+              list: AK Shows
               type: shows
               strip_dates: yes
     plugin_priority:
@@ -367,7 +367,7 @@ tasks:
           from:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
-              list: AK TV
+              list: AK Shows
               type: shows
               strip_dates: yes
     exec: echo "Found {{ series_name }} - {{ series_id }} ({{ location }})" >> /dev/null
@@ -432,18 +432,6 @@ tasks:
             trakt_list:
               account: '{{ secrets.trakt.account }}'
               list: AK Shows
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            target: 720p+ hdtv+
-            timeframe: 14 days
-            quality: 480p+ webrip+
-            tracking: backfill
-          from:
-            trakt_list:
-              account: '{{ secrets.trakt.account }}'
-              list: AK TV
               type: shows
               strip_dates: yes
 
