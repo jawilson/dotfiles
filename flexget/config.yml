@@ -205,7 +205,6 @@ templates:
     list_match:
       from:
         - movie_list: movie queue
-    template: movies-discover
     disable:
       - seen_movies
     discover:
