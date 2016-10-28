@@ -396,7 +396,8 @@ tasks:
             position: next
             list: AK Shows
             strip_dates: yes
-        - next_series_episodes: yes
+        - next_series_episodes:
+            backfill: yes
       from:
         - torrentleech:
             rss_key: '{{ secrets.torrentleech.rss_key }}'
