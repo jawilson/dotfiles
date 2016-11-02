@@ -369,8 +369,28 @@ tasks:
               list: AK Shows
               type: shows
               strip_dates: yes
+    accept_all: yes
     exec: echo "Found {{ series_name }} - {{ series_id }} ({{ location }})" >> /dev/null
 
+  Sync-Trakt-Shows:
+    manual: yes
+    template: no_global
+    disable: [seen]
+    inputs:
+      - next_trakt_episodes:
+          account: '{{ secrets.trakt.account }}'
+          context: collected
+          position: last
+          list: TV Shows
+          strip_dates: yes
+      - next_trakt_episodes:
+          account: '{{ secrets.trakt.account }}'
+          context: collected
+          position: next
+          list: AK Shows
+          strip_dates: yes
+    accept_all: yes
+    set_series_begin: yes
 
   # All of the TV-related tasks pull in the tv-global template, this gives
   # all of the necessary rss sources and a few extra configs
@@ -398,6 +418,7 @@ tasks:
             strip_dates: yes
         - next_series_episodes:
             backfill: yes
+            from_start: yes
       from:
         - torrentleech:
             rss_key: '{{ secrets.torrentleech.rss_key }}'

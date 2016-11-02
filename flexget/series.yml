@@ -9,8 +9,6 @@ series:
       alternate_name:
           - The Daily Show with Trevor Noah
       name_regexp: ^the.daily.show(.with.trevor.noah)?
-  - "It's Always Sunny in Philadelphia":
-      begin: S07E01
   - Last Man Standing:
       alternate_name:
           - Last Man Standing (US)
@@ -21,16 +19,9 @@ series:
         tvdb_id: 278518
   - "Marvel's Agents of S.H.I.E.L.D.":
       name_regexp: ^marvel(')?s.agents.of.(s.h.i.e.l.d.?|shield)
-  - The Simpsons:
-      begin: S23E01
-  - South Park:
-      begin: S15E01
   - Top Gear:
       # Do not, under any circumstances, download the US version, it sucks more
       # than the new UK version
       name_regexp: ^top.gear(?!.us)
-      begin: S17E06
-  - Tosh.0:
-      begin: S03E07
   - "The Venture Bros.":
       name_regexp: ^the.venture.bro(ther)?s\.?
