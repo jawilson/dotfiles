@@ -11,7 +11,7 @@ late_show="$TV_ROOT/The Late Show with Stephen Colbert/"
 delete_old () {
     if [ -d "$1" ]
     then
-        find "$1" -mindepth 1 -maxdepth 1 -not -name ".actors" -not -name *.tbn -not -name *.jpg -not -name tvshow.nfo -mtime +$2 -exec rm -rf "{}" \;
+        find "$1" -mindepth 1 -maxdepth 1 -not -name "Plex Versions" -mtime +$2 -exec rm -rf "{}" \;
     fi
 }
 

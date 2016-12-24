@@ -262,6 +262,7 @@ tasks:
     sequence:
       - configure_series:
           settings:
+            parse_only: yes
             assume_special: true
           from:
             trakt_list:
@@ -271,6 +272,7 @@ tasks:
               strip_dates: yes
       - configure_series:
           settings:
+            parse_only: yes
             assume_special: true
           from:
             trakt_list:
@@ -431,7 +433,7 @@ tasks:
     sequence:
       - configure_series:
           settings:
-            target: 720p+ hdtv+
+            target: 720p+ webrip+
             timeframe: 14 days
             quality: 480p+ webrip+
             tracking: backfill

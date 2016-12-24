@@ -33,9 +33,6 @@ tasks:
     # Where to get the unpacked (staged) files from
     filesystem:
       path: '/media/raid/videos/staging/tv_shows/'
-    thexem:
-      source: scene
-      destination: tvdb
     # Where to get the metadata
     thetvdb_lookup: yes
     # This is needed to get my season offset values
