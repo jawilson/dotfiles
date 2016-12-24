@@ -124,9 +124,7 @@ templates:
     # or are currently downloading
     exists_series:
       - "/media/raid/videos/TV Shows/"
-      - "/media/raid/videos/TV Premieres/"
       - "/media/raid/videos/staging/tv_shows/"
-      - "/media/raid/videos/staging/tv_premieres/"
       - "/media/raid/deluge/downloads/"
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
@@ -457,75 +455,6 @@ tasks:
               strip_dates: yes
 
 
-  # I'm always up for new shows, but some I genres I just can't stand. This
-  # task grabs all of the premieres except for some genres
-  Series-Premieres:
-    priority: 40
-    template: [tv-global]
-    # The entry has to have the tvdb_genres field so I can filter by it
-    require_field:
-      - tvdb_genres
-      - tvdb_first_air_date
-    # Make sure plenty of people are seeding it, otherwise it may not be that good
-    torrent_alive:
-      min_seeds: 50
-    # Block these genres if they exist in the list of tvdb_genres at all
-    regexp:
-      reject:
-        - documentary: {from: tvdb_genres}
-        - talk show: {from: tvdb_genres}
-        - game show: {from: tvdb_genres}
-        - reality: {from: tvdb_genres}
-        - crime: {from: tvdb_genres}
-        - children: {from: tvdb_genres}
-        - home and garden: {from: tvdb_genres}
-    if:
-      # Block these genres only if they are the ONLY genre listed in
-      # tvdb_genres. For example, this will not block a show that's both
-      # "Comedy" and "Drama" but it will block a show that is just "Drama"
-      - "tvdb_genres == ['Drama']": reject
-      # Block premieres that weren't within the last 60 days
-      - tvdb_first_air_date and tvdb_first_air_date < now - timedelta(days=60): reject
-    # Accept all series permieres
-    series_premiere:
-      timeframe: 1 days
-      quality: 720p+ hdtv+
-    # Add to deluge, but don't queue to top (My_TV_Shows are more important)
-    # and put in a different location
-    set:
-      movedone: >
-        /media/raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
-      queuetotop: no
-      label: tv-premiere
-    # This is a custom plugin, it is part of my rar-unpacking method, it changes
-    # 'movedone' based on the regexp in the key
-    content_sort:
-      '*.rar': '/media/raid/deluge/downloads/completed/tv_premieres/'
-
-  # If a premier was grabbed, keep on tracking it until the directory is (re)moved
-  Series-Premieres-Track:
-    priority: 50
-    template: [tv-global]
-    configure_series:
-      settings:
-        target: 720p+ hdtv+
-        timeframe: 3 days
-        quality: webrip+
-        tracking: backfill
-      from:
-        filesystem:
-          path: "/media/raid/videos/TV Premieres/"
-          recursive: no
-          retrieve: dirs
-    set:
-      movedone: >
-        /media/raid/videos/TV Premieres/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
-      queuetotop: no
-      label: tv-premiere-track
-    content_sort:
-      '*.rar': '/media/raid/deluge/downloads/completed/tv_premieres/'
-
-
   # Cleans movies from the movie queue (and Trakt) that we already have
   Clean-Movie-Queue:
     priority: 90
@@ -600,12 +529,9 @@ schedules:
   #
   # Series
   #
-  - tasks: [ 'My-TV-Shows', 'Series-Premieres-Track' ]
+  - tasks: [ 'My-TV-Shows' ]
     schedule:
       minute: 3,18,33,48
-  - tasks: [ 'Series-Premieres' ]
-    interval:
-      hours: 2
 
   #
   # Movies
