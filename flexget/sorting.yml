@@ -68,7 +68,7 @@ tasks:
       to: >
         /{% if movedone|default(False) %}{{ movedone|replace('/', '', 1) }}{% else %}media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}{% endif %}
       # Filename (inside of folder) to move to
-      filename: >
+      rename: >
         {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
       clean_source: 40
 
@@ -84,6 +84,6 @@ tasks:
     move:
       to: >
         /media/raid/videos/Movies/{{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }})/
-      filename: >
+      rename: >
         {{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }}) - {{ quality }}.{{ location[-3:] }}
       clean_source: 1000

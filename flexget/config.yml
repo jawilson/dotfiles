@@ -81,8 +81,8 @@ templates:
     # Size and seed restrictions require real torrents
     magnets: no
     slack:
-      webhook-url: '{{ secrets.slack.webhook_url }}'
-      text: >
+      web_hook_url: '{{ secrets.slack.webhook_url }}'
+      message: >
         {{task}} - Download started:
         {%- if series_name is defined %}
         {% set info_string = tvdb_series_name|d(series_name) ~ ' - ' ~ series_id ~ (' - ' ~ tvdb_ep_name if tvdb_ep_name|default(False) else '') %}
