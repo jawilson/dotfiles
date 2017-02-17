@@ -7,22 +7,22 @@
 #
 
 # Use the secrets plugin to separately store credentials, etc
-secrets: secretfile.yml
+variables: secretfile.yml
 templates:
 
   global:
     if:
       - "'torrentleech' in url":
           deluge:
-            username: '{{ secrets.deluge.username }}'
-            password: '{{ secrets.deluge.password }}'
+            username: '{? deluge.username ?}'
+            password: '{? deluge.password ?}'
             main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
             keep_subs: yes
             port: 58847
       - "'torrentleech' not in url":
           deluge:
-            username: '{{ secrets.deluge.username }}'
-            password: '{{ secrets.deluge.password }}'
+            username: '{? deluge.username ?}'
+            password: '{? deluge.password ?}'
             main_file_only: yes # Ignore all but the file that is >90% of the torrent if it exists
             keep_subs: yes
             port: 58846
@@ -104,7 +104,7 @@ templates:
           {%- endif %}
         via:
           - slack:
-              web_hook_url: '{{ secrets.slack.webhook_url }}'
+              web_hook_url: '{? slack.webhook_url ?}'
 
   # This template is a "global" template for all TV-related tasks.
   # We keep all of the RSS feeds that list tv-related torrents here
@@ -112,7 +112,7 @@ templates:
   tv-global:
     # This is a TON of feeds, you probably don't need so many, but why not?
     inputs:
-      - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
+      - rss: { url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}', other_fields: [category] }
     if:
       - "has_field('category')":
           regexp:
@@ -154,7 +154,7 @@ templates:
   # as well as some other configurations.
   movies-global:
     inputs:
-      - rss: { url: 'http://rss.torrentleech.org/{{ secrets.torrentleech.rss_key }}', other_fields: [category] }
+      - rss: { url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}', other_fields: [category] }
     # Some feeds might include TV Shows, ignore them
     if:
       - "has_field('category')":
@@ -215,9 +215,9 @@ templates:
         - movie_list: movie queue
       from:
         - torrentleech:
-            rss_key: '{{ secrets.torrentleech.rss_key }}'
-            username: '{{ secrets.torrentleech.username }}'
-            password: '{{ secrets.torrentleech.password }}'
+            rss_key: '{? torrentleech.rss_key ?}'
+            username: '{? torrentleech.username ?}'
+            password: '{? torrentleech.password ?}'
             category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
         - flexget_archive: [movies]
         - rarbg:
@@ -225,11 +225,11 @@ templates:
             min_seeders: 10
     list_remove:
       - trakt_list:
-          account: '{{ secrets.trakt.account }}'
+          account: '{? trakt.account ?}'
           list: Movie Queue
     list_add:
       - trakt_list: # Add accepted item to my Trakt watchlist
-          account: '{{ secrets.trakt.account }}'
+          account: '{? trakt.account ?}'
           list: watchlist
     set:
       label: my-movies
@@ -269,7 +269,7 @@ tasks:
             assume_special: true
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: TV Shows
               type: shows
               strip_dates: yes
@@ -279,7 +279,7 @@ tasks:
             assume_special: true
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: AK Shows
               type: shows
               strip_dates: yes
@@ -359,7 +359,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: TV Shows
               type: shows
               strip_dates: yes
@@ -368,7 +368,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: AK Shows
               type: shows
               strip_dates: yes
@@ -381,13 +381,13 @@ tasks:
     disable: [seen]
     inputs:
       - next_trakt_episodes:
-          account: '{{ secrets.trakt.account }}'
+          account: '{? trakt.account ?}'
           context: collected
           position: last
           list: TV Shows
           strip_dates: yes
       - next_trakt_episodes:
-          account: '{{ secrets.trakt.account }}'
+          account: '{? trakt.account ?}'
           context: collected
           position: last
           list: AK Shows
@@ -400,7 +400,7 @@ tasks:
     disable: [seen]
     inputs:
       - next_trakt_episodes:
-          account: '{{ secrets.trakt.account }}'
+          account: '{? trakt.account ?}'
           context: collected
           position: next
           list: TV Shows
@@ -421,13 +421,13 @@ tasks:
     discover:
       what:
         - next_trakt_episodes:
-            account: '{{ secrets.trakt.account }}'
+            account: '{? trakt.account ?}'
             context: collected
             position: next
             list: TV Shows
             strip_dates: yes
         - next_trakt_episodes:
-            account: '{{ secrets.trakt.account }}'
+            account: '{? trakt.account ?}'
             context: collected
             position: next
             list: AK Shows
@@ -437,9 +437,9 @@ tasks:
             from_start: yes
       from:
         - torrentleech:
-            rss_key: '{{ secrets.torrentleech.rss_key }}'
-            username: '{{ secrets.torrentleech.username }}'
-            password: '{{ secrets.torrentleech.password }}'
+            rss_key: '{? torrentleech.rss_key ?}'
+            username: '{? torrentleech.username ?}'
+            password: '{? torrentleech.password ?}'
             category: ['Episodes HD', 'Episodes']
         - flexget_archive: [tv]
         - rarbg:
@@ -455,7 +455,7 @@ tasks:
             tracking: backfill
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: TV Shows
               type: shows
               strip_dates: yes
@@ -467,7 +467,7 @@ tasks:
             tracking: backfill
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: AK Shows
               type: shows
               strip_dates: yes
@@ -496,7 +496,7 @@ tasks:
         - movie_list: movie queue
     list_remove:
       - trakt_list:
-          account: '{{ secrets.trakt.account }}'
+          account: '{? trakt.account ?}'
           list: Movie Queue
 
 
@@ -505,7 +505,7 @@ tasks:
     priority: 100 # Always run before My-Movies task
     template: no_global # None of the global templates make sense here
     trakt_list:
-      account: '{{ secrets.trakt.account }}'
+      account: '{? trakt.account ?}'
       list: Movie Queue
       type: movies
     no_entries_ok: yes
