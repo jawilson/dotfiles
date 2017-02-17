@@ -386,11 +386,24 @@ tasks:
       - next_trakt_episodes:
           account: '{{ secrets.trakt.account }}'
           context: collected
-          position: next
+          position: last
           list: AK Shows
           strip_dates: yes
     accept_all: yes
     set_series_begin: yes
+
+  Sync-Trakt-Shows-Deleted:
+    template: no_global
+    disable: [seen]
+    inputs:
+      - next_trakt_episodes:
+          account: '{{ secrets.trakt.account }}'
+          context: collected
+          position: next
+          list: TV Shows
+          strip_dates: yes
+    accept_all: yes
+    series_remove: yes
 
   # All of the TV-related tasks pull in the tv-global template, this gives
   # all of the necessary rss sources and a few extra configs
@@ -531,6 +544,9 @@ schedules:
   #
   # Series
   #
+  - tasks: [ 'Sync-Trakt-Shows-Deleted' ]
+    schedule:
+      hour: 8
   - tasks: [ 'My-TV-Shows' ]
     schedule:
       minute: 3,18,33,48
