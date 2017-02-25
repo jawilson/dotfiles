@@ -7,7 +7,7 @@
 #
 
 # Use the secrets plugin to separately store credentials, etc
-secrets: secretfile.yml
+variables: secretfile.yml
 templates:
   global:
     # Each feed must be run manually
@@ -45,7 +45,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: TV Shows
               type: shows
               strip_dates: yes
@@ -54,7 +54,7 @@ tasks:
             tracking: no
           from:
             trakt_list:
-              account: '{{ secrets.trakt.account }}'
+              account: '{? trakt.account ?}'
               list: AK TV
               type: shows
               strip_dates: yes
