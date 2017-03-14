@@ -5,16 +5,11 @@ series:
         tvdb_series_name: "Archer (2009)"
   - "Cosmos: A Spacetime Odyssey":
       name_regexp: ^cosmos.+a.space.time.odyssey
-  - The Daily Show:
-      alternate_name:
-          - The Daily Show with Trevor Noah
-      name_regexp: ^the.daily.show(.with.trevor.noah)?
   - Last Man Standing:
       alternate_name:
           - Last Man Standing (US)
           - Last Man Standing (2011)
   - Last Week Tonight with John Oliver:
-      identified_by: ep
       set:
         tvdb_id: 278518
   - "Marvel's Agents of S.H.I.E.L.D.":

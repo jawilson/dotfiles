@@ -32,6 +32,42 @@ templates:
       space: 50000
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
+    # Limit the frequency of requests to domains so they don't complain about
+    # using a bot
+    domain_delay:
+      www.torrentleech.org: 10 seconds
+      rss.torrentleech.org: 10 minutes
+      bt-chat.com: 5 seconds
+      thexem.de: 10 seconds
+    # The Pirate Bay ssl certs always fail
+    verify_ssl_certificates: no
+    notify:
+      entries:
+        message: >
+          {{task}} - Download started:
+          {%- if series_name is defined %}
+          {% set info_string = tvdb_series_name|d(series_name) ~ ' - ' ~ series_id ~ (' - ' ~ tvdb_ep_name if tvdb_ep_name|default(False) else '') %}
+          {%- if trakt_series_slug is defined and trakt_season is defined and trakt_episode is defined -%}
+          <https://trakt.tv/shows/{{ trakt_series_slug }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}|{{ info_string }}>
+          {%- else %}
+          {{ info_string }}
+          {%- endif %}
+          - {{quality}}
+          {%- elif imdb_name is defined %}
+          {%- if imdb_url is defined %}
+          <{{imdb_url}}|{{imdb_name}} {{imdb_year}}>
+          {%- else %}
+          {{imdb_name}} {{imdb_year}}
+          {%- endif %}
+          - {{quality}}
+          {%- else -%}
+          {{title}}
+          {%- endif %}
+        via:
+          - slack:
+              web_hook_url: '{? slack.webhook_url ?}'
+
+  global-filter:
     # Most of these are the results of problem torrents I kept seeing still pop up, so I wholesale blocked them
     # RegExr (http://www.gskinner.com/RegExr/) is a great tool for testing regexes
     regexp:
@@ -69,56 +105,71 @@ templates:
       reject:
         - 'password.txt'
         - '*.wmv'
-    # Limit the frequency of requests to domains so they don't complain about
-    # using a bot
-    domain_delay:
-      www.torrentleech.org: 10 seconds
-      rss.torrentleech.org: 10 minutes
-      bt-chat.com: 5 seconds
-      thexem.de: 10 seconds
-    # The Pirate Bay ssl certs always fail
-    verify_ssl_certificates: no
     # Size and seed restrictions require real torrents
     magnets: no
-    notify:
-      entries:
-        message: >
-          {{task}} - Download started:
-          {%- if series_name is defined %}
-          {% set info_string = tvdb_series_name|d(series_name) ~ ' - ' ~ series_id ~ (' - ' ~ tvdb_ep_name if tvdb_ep_name|default(False) else '') %}
-          {%- if trakt_series_slug is defined and trakt_season is defined and trakt_episode is defined -%}
-          <https://trakt.tv/shows/{{ trakt_series_slug }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}|{{ info_string }}>
-          {%- else %}
-          {{ info_string }}
-          {%- endif %}
-          - {{quality}}
-          {%- elif imdb_name is defined %}
-          {%- if imdb_url is defined %}
-          <{{imdb_url}}|{{imdb_name}} {{imdb_year}}>
-          {%- else %}
-          {{imdb_name}} {{imdb_year}}
-          {%- endif %}
-          - {{quality}}
-          {%- else -%}
-          {{title}}
-          {%- endif %}
-        via:
-          - slack:
-              web_hook_url: '{? slack.webhook_url ?}'
 
-  # This template is a "global" template for all TV-related tasks.
-  # We keep all of the RSS feeds that list tv-related torrents here
-  # as well as where to check existing shows.
-  tv-global:
-    # This is a TON of feeds, you probably don't need so many, but why not?
-    inputs:
-      - rss: { url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}', other_fields: [category] }
-    if:
-      - "has_field('category')":
-          regexp:
-            reject_excluding:
-              - '^Episodes( HD)?$': {from: category}
-    archive: [tv]
+  tv-anchors:
+    _tv_series_include: &tv-series-include
+      include:
+        - series.yml
+    _tv_discover_from: &tv-discover-from
+      from:
+        - torrentleech:
+            rss_key: '{? torrentleech.rss_key ?}'
+            username: '{? torrentleech.username ?}'
+            password: '{? torrentleech.password ?}'
+            category: ['Episodes HD', 'Episodes']
+        - flexget_archive: [tv]
+        - rarbg:
+            category: [41]
+            use_tvdb: true
+            min_seeders: 10
+    _tv_trakt_list_tv_shows: &tv-trakt-list-tv-shows
+      account: '{? trakt.account ?}'
+      list: TV Shows
+      strip_dates: yes
+    _tv_trakt_ak_list_tv_shows: &tv-trakt-ak-list-tv-shows
+      account: '{? trakt.ak_account ?}'
+      list: TV Shows
+      strip_dates: yes
+    _tv_next_trakt_episodes: &tv-next-trakt-episodes
+      <<: *tv-trakt-list-tv-shows
+      context: collected
+      position: next
+    _tv_next_trakt_ak_episodes: &tv-next-trakt-ak-episodes
+      <<: *tv-trakt-ak-list-tv-shows
+      context: collected
+      position: next
+
+
+  tv-series:
+    <<: *tv-series-include
+    configure_series:
+      settings:
+        target: 720p+ webrip+
+        timeframe: 14 days
+        quality: 480p+ webrip+
+        tracking: backfill
+      from:
+        inputs:
+          - trakt_list:
+              <<: *tv-trakt-list-tv-shows
+              type: shows
+          - trakt_list:
+              <<: *tv-trakt-ak-list-tv-shows
+              type: shows
+
+  tv-trakt-follow:
+    seen: local
+    accept_all: yes
+    no_entries_ok: yes
+    set_series_begin: yes
+    manipulate:
+      - series_name:
+          from: trakt_series_name
+
+  tv-filter:
+    template: [global-filter]
     # Impose reasonable size constraints
     content_size:
       max: 5000
@@ -129,16 +180,35 @@ templates:
       - "/media/raid/videos/TV Shows/"
       - "/media/raid/videos/staging/tv_shows/"
       - "/media/raid/deluge/downloads/"
+
+
+  tv-global:
+    archive: [tv]
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
     require_field: [series_name, series_id]
-    # Add accepted entries to Deluge and make sure they end up in the correct
-    # folder with a nice name
+    sequence:
+      - configure_series:
+          settings:
+            set:
+              movedone: >
+                /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+          from:
+            trakt_list:
+              <<: *tv-trakt-list-tv-shows
+              type: shows
+      - configure_series:
+          settings:
+            set:
+              movedone: >
+                /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+          from:
+            trakt_list:
+              <<: *tv-trakt-ak-list-tv-shows
+              type: shows
     set:
       queuetotop: yes
-      movedone: >
-        /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
       # Rename the "content file" to something nice, use leading slash to force file to top level
       content_filename: >
         /{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}
@@ -153,16 +223,6 @@ templates:
   # We keep all of the RSS feeds that list movie-related torrents here
   # as well as some other configurations.
   movies-global:
-    inputs:
-      - rss: { url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}', other_fields: [category] }
-    # Some feeds might include TV Shows, ignore them
-    if:
-      - "has_field('category')":
-          regexp:
-            reject_excluding:
-              - '^(HD|BDRip|DVDRip.DVDScreener|DVD-R|Documentaries)$': {from: category}
-    # Rotten Tomatoes is broken, possibly forever :(
-    #rottentomatoes_lookup: yes
     archive: [movies]
     regexp:
       reject:
@@ -243,61 +303,28 @@ tasks:
   # accepted, then the original file is deleted
   Local-Torrents-TV:
     priority: 1
-    include:
-      - series.yml
-      - series-ak.yml
+    <<: *tv-series-include
     template:
       - tv-global
     disable:
-      - seen
-      - seen_info_hash
+      - archive
       - retry_failed
-      - configure_series
-      - trakt_list
-      - inputs
-      - exists_series
-      - regexp
-      - content_size
-      - content_filter
-      - torrent_alive
+      - seen
     all_series:
       parse_only: yes
-    sequence:
-      - configure_series:
-          settings:
-            parse_only: yes
-            assume_special: true
-          from:
-            trakt_list:
-              account: '{? trakt.account ?}'
-              list: TV Shows
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            parse_only: yes
-            assume_special: true
-          from:
-            trakt_list:
-              account: '{? trakt.account ?}'
-              list: AK Shows
-              type: shows
-              strip_dates: yes
-    plugin_priority:
-      exec: 0
+      assume_special: true
     filesystem:
       path: '/home/jawilson/Dropbox/torrents/TV'
       recursive: yes
       retrieve: files
       regexp: '.*\.torrent$'
     no_entries_ok: yes
-    verify_ssl_certificates: no
-    exec:
-      on_output:
-        for_accepted: rm "{{location}}"
     accept_all: yes
     set:
       label: local-tv
+    exec:
+      on_exit:
+        for_accepted: rm "{{location}}"
 
 
   # Same as above but for movies
@@ -337,7 +364,9 @@ tasks:
 
   Sync-TV-Shows:
     manual: yes
-    template: no_global # None of the global templates make sense here
+    template:
+      - no_global # None of the global templates make sense here
+      - tv-series
     filesystem:
       path:
         - /media/raid/videos/TV Shows/
@@ -348,129 +377,84 @@ tasks:
     regexp:
       reject:
         - \bsample\b: {from: title}
-    disable: builtins
-    thetvdb_lookup: yes
-    include:
-      - series.yml
-      - series-ak.yml
-    sequence:
-      - configure_series:
-          settings:
-            tracking: no
-          from:
-            trakt_list:
-              account: '{? trakt.account ?}'
-              list: TV Shows
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            tracking: no
-          from:
-            trakt_list:
-              account: '{? trakt.account ?}'
-              list: AK Shows
-              type: shows
-              strip_dates: yes
-    accept_all: yes
-    exec: echo "Found {{ series_name }} - {{ series_id }} ({{ location }})" >> /dev/null
+    all_series:
+      tracking: no
 
-  Sync-Trakt-Shows:
-    manual: yes
-    template: no_global
-    disable: [seen]
-    inputs:
-      - next_trakt_episodes:
-          account: '{? trakt.account ?}'
-          context: collected
-          position: last
-          list: TV Shows
-          strip_dates: yes
-      - next_trakt_episodes:
-          account: '{? trakt.account ?}'
-          context: collected
-          position: last
-          list: AK Shows
-          strip_dates: yes
-    accept_all: yes
-    set_series_begin: yes
 
   Sync-Trakt-Shows-Deleted:
+    priority: 10
     template: no_global
-    disable: [seen]
+    seen: no
     inputs:
       - next_trakt_episodes:
-          account: '{? trakt.account ?}'
-          context: collected
-          position: next
-          list: TV Shows
-          strip_dates: yes
+          <<: *tv-next-trakt-episodes
+      - next_trakt_episodes:
+          <<: *tv-next-trakt-ak-episodes
     accept_all: yes
     series_remove: yes
 
-  # All of the TV-related tasks pull in the tv-global template, this gives
-  # all of the necessary rss sources and a few extra configs
 
-  # There are 3 My-TV Shows tasks, the first, tries to get the most wanted qualities
+  Follow-Trakt-Shows:
+    priority: 20
+    template: [no_global,tv-trakt-follow]
+    trakt_list:
+      <<: *tv-trakt-list-tv-shows
+      type: episodes
+      strip_dates: yes
+    list_remove:
+      - trakt_list:
+          <<: *tv-trakt-list-tv-shows
+          strip_dates: yes
+    list_add:
+      - trakt_list:
+          <<: *tv-trakt-list-tv-shows
+          type: shows
+          strip_dates: yes
+
+
+  Follow-Trakt-Shows-AK:
+    priority: 20
+    template: [no_global,tv-trakt-follow]
+    trakt_list:
+      <<: *tv-trakt-list-tv-shows
+      type: episodes
+      strip_dates: yes
+    list_remove:
+      - trakt_list:
+          <<: *tv-trakt-ak-list-tv-shows
+          strip_dates: yes
+    list_add:
+      - trakt_list:
+          <<: *tv-trakt-ak-list-tv-shows
+          type: shows
+          strip_dates: yes
+
+
   My-TV-Shows:
-    priority: 10
-    include:
-      - series.yml
-      - series-ak.yml
-    template: [tv-global]
+    priority: 30
+    template:
+      - tv-series
+      - tv-global
+      - tv-filter
+    rss:
+      url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}'
+      other_fields: [category]
+    if:
+      - "has_field('category')":
+          regexp:
+            reject_excluding:
+              - '^Episodes( HD)?$': {from: category}
+    archive: [tv]
     discover:
+      <<: *tv-discover-from
       what:
         - next_trakt_episodes:
-            account: '{? trakt.account ?}'
-            context: collected
-            position: next
-            list: TV Shows
-            strip_dates: yes
+            <<: *tv-next-trakt-episodes
         - next_trakt_episodes:
-            account: '{? trakt.account ?}'
-            context: collected
-            position: next
-            list: AK Shows
-            strip_dates: yes
+            <<: *tv-next-trakt-ak-episodes
         - next_series_episodes:
             backfill: yes
             from_start: yes
-      from:
-        - torrentleech:
-            rss_key: '{? torrentleech.rss_key ?}'
-            username: '{? torrentleech.username ?}'
-            password: '{? torrentleech.password ?}'
-            category: ['Episodes HD', 'Episodes']
-        - flexget_archive: [tv]
-        - rarbg:
-            category: [41]
-            use_tvdb: true
-            min_seeders: 10
-    sequence:
-      - configure_series:
-          settings:
-            target: 720p+ webrip+
-            timeframe: 14 days
-            quality: 480p+ webrip+
-            tracking: backfill
-          from:
-            trakt_list:
-              account: '{? trakt.account ?}'
-              list: TV Shows
-              type: shows
-              strip_dates: yes
-      - configure_series:
-          settings:
-            target: 720p+ hdtv+
-            timeframe: 14 days
-            quality: 480p+ webrip+
-            tracking: backfill
-          from:
-            trakt_list:
-              account: '{? trakt.account ?}'
-              list: AK Shows
-              type: shows
-              strip_dates: yes
 
 
   # Cleans movies from the movie queue (and Trakt) that we already have
@@ -488,8 +472,6 @@ tasks:
       retrieve: dirs
     imdb_lookup: yes
     tmdb_lookup: yes
-    # Rotten Tomatoes is broken, possibly forever :(
-    #rottentomatoes_lookup: yes
     require_field: [movie_name, movie_year]
     list_match:
       from:
@@ -547,7 +529,7 @@ schedules:
   #
   # Series
   #
-  - tasks: [ 'Sync-Trakt-Shows-Deleted' ]
+  - tasks: [ 'Follow-Trakt-Shows*', 'Sync-Trakt-Shows-Deleted' ]
     schedule:
       hour: 8
   - tasks: [ 'My-TV-Shows' ]

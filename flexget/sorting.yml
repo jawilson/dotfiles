@@ -38,11 +38,14 @@ tasks:
     # This is needed to get my season offset values
     include:
       - series.yml
-      - series-ak.yml
     sequence:
       - configure_series:
           settings:
+            parse_only: yes
             tracking: no
+            set:
+              move_to: >
+                /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
               account: '{? trakt.account ?}'
@@ -51,22 +54,24 @@ tasks:
               strip_dates: yes
       - configure_series:
           settings:
+            parse_only: yes
             tracking: no
+            set:
+              move_to: >
+                /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
-              account: '{? trakt.account ?}'
-              list: AK TV
+              account: '{? trakt.ak_account ?}'
+              list: TV Shows
               type: shows
               strip_dates: yes
     all_series:
       # Don't actually filter
       parse_only: yes
+      tracking: no
     # Don't attempt to move if we don't have valid metadata
     require_field: [tvdb_series_name, series_id]
     move:
-      # Folder to move to
-      to: >
-        /{% if movedone|default(False) %}{{ movedone|replace('/', '', 1) }}{% else %}media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}{% endif %}
       # Filename (inside of folder) to move to
       rename: >
         {{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}.{{ location[-3:] }}
