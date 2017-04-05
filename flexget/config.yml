@@ -219,33 +219,20 @@ templates:
       '*.rar': '/media/raid/deluge/downloads/completed/tv_shows/'
 
 
-  # This template is a "global" template for all movie-related tasks.
-  # We keep all of the RSS feeds that list movie-related torrents here
-  # as well as some other configurations.
+  movie-anchors:
+    _movie_trakt_list_movies: &movie-trakt-list-movies
+      account: '{? trakt.account ?}'
+      list: Movie Queue
+      type: movies
+    _movie_trakt_ak_list_movies: &movie-trakt-ak-list-movies
+      account: '{? trakt.ak_account ?}'
+      list: Movies
+      type: movies
+
   movies-global:
     archive: [movies]
-    regexp:
-      reject:
-        - s\d+e\d+: {from: title}
-        - '\d{4}.\d{2}.\d{2}': {from: title}
-        - \d+x\d+: {from: title}
-        - \baac2: {from: title} # No 2 channel audio
-    # Force proper_movies to run after regexp to avoid unnecessary imdb_lookup
-    plugin_priority:
-      regexp: 176
-      if: 177
-      proper_movies: 171
-    # Impose reasonable size constraints
-    content_size:
-      max: 20000
-      min: 1000
     imdb_lookup: yes
     trakt_lookup: yes
-    # Check for already downloaded or currently downloading movies
-    exists_movie:
-      - /media/raid/videos/Movies/
-      - /media/raid/videos/staging/movies
-      - /media/raid/deluge/downloads/
     # Download propers, since they will have the same content_filename,
     # lower/non-propers will be overwritten
     proper_movies: yes
@@ -260,14 +247,18 @@ templates:
     content_sort:
       '*.rar': '/media/raid/deluge/downloads/completed/movies/'
 
-
   # This template uses the movie queue to find movies from various sources
   movies-queued:
-    list_match:
-      from:
-        - movie_list: movie queue
-    disable:
-      - seen_movies
+    template: [global-filter]
+    rss:
+      url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}'
+      other_fields: [category]
+    # Some feeds might include TV Shows, ignore them
+    if:
+      - "has_field('category')":
+          regexp:
+            reject_excluding:
+              - '^(HD|BDRip|DVDRip.DVDScreener|DVD-R|Documentaries)$': {from: category}
     discover:
       release_estimations:
         optimistic: 30 days
@@ -283,14 +274,29 @@ templates:
         - rarbg:
             category: [44, 45]
             min_seeders: 10
+    regexp:
+      reject:
+        - s\d+e\d+: {from: title}
+        - '\d{4}.\d{2}.\d{2}': {from: title}
+        - \d+x\d+: {from: title}
+        - \baac2: {from: title} # No 2 channel audio
+    # Impose reasonable size constraints
+    content_size:
+      max: 20000
+      min: 1000
+    # Check for already downloaded or currently downloading movies
+    exists_movie:
+      - /media/raid/videos/Movies/
+      - /media/raid/videos/staging/movies
+      - /media/raid/deluge/downloads/
+    list_match:
+      from:
+        - movie_list: movie queue
     list_remove:
       - trakt_list:
-          account: '{? trakt.account ?}'
-          list: Movie Queue
-    list_add:
-      - trakt_list: # Add accepted item to my Trakt watchlist
-          account: '{? trakt.account ?}'
-          list: watchlist
+          <<: *movie-trakt-list-movies
+      - trakt_list:
+          <<: *movie-trakt-ak-list-movies
     set:
       label: my-movies
 
@@ -332,34 +338,28 @@ tasks:
     priority: 2
     template:
       - movies-global
-      - movies-queued
     disable:
-      - seen
-      - seen_info_hash
+      - archive
       - retry_failed
-      - discover
-      - inputs
-      - exists_movie
-      - seen_movies
-      - regexp
-      - content_size
-      - content_filter
-      - torrent_alive
-    plugin_priority:
-      exec: 0
+      - seen
     filesystem:
       path: '/home/jawilson/Dropbox/torrents/Movies'
       recursive: yes
       retrieve: files
       regexp: '.*\.torrent$'
     no_entries_ok: yes
-    exec:
-      on_output:
-        for_accepted: rm "{{location}}"
     accept_all: yes
-    verify_ssl_certificates: no
+    list_remove:
+      - movie_list: movie queue
+      - trakt_list:
+          <<: *movie-trakt-list-movies
+      - trakt_list:
+          <<: *movie-trakt-ak-list-movies
     set:
       label: local-movies
+    exec:
+      on_exit:
+        for_accepted: rm "{{location}}"
 
 
   Sync-TV-Shows:
@@ -460,12 +460,8 @@ tasks:
   # Cleans movies from the movie queue (and Trakt) that we already have
   Clean-Movie-Queue:
     priority: 90
-    template: no_global # None of the global templates make sense here
-    disable:
-      - seen
-      - seen_info_hash
-      - seen_movies
-    accept_all: yes
+    template: no_global
+    seen: no
     filesystem:
       path: /media/raid/videos/Movies/
       recursive: no
@@ -473,23 +469,25 @@ tasks:
     imdb_lookup: yes
     tmdb_lookup: yes
     require_field: [movie_name, movie_year]
-    list_match:
-      from:
-        - movie_list: movie queue
+    accept_all: yes
     list_remove:
+      - movie_list: movie queue
       - trakt_list:
-          account: '{? trakt.account ?}'
-          list: Movie Queue
+          <<: *movie-trakt-list-movies
+      - trakt_list:
+          <<: *movie-trakt-ak-list-movies
 
 
   # This task queues all of the movies in my Trakt "Movie Queue" playlist
   Movie-Queue:
     priority: 100 # Always run before My-Movies task
     template: no_global # None of the global templates make sense here
-    trakt_list:
-      account: '{? trakt.account ?}'
-      list: Movie Queue
-      type: movies
+    seen: local
+    sequence:
+      - trakt_list:
+          <<: *movie-trakt-list-movies
+      - trakt_list:
+          <<: *movie-trakt-ak-list-movies
     no_entries_ok: yes
     accept_all: yes
     list_add:
@@ -501,16 +499,16 @@ tasks:
   My-Movies-1080p:
     priority: 110
     template:
-      - movies-global
       - movies-queued
+      - movies-global
     quality: 1080p+ bluray+ h264+ truehd|dtshd|dd5.1|dts
 
 
   My-Movies-720p:
     priority: 120
     template:
-      - movies-global
       - movies-queued
+      - movies-global
     quality: 720p+ dvdrip+ xvid+ truehd|dtshd|dd5.1|dts|ac3
     torrent_alive:
       min_seeds: 5
