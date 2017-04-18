@@ -16,10 +16,13 @@
 [help]
 	autocorrect = 1
 [alias]
+    cup = "!f(){ b=$1; git checkout "$b"; git pull --rebase; };f"
+    topic-start  = "!f(){ b=$1; git checkout master; git fetch; git rebase; git checkout -b "$b" master; };f"
 	co = checkout
 	ci = commit -v
 	svn-pretty-log = "! f() { git log -n 1000 --graph --color=always --pretty=format:\"%Cred%h%Creset%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%Cred%b%Creset\" --date=relative \"$@\" | parse-git-svn-pretty-log | less -FRS; }; f"
 	pretty-log = log --graph --pretty=format:'%Cred%h%Creset%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev=8 --date=relative
+    log-standup = !git log --since yesterday --author $(git config user.email) --pretty=short
 	up = pull --rebase
 	diverge  = ![ "$2" ] && HEAD=$2 || HEAD=HEAD && git diff $(git merge-base --octopus $1 $HEAD)..$HEAD
 	ldiverge = ![ "$2" ] && HEAD=$2 || HEAD=HEAD && git show $(git merge-base --octopus $1 $HEAD)..$HEAD
@@ -52,6 +55,6 @@
 [web]
 	browser = chrome
 [filter "lfs"]
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
 	required = true
