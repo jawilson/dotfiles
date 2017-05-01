@@ -109,9 +109,6 @@ templates:
     magnets: no
 
   tv-anchors:
-    _tv_series_include: &tv-series-include
-      include:
-        - series.yml
     _tv_discover_from: &tv-discover-from
       from:
         - torrentleech:
@@ -140,24 +137,18 @@ templates:
       <<: *tv-trakt-ak-list-tv-shows
       context: collected
       position: next
-
-
-  tv-series:
-    <<: *tv-series-include
-    configure_series:
-      settings:
-        target: 720p+ webrip+
-        timeframe: 14 days
-        quality: 480p+ webrip+
-        tracking: backfill
-      from:
-        inputs:
-          - trakt_list:
-              <<: *tv-trakt-list-tv-shows
-              type: shows
-          - trakt_list:
-              <<: *tv-trakt-ak-list-tv-shows
-              type: shows
+    _tv_series: &tv-series
+      include:
+        - series.yml
+      configure_series: &tv-series-from
+        from:
+          inputs:
+            - trakt_list:
+                <<: *tv-trakt-list-tv-shows
+                type: shows
+            - trakt_list:
+                <<: *tv-trakt-ak-list-tv-shows
+                type: shows
 
   tv-trakt-follow:
     seen: local
@@ -169,7 +160,15 @@ templates:
           from: trakt_series_name
 
   tv-filter:
+    <<: *tv-series
     template: [global-filter]
+    configure_series:
+      <<: *tv-series-from
+      settings:
+        target: 720p+ webrip+
+        timeframe: 14 days
+        quality: 480p+ webrip+
+        tracking: backfill
     # Impose reasonable size constraints
     content_size:
       max: 5000
@@ -177,9 +176,10 @@ templates:
     # Prevent from downloading shows that were aquired manually
     # or are currently downloading
     exists_series:
-      - "/media/raid/videos/TV Shows/"
-      - "/media/raid/videos/staging/tv_shows/"
-      - "/media/raid/deluge/downloads/"
+      - "/media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}"
+      - /media/raid/videos/AK Shows
+      - /media/raid/videos/staging/tv_shows/
+      - /media/raid/deluge/downloads/
 
 
   tv-global:
@@ -192,7 +192,7 @@ templates:
       - configure_series:
           settings:
             set:
-              movedone: >
+              movedone: >-
                 /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
@@ -201,7 +201,7 @@ templates:
       - configure_series:
           settings:
             set:
-              movedone: >
+              movedone: >-
                 /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
@@ -210,7 +210,7 @@ templates:
     set:
       queuetotop: yes
       # Rename the "content file" to something nice, use leading slash to force file to top level
-      content_filename: >
+      content_filename: >-
         /{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}
       label: tv
     # This is a custom plugin, it is part of my rar-unpacking method,
@@ -240,7 +240,7 @@ templates:
       # Give folders/files nice names
       movedone: "/media/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
       # Rename the "content file" to something nice, use leading slash to force file to top level
-      content_filename: |
+      content_filename: >-
         /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
@@ -309,7 +309,7 @@ tasks:
   # accepted, then the original file is deleted
   Local-Torrents-TV:
     priority: 1
-    <<: *tv-series-include
+    <<: *tv-series
     template:
       - tv-global
     disable:
@@ -319,6 +319,10 @@ tasks:
     all_series:
       parse_only: yes
       assume_special: true
+    configure_series:
+      <<: *tv-series-from
+      settings:
+        parse_only: yes
     filesystem:
       path: '/home/jawilson/Dropbox/torrents/TV'
       recursive: yes
@@ -364,9 +368,9 @@ tasks:
 
   Sync-TV-Shows:
     manual: yes
+    <<: *tv-series
     template:
       - no_global # None of the global templates make sense here
-      - tv-series
     filesystem:
       path:
         - /media/raid/videos/TV Shows/
@@ -378,7 +382,9 @@ tasks:
       reject:
         - \bsample\b: {from: title}
     all_series:
+      parse_only: true
       tracking: no
+    accept_all: true
 
 
   Sync-Trakt-Shows-Deleted:
@@ -390,7 +396,8 @@ tasks:
           <<: *tv-next-trakt-episodes
       - next_trakt_episodes:
           <<: *tv-next-trakt-ak-episodes
-    accept_all: yes
+    all_series:
+      tracking: no
     series_remove: yes
 
 
@@ -433,7 +440,6 @@ tasks:
   My-TV-Shows:
     priority: 30
     template:
-      - tv-series
       - tv-global
       - tv-filter
     rss:
@@ -455,6 +461,7 @@ tasks:
         - next_series_episodes:
             backfill: yes
             from_start: yes
+    max_reruns: 2
 
 
   # Cleans movies from the movie queue (and Trakt) that we already have
