@@ -431,7 +431,7 @@ tasks:
     priority: 20
     template: [no_global,tv-trakt-follow]
     trakt_list:
-      <<: *tv-trakt-list-tv-shows
+      <<: *tv-trakt-ak-list-tv-shows
       type: episodes
       strip_dates: yes
     list_remove:
