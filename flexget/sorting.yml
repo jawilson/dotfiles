@@ -86,9 +86,17 @@ tasks:
     #rottentomatoes_lookup: yes
     proper_movies: yes
     require_field: [movie_name, movie_year]
+    manipulate:
+      - extras:
+          from: title
+          extract: '(Half).?(sbs|tab|ou)'
+      - extras:
+          replace:
+            regexp: 'half[^-]?(sbs|tab|ou)'
+            format: '3d half-\1'
     move:
       to: >
         /media/raid/videos/Movies/{{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }})/
       rename: >
-        {{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }}) - {{ quality }}.{{ location[-3:] }}
+        {{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }}) - {{ quality }}{% if extras|default(False) %} {{ extras|lower }}{% endif %}.{{ location[-3:] }}
       clean_source: 1000

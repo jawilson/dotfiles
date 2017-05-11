@@ -60,7 +60,7 @@ templates:
           {%- else %}
           {{info_string}}
           {%- endif %}
-          - {{quality}}
+          - {{quality}}{% if extras|d(False) %} {{ extras|lower }}{% endif %}
           {%- else -%}
           {{title}}
           {%- endif %}
@@ -76,7 +76,6 @@ templates:
         - (s|d)ub(s|bed)?\b: {from: title}                    # Block any subbed/dubbed/etc videos
         - \bspanish\b: {from: title}                          # Spanish releases kept cropping up
         - \b(duo|tri|quadri|tetra|penta)logy\b: {from: title} # Block series, only accept one at a time
-        - \b3-?D\b: {from: title}                             # I don't have any 3D displays
         - \btrailer\b: {from: title}                          # I've gotten a few trailers that matched as movies. VERY annoying
         - \bR5\b: {from: title}                               # The following are poor quality types that somehow got through the quality
         - \bWEBSCR\b: {from: title}                           # features usually due to the title including a keyword like "720p" as well
@@ -237,12 +236,20 @@ templates:
     # Download propers, since they will have the same content_filename,
     # lower/non-propers will be overwritten
     proper_movies: yes
+    manipulate:
+      - extras:
+          from: title
+          extract: '(Half).?(sbs|tab|ou)'
+      - extras:
+          replace:
+            regexp: 'half[^-]?(sbs|tab|ou)'
+            format: '3d half-\1'
     set:
       # Give folders/files nice names
       movedone: "/media/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
       # Rename the "content file" to something nice, use leading slash to force file to top level
       content_filename: >-
-        /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}
+        /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}{% if extras|default(False) %} {{ extras|lower }}{% endif %}
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
