@@ -129,14 +129,6 @@ templates:
       account: '{? trakt.ak_account ?}'
       list: TV Shows
       strip_dates: yes
-    _tv_next_trakt_episodes: &tv-next-trakt-episodes
-      <<: *tv-trakt-list-tv-shows
-      context: collected
-      position: next
-    _tv_next_trakt_ak_episodes: &tv-next-trakt-ak-episodes
-      <<: *tv-trakt-ak-list-tv-shows
-      context: collected
-      position: next
     _tv_series: &tv-series
       include:
         - series.yml
@@ -401,9 +393,13 @@ tasks:
     seen: no
     inputs:
       - next_trakt_episodes:
-          <<: *tv-next-trakt-episodes
+          <<: *tv-trakt-list-tv-shows
+          context: collected
+          position: next
       - next_trakt_episodes:
-          <<: *tv-next-trakt-ak-episodes
+          <<: *tv-trakt-ak-list-tv-shows
+          context: collected
+          position: next
     all_series:
       tracking: no
     series_remove: yes
@@ -462,10 +458,6 @@ tasks:
     discover:
       <<: *tv-discover-from
       what:
-        - next_trakt_episodes:
-            <<: *tv-next-trakt-episodes
-        - next_trakt_episodes:
-            <<: *tv-next-trakt-ak-episodes
         - next_series_episodes:
             backfill: yes
             from_start: yes
