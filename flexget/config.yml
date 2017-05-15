@@ -239,10 +239,10 @@ templates:
     manipulate:
       - extras:
           from: title
-          extract: '(Half).?(sbs|tab|ou)'
+          extract: '($|half.?(?:sbs|tab|ou))'
       - extras:
           replace:
-            regexp: 'half[^-]?(sbs|tab|ou)'
+            regexp: 'half.?(sbs|tab|ou)'
             format: '3d half-\1'
     set:
       # Give folders/files nice names
