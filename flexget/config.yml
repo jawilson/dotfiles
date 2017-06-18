@@ -60,7 +60,7 @@ templates:
           {%- else %}
           {{info_string}}
           {%- endif %}
-          - {{quality}}{% if extras|d(False) %} {{ extras|lower }}{% endif %}
+          - {{quality}}{% if extras|d(False) %} 3d {{ extras|lower }}{% endif %}
           {%- else -%}
           {{title}}
           {%- endif %}
@@ -232,16 +232,12 @@ templates:
       - extras:
           from: title
           extract: '($|half.?(?:sbs|tab|ou))'
-      - extras:
-          replace:
-            regexp: 'half.?(sbs|tab|ou)'
-            format: '3d half-\1'
     set:
       # Give folders/files nice names
       movedone: "/media/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
       # Rename the "content file" to something nice, use leading slash to force file to top level
       content_filename: >-
-        /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}{% if extras|default(False) %} {{ extras|lower }}{% endif %}
+        /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}{% if extras|default(False) %} 3d {{ extras|lower }}{% endif %}
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
