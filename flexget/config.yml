@@ -11,6 +11,16 @@ variables: secretfile.yml
 templates:
 
   global:
+    # Some strings I found tripping up the parsers
+    manipulate:
+      - title:
+          replace:
+            regexp: '-?bs666$'
+            format: ''
+      - title:
+          replace:
+            regexp: 's(\d\d)(\d\d)'
+            format: 's\1e\2'
     if:
       - "'torrentleech' in url":
           deluge:
@@ -143,7 +153,8 @@ templates:
                 type: shows
 
   tv-trakt-follow:
-    seen: local
+    disable:
+      - seen
     accept_all: yes
     no_entries_ok: yes
     set_series_begin: yes
@@ -161,6 +172,7 @@ templates:
         timeframe: 14 days
         quality: 480p+ webrip+
         tracking: backfill
+        season_packs: yes
     # Impose reasonable size constraints
     content_size:
       max: 5000
@@ -314,7 +326,8 @@ tasks:
       - seen
     all_series:
       parse_only: yes
-      assume_special: true
+      assume_special: yes
+      season_packs: yes
     configure_series:
       <<: *tv-series-from
       settings:
@@ -326,6 +339,7 @@ tasks:
       regexp: '.*\.torrent$'
     no_entries_ok: yes
     accept_all: yes
+    series_add: yes
     set:
       label: local-tv
     exec:
@@ -364,9 +378,13 @@ tasks:
 
   Sync-TV-Shows:
     manual: yes
-    <<: *tv-series
     template:
       - no_global # None of the global templates make sense here
+    disable:
+      - seen
+      - seen_info_hash
+      - nzb_size
+      - urlrewriting
     filesystem:
       path:
         - /media/raid/videos/TV Shows/
@@ -377,9 +395,12 @@ tasks:
     regexp:
       reject:
         - \bsample\b: {from: title}
-    all_series:
-      parse_only: true
-      tracking: no
+    <<: *tv-series
+    configure_series:
+      <<: *tv-series-from
+      settings:
+        tracking: no
+        upgrade: yes
     accept_all: true
 
 
@@ -398,6 +419,11 @@ tasks:
           position: next
     all_series:
       tracking: no
+      parse_only: yes
+    accept_all: yes
+    exists_series:
+      - /media/raid/videos/TV Shows
+      - /media/raid/videos/AK Shows
     series_remove: yes
 
 
@@ -454,6 +480,10 @@ tasks:
     discover:
       <<: *tv-discover-from
       what:
+        - next_series_seasons:
+            backfill: yes
+            from_start: yes
+            threshold: 4
         - next_series_episodes:
             backfill: yes
             from_start: yes
