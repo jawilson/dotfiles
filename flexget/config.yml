@@ -49,8 +49,6 @@ templates:
       rss.torrentleech.org: 10 minutes
       bt-chat.com: 5 seconds
       thexem.de: 10 seconds
-    # The Pirate Bay ssl certs always fail
-    verify_ssl_certificates: no
     notify:
       entries:
         message: >
