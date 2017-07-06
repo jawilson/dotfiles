@@ -89,14 +89,10 @@ tasks:
     manipulate:
       - extras:
           from: title
-          extract: '($|half.?(?:sbs|tab|ou))'
-      - extras:
-          replace:
-            regexp: 'half.?(sbs|tab|ou)'
-            format: '3d half-\1'
+          extract: '(?:half|h).?(sbs|tab|ou)'
     move:
       to: >
         /media/raid/videos/Movies/{{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }})/
       rename: >
-        {{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }}) - {{ quality }}{% if extras|default(False) %} {{ extras|lower }}{% endif %}.{{ location[-3:] }}
+        {{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }}) - {{ quality }}{% if extras|default(False) %} 3d half-{{ extras|lower }}{% endif %}.{{ location[-3:] }}
       clean_source: 1000
