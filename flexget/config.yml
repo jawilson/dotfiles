@@ -75,6 +75,7 @@ templates:
         via:
           - slack:
               web_hook_url: '{? slack.webhook_url ?}'
+              channel: '#bots'
 
   global-filter:
     # Most of these are the results of problem torrents I kept seeing still pop up, so I wholesale blocked them
