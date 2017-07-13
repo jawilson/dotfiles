@@ -284,7 +284,7 @@ templates:
             category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
         - flexget_archive: [movies]
         - rarbg:
-            category: [44, 45]
+            category: [44, 45, 47]
             min_seeders: 10
     regexp:
       reject:
