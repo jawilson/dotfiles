@@ -32,7 +32,7 @@ tasks:
   Sort_Unpacked_TV_Shows:
     # Where to get the unpacked (staged) files from
     filesystem:
-      path: '/media/raid/videos/staging/tv_shows/'
+      path: '{? storage.videos ?}/staging/tv_shows/'
     # Where to get the metadata
     thetvdb_lookup: yes
     # This is needed to get my season offset values
@@ -45,7 +45,7 @@ tasks:
             tracking: no
             set:
               move_to: >
-                /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+                {? storage.videos ?}/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
               account: '{? trakt.account ?}'
@@ -58,7 +58,7 @@ tasks:
             tracking: no
             set:
               move_to: >
-                /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+                {? storage.videos ?}/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
               account: '{? trakt.ak_account ?}'
@@ -80,7 +80,7 @@ tasks:
   # Same as above
   Sort_Unpacked_Movies:
     filesystem:
-      path: '/media/raid/videos/staging/movies/'
+      path: '{? storage.videos ?}/staging/movies/'
     imdb_lookup: yes
     tmdb_lookup: yes
     #rottentomatoes_lookup: yes
@@ -92,7 +92,7 @@ tasks:
           extract: '(?:half|h).?(sbs|tab|ou)'
     move:
       to: >
-        /media/raid/videos/Movies/{{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }})/
+        {? storage.videos ?}/Movies/{{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }})/
       rename: >
         {{ movie_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ movie_year }}) - {{ quality }}{% if extras|default(False) %} 3d half-{{ extras|lower }}{% endif %}.{{ location[-3:] }}
       clean_source: 1000
