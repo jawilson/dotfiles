@@ -173,9 +173,14 @@ templates:
         tracking: backfill
         season_packs: yes
     # Impose reasonable size constraints
-    content_size:
-      max: 5000
-      min: 20
+    if:
+      - season_pack:
+          content_size:
+            min: 500
+      - not season_pack:
+          content_size:
+            max: 5000
+            min: 20
     # Prevent from downloading shows that were aquired manually
     # or are currently downloading
     exists_series:
