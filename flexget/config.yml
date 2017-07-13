@@ -38,7 +38,7 @@ templates:
             port: 58846
     # Make there's 50GB free before adding more downloads
     free_space:
-      path: /media/raid
+      path: '{? storage.videos ?}'
       space: 50000
     # Make sure all filenames are Windows safe (for samba)
     pathscrub: windows
@@ -179,10 +179,10 @@ templates:
     # Prevent from downloading shows that were aquired manually
     # or are currently downloading
     exists_series:
-      - "/media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}"
-      - /media/raid/videos/AK Shows
-      - /media/raid/videos/staging/tv_shows/
-      - /media/raid/deluge/downloads/
+      - "{? storage.videos ?}/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}"
+      - '{? storage.videos ?}/AK Shows'
+      - '{? storage.videos ?}/staging/tv_shows'
+      - '{? storage.downloads ?}'
 
 
   tv-global:
@@ -196,7 +196,7 @@ templates:
           settings:
             set:
               movedone: >-
-                /media/raid/videos/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+                {? storage.videos ?}/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
               <<: *tv-trakt-list-tv-shows
@@ -205,7 +205,7 @@ templates:
           settings:
             set:
               movedone: >-
-                /media/raid/videos/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
+                {? storage.videos ?}/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
           from:
             trakt_list:
               <<: *tv-trakt-ak-list-tv-shows
@@ -219,7 +219,7 @@ templates:
     # This is a custom plugin, it is part of my rar-unpacking method,
     # it changes 'movedone' based on the regexp in the key
     content_sort:
-      '*.rar': '/media/raid/deluge/downloads/completed/tv_shows/'
+      '*.rar': '{? storage.downloads ?}/completed/tv_shows/'
 
 
   movie-anchors:
@@ -245,14 +245,14 @@ templates:
           extract: '(?:half|h).?(sbs|tab|ou)'
     set:
       # Give folders/files nice names
-      movedone: "/media/raid/videos/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
+      movedone: "{? storage.videos ?}/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
       # Rename the "content file" to something nice, use leading slash to force file to top level
       content_filename: >-
         /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}{% if extras|default(False) %} 3d half-{{ extras|lower }}{% endif %}
     # This is a custom plugin, it is part of my rar-unpacking method, it changes
     # 'movedone' based on the regexp in the key
     content_sort:
-      '*.rar': '/media/raid/deluge/downloads/completed/movies/'
+      '*.rar': '{? storage.downloads ?}/completed/movies/'
 
   # This template uses the movie queue to find movies from various sources
   movies-queued:
@@ -293,9 +293,9 @@ templates:
       min: 1000
     # Check for already downloaded or currently downloading movies
     exists_movie:
-      - /media/raid/videos/Movies/
-      - /media/raid/videos/staging/movies
-      - /media/raid/deluge/downloads/
+      - "{? storage.videos ?}/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
+      - '{? storage.videos ?}/staging/movies'
+      - '{? storage.downloads ?}'
     list_match:
       from:
         - movie_list: movie queue
@@ -386,8 +386,8 @@ tasks:
       - urlrewriting
     filesystem:
       path:
-        - /media/raid/videos/TV Shows/
-        - /media/raid/videos/AK Shows/
+        - '{? storage.videos ?}/TV Shows'
+        - '{? storage.videos ?}/AK Shows'
       recursive: yes
       retrieve: files
       regexp: '.*\.(avi|mkv|mp4|mpg|m4v)$'
@@ -421,8 +421,8 @@ tasks:
       parse_only: yes
     accept_all: yes
     exists_series:
-      - /media/raid/videos/TV Shows
-      - /media/raid/videos/AK Shows
+      - '{? storage.videos ?}/TV Shows'
+      - '{? storage.videos ?}/AK Shows'
     series_remove: yes
 
 
@@ -495,7 +495,7 @@ tasks:
     template: no_global
     seen: no
     filesystem:
-      path: /media/raid/videos/Movies/
+      path: '{? storage.videos ?}/Movies'
       recursive: no
       retrieve: dirs
     imdb_lookup: yes
