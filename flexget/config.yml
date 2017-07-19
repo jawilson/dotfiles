@@ -115,6 +115,8 @@ templates:
         - 'password.txt'
         - '*.wmv'
     # Size and seed restrictions require real torrents
+    rewrite_magnet:
+      scrape: yes
     magnets: no
 
   tv-anchors:
