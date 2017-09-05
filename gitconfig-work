@@ -16,7 +16,7 @@
 [help]
 	autocorrect = 1
 [alias]
-    cup = "!f(){ b=$1; git checkout "$b"; git pull --rebase; };f"
+    cup = "!f(){ b=$1; git fetch --prune; git checkout "$b"; git rebase origin/"$b"; };f"
     topic-start  = "!f(){ b=$1; git checkout master; git fetch; git rebase; git checkout -b "$b" master; };f"
 	co = checkout
 	ci = commit -v
@@ -57,4 +57,5 @@
 [filter "lfs"]
     clean = git-lfs clean -- %f
     smudge = git-lfs smudge -- %f
-	required = true
+    required = true
+    process = git-lfs filter-process

@@ -59,7 +59,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras cp colorize node)
+plugins=(git git-extras cp colorize node aws)
 
 # User configuration
 
