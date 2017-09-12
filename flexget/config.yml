@@ -19,7 +19,7 @@ templates:
             format: ''
       - title:
           replace:
-            regexp: 's(\d\d)(\d\d)'
+            regexp: '\bs(\d\d)(\d\d)\b'
             format: 's\1e\2'
     if:
       - "'torrentleech' in url":
@@ -120,18 +120,6 @@ templates:
     magnets: no
 
   tv-anchors:
-    _tv_discover_from: &tv-discover-from
-      from:
-        - torrentleech:
-            rss_key: '{? torrentleech.rss_key ?}'
-            username: '{? torrentleech.username ?}'
-            password: '{? torrentleech.password ?}'
-            category: ['Episodes HD', 'Episodes']
-        - flexget_archive: [tv]
-        - rarbg:
-            category: [41]
-            use_tvdb: true
-            min_seeders: 10
     _tv_trakt_list_tv_shows: &tv-trakt-list-tv-shows
       account: '{? trakt.account ?}'
       list: TV Shows
@@ -170,7 +158,7 @@ templates:
       <<: *tv-series-from
       settings:
         target: 720p+ webrip+
-        timeframe: 14 days
+        timeframe: 3 days
         quality: 480p+ webrip+
         tracking: backfill
         season_packs: yes
@@ -193,7 +181,6 @@ templates:
 
 
   tv-global:
-    archive: [tv]
     # Look up info on TheTVDB.com to fill in extra info
     thetvdb_lookup: yes
     trakt_lookup: yes
@@ -222,7 +209,6 @@ templates:
       # Rename the "content file" to something nice, use leading slash to force file to top level
       content_filename: >-
         /{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }} - {{ series_id }}{% if tvdb_ep_name|default(False) %} - {{ tvdb_ep_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }}{% endif %} - {{ quality }}
-      label: tv
     # This is a custom plugin, it is part of my rar-unpacking method,
     # it changes 'movedone' based on the regexp in the key
     content_sort:
@@ -239,55 +225,14 @@ templates:
       list: Movies
       type: movies
 
-  movies-global:
-    archive: [movies]
-    imdb_lookup: yes
-    trakt_lookup: yes
-    # Download propers, since they will have the same content_filename,
-    # lower/non-propers will be overwritten
-    proper_movies: yes
-    manipulate:
-      - extras:
-          from: title
-          extract: '(?:half|h).?(sbs|tab|ou)'
-    set:
-      # Give folders/files nice names
-      movedone: "{? storage.videos ?}/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
-      # Rename the "content file" to something nice, use leading slash to force file to top level
-      content_filename: >-
-        /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}{% if extras|default(False) %} 3d half-{{ extras|lower }}{% endif %}
-    # This is a custom plugin, it is part of my rar-unpacking method, it changes
-    # 'movedone' based on the regexp in the key
-    content_sort:
-      '*.rar': '{? storage.downloads ?}/completed/movies/'
-
-  # This template uses the movie queue to find movies from various sources
-  movies-queued:
+  movies-filter:
     template: [global-filter]
-    rss:
-      url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}'
-      other_fields: [category]
     # Some feeds might include TV Shows, ignore them
     if:
       - "has_field('category')":
           regexp:
             reject_excluding:
               - '^(HD|BDRip|DVDRip.DVDScreener|DVD-R|Documentaries)$': {from: category}
-    discover:
-      release_estimations:
-        optimistic: 30 days
-      what:
-        - movie_list: movie queue
-      from:
-        - torrentleech:
-            rss_key: '{? torrentleech.rss_key ?}'
-            username: '{? torrentleech.username ?}'
-            password: '{? torrentleech.password ?}'
-            category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
-        - flexget_archive: [movies]
-        - rarbg:
-            category: [44, 45, 47]
-            min_seeders: 10
     regexp:
       reject:
         - s\d+e\d+: {from: title}
@@ -306,13 +251,71 @@ templates:
     list_match:
       from:
         - movie_list: movie queue
+
+  movies-global:
+    imdb_lookup: yes
+    trakt_lookup: yes
+    # Download propers, since they will have the same content_filename,
+    # lower/non-propers will be overwritten
+    proper_movies: yes
+    #manipulate:
+    #  - extras:
+    #    from: title
+    #    extract: '(?:half|h).?(sbs|tab|ou)'
+    set:
+      # Give folders/files nice names
+      movedone: "{? storage.videos ?}/Movies/{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }})"
+      # Rename the "content file" to something nice, use leading slash to force file to top level
+      content_filename: >-
+        /{{ imdb_name|replace('/', '_')|replace(':', ' -')|replace(',', '') }} ({{ imdb_year }}) - {{ quality }}{% if extras|default(False) %} 3d half-{{ extras|lower }}{% endif %}
+    # This is a custom plugin, it is part of my rar-unpacking method, it changes
+    # 'movedone' based on the regexp in the key
+    content_sort:
+      '*.rar': '{? storage.downloads ?}/completed/movies/'
     list_remove:
       - trakt_list:
           <<: *movie-trakt-list-movies
       - trakt_list:
           <<: *movie-trakt-ak-list-movies
+
+  # This template uses the movie queue to find movies from various sources
+  movies-queued:
+    rss:
+      url: 'http://rss.torrentleech.org/{? torrentleech.rss_key ?}'
+      other_fields: [category]
+    discover:
+      release_estimations:
+        optimistic: 30 days
+      what:
+        - movie_list: movie queue
+      from:
+        - torrentleech:
+            rss_key: '{? torrentleech.rss_key ?}'
+            username: '{? torrentleech.username ?}'
+            password: '{? torrentleech.password ?}'
+            category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
+        - flexget_archive: [movies]
+        - rarbg:
+            category: [44, 45, 47]
+            min_seeders: 10
+        - piratebay:
+            category: 'highres movies'
+        - piratebay:
+            category: 'movies'
+    archive: [movies]
     set:
       label: my-movies
+
+
+  local-torrents:
+    disable:
+      - retry_failed
+      - seen
+    no_entries_ok: yes
+    accept_all: yes
+    exec:
+      on_exit:
+        for_accepted: rm "{{location}}"
 
 
 # This is where we pull everything together
@@ -325,11 +328,8 @@ tasks:
     priority: 1
     <<: *tv-series
     template:
+      - local-torrents
       - tv-global
-    disable:
-      - archive
-      - retry_failed
-      - seen
     all_series:
       parse_only: yes
       assume_special: yes
@@ -343,43 +343,26 @@ tasks:
       recursive: yes
       retrieve: files
       regexp: '.*\.torrent$'
-    no_entries_ok: yes
-    accept_all: yes
     series_add: yes
     set:
       label: local-tv
-    exec:
-      on_exit:
-        for_accepted: rm "{{location}}"
 
 
   # Same as above but for movies
   Local-Torrents-Movies:
     priority: 2
     template:
+      - local-torrents
       - movies-global
-    disable:
-      - archive
-      - retry_failed
-      - seen
     filesystem:
       path: '/home/jawilson/Dropbox/torrents/Movies'
       recursive: yes
       retrieve: files
       regexp: '.*\.torrent$'
-    no_entries_ok: yes
-    accept_all: yes
     list_remove:
       - movie_list: movie queue
-      - trakt_list:
-          <<: *movie-trakt-list-movies
-      - trakt_list:
-          <<: *movie-trakt-ak-list-movies
     set:
       label: local-movies
-    exec:
-      on_exit:
-        for_accepted: rm "{{location}}"
 
 
   Sync-TV-Shows:
@@ -482,9 +465,22 @@ tasks:
           regexp:
             reject_excluding:
               - '^Episodes( HD)?$': {from: category}
-    archive: [tv]
     discover:
-      <<: *tv-discover-from
+      from:
+        - torrentleech:
+            rss_key: '{? torrentleech.rss_key ?}'
+            username: '{? torrentleech.username ?}'
+            password: '{? torrentleech.password ?}'
+            category: ['Episodes HD', 'Episodes']
+        - flexget_archive: [tv]
+        - rarbg:
+            category: [41, 49]
+            use_tvdb: true
+            min_seeders: 10
+        - piratebay:
+            category: 'highres tv'
+        - piratebay:
+            category: 'tv'
       what:
         - next_series_seasons:
             backfill: yes
@@ -494,6 +490,35 @@ tasks:
             backfill: yes
             from_start: yes
     max_reruns: 2
+    archive: [tv]
+
+
+  Monitor-Missing-Shows:
+    template:
+      - no_global # None of the global templates make sense here
+    seen: local
+    <<: *tv-series
+    configure_series:
+      <<: *tv-series-from
+      settings:
+        parse_only: yes
+    no_entries_ok: yes
+    next_series_episodes: yes
+    trakt_lookup: yes
+    if:
+      - trakt_ep_first_aired and trakt_ep_first_aired < now - timedelta(days=2): accept
+    notify:
+      task:
+        message: |+
+          Missing {% if task.accepted > 1 %}episodes{% else %}episode{% endif %} detected:
+          {% for entry in task.accepted %}
+            • <{{ entry.trakt_series_url }}/seasons/{{ entry.trakt_season }}/episodes/{{ entry.trakt_episode }}|{{ entry.trakt_series_name }} - {{ entry.series_id }} - {{ entry.trakt_ep_name }}>
+              Released on {{ entry.trakt_ep_first_aired|formatdate("%B %d, %Y") }}
+          {% endfor %}
+        via:
+          - slack:
+              web_hook_url: '{? slack.webhook_url ?}'
+              channel: '#bots'
 
 
   # Cleans movies from the movie queue (and Trakt) that we already have
@@ -511,10 +536,6 @@ tasks:
     accept_all: yes
     list_remove:
       - movie_list: movie queue
-      - trakt_list:
-          <<: *movie-trakt-list-movies
-      - trakt_list:
-          <<: *movie-trakt-ak-list-movies
 
 
   # This task queues all of the movies in my Trakt "Movie Queue" playlist
@@ -538,8 +559,9 @@ tasks:
   My-Movies-1080p:
     priority: 110
     template:
-      - movies-queued
       - movies-global
+      - movies-filter
+      - movies-queued
     quality: 1080p+ bluray+ h264+ truehd|dtshd|dd5.1|dts
 
 
@@ -547,6 +569,7 @@ tasks:
     priority: 120
     template:
       - movies-queued
+      - movies-filter
       - movies-global
     quality: 720p+ dvdrip+ xvid+ truehd|dtshd|dd5.1|dts|ac3
     torrent_alive:
@@ -572,6 +595,9 @@ schedules:
   - tasks: [ 'My-TV-Shows' ]
     schedule:
       minute: 3,18,33,48
+  - tasks: [ 'Monitor-Missing-Shows' ]
+    interval:
+      hours: 1
 
   #
   # Movies
