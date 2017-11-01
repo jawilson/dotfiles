@@ -1,3 +1,147 @@
+## v0.6.4
+
+- `load` segment now has configurable averages.
+- Update to `dir` segment to add `dir_writable` feature.
+- `status` segment can now display POSIX signal name of exit code.
+- Added `teardown` command to turn off P9k prompt.
+- Fixes for P9k in Cygwin and 32-bit systems.
+- Better colors in virtualization segments.
+- Added 'Gopher' icon to the `go_version` segment.
+- Improved detection in `nvm`
+- Added option to support command status reading from piped command sequences.
+- Fixed issue with visual artifacts with quick consecutive commands.
+- Updated 'ananconda' segment for more uniform styling.
+- `rvm` segment can now support usernames with dashes.
+- Fixed Python icon reference in some font configurations.
+- Vi mode indicator fixed.
+- Fixes for Docker segment.
+- Added new Docker-based testing system.
+- Significant enhancements to the `battery` segment. Check out the README to
+  read more!
+- New truncation strategy that truncates until the path becomes unique.
+
+### New Segments: `host` and `user`
+
+Provides two separate segments for `host` and `user` in case you don't wont both
+in one (per the `context` segment).
+
+### New Segment: `newline`
+
+Allows you to split segments across multiple lines.
+
+### New Segment: `kubecontext`
+
+Shows the current context of your `kubectl` configuration.
+
+### New Segment: `vpn`
+
+Shows current `vpn` interface.
+
+## v0.6.3
+
+- Fixed susceptibility to [pw3nage exploit](https://github.com/njhartwell/pw3nage).
+- Added support for Android
+- The abbreviation for $HOME is now configurable (doesn't have to be `~`).
+- Fixed colorization of VCS segment in Subversion repos.
+- Improved handling of symlinks in installation paths.
+
+## v0.6.2
+
+- Fixed some issues with the new `nerdfont-fontconfig` option.
+- Fixed typo in README.
+- The `get_icon_names` function can now print sorted output, and show which
+  icons users have overridden.
+- Added a FreeBSD VM for testing.
+
+### Add debug script for iTerm2 issues
+
+A new script `debug/iterm.zsh` was added for easier spotting problems with your iTerm2 configuration.
+
+### Add debug script for font issues
+
+A new script `debug/font-issues.zsh` was added, so that problems with your font could be spotted easier.
+
+### `ram` changes
+
+The `ram` segment now shows the available ram instead of free.
+
+### Add new segments `host` and `user`
+
+The user and host segments allow you to have different icons and colors for both the user and host segments
+depending on their state.
+
+## v0.6.0
+
+- Fixed a bug where the tag display was broken on detached HEADs.
+- Fixed a bug where SVN detection sometimes failed.
+- Fixed the `load` and `ram` segments for BSD.
+- Fixed code-points that changed in Awesome fonts.
+- Fixed display of "OK_ICON" in `status` segment in non-verbose mode.
+- Fixed an issue where dir name truncation that was very short sometimes failed.
+- Speed & accuracy improvements to the battery segment.
+- Added Github syntax highlighting to README.
+- Various documentation cleanup.
+
+### New Font Option: nerd-fonts
+
+There is now an option to use [nerd-fonts](https://github.com/ryanoasis/nerd-fonts) with P9k. Simply configure the `nerdfont-fontconfig`, and you'll be set!
+
+### `vcs` changes
+
+The VCS segment can now display icons for remote repo hosting services, including Github, Gitlab, and 'other'.
+
+### `dir` changes
+
+Added an option to configure the path separator. If you want something
+else than an ordinary slash, you could set
+`POWERLEVEL9K_DIR_PATH_SEPARATOR` to whatever you want.
+
+#### `truncate_with_package_name` now searches for `composer.json` as well
+
+Now `composer.json` files are searched as well. By default `package.json` still takes
+precedence. If you want to change that, set `POWERLEVEL9K_DIR_PACKAGE_FILES=(composer.json package.json)`.
+
+### New segment `command_execution_time` added
+
+Shows the duration a command needed to run. By default only durations over 3 seconds
+are shown (can be adjusted by setting POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD).
+
+### New segment `dir_writable` added
+
+This segment displays a lock icon if your user has no write permissions in the current folder.
+
+### New segment `disk_usage` added
+
+This segment will show the usage level of your current partition.
+
+### New segment `public_ip` added
+
+Fetches your Public IP (using ident.me) and displays it in your prompt.
+
+### New segment `swift_version` added
+
+This segment displays the version of Swift that is installed / in your path.
+
+### New segment `detect_virt` added
+
+Detects and reports if you are in a virtualized session using `systemd`.
+
+## v0.5.0
+
+### `load` and `ram` changes
+
+These two segments now support BSD.
+
+### `vcs` changes
+
+- We implemented a huge speed improvement for this segment.
+- Now this segment supports Subversion repositories.
+- Add ability to hide tags by setting `POWERLEVEL9K_VCS_HIDE_TAGS` to true.
+
+## `anaconda` changes
+
+Speed improvements for `anaconda` segment.
+
 ## v0.4.0
 
 ### Development changes
@@ -76,6 +220,11 @@ Added new `docker_machine` segment that will show your Docker machine.
 
 A new segment `anaconda` was added that shows the current used
 anaconda environment.
+
+## New segment `pyenv` added
+
+This segment shows your active python version as reported by `pyenv`.
+
 
 ## v0.3.2
 
