@@ -36,3 +36,6 @@ docker run \
   -e TZ=America/New_York \
   -p 8181:8181 \
   -d linuxserver/plexpy"
+
+# HomeAssistant
+alias certbot-renew="docker-compose -f /media/raid/home-assistant/docker-compose.yml.letsencrypt up"
