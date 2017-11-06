@@ -1,19 +1,27 @@
 " MIT License. Copyright (c) 2013-2016 Bailey Ling.
 " vim: et ts=2 sts=2 sw=2
 
+scriptencoding utf-8
+
 function! airline#extensions#wordcount#formatters#default#format()
+  let fmt = get(g:, 'airline#extensions#wordcount#formatter#default#fmt', '%s words')
+  let fmt_short = get(g:, 'airline#extensions#wordcount#formatter#default#fmt_short', fmt == '%s words' ? '%sW' : fmt)
   let words = string(s:wordcount())
   if empty(words)
     return
   endif
-  let separator = s:get_decimal_group()
-  if words > 999 && !empty(separator)
-    " Format number according to locale, e.g. German: 1.245 or English: 1,245
-    let a = join(reverse(split(words, '.\zs')),'')
-    let a = substitute(a, '...', '&'.separator, 'g')
-    let words = join(reverse(split(a, '.\zs')),'')
+  let result = g:airline_symbols.space . g:airline_right_alt_sep . g:airline_symbols.space
+  if winwidth(0) >= 80
+    let separator = s:get_decimal_group()
+    if words > 999 && !empty(separator)
+      " Format number according to locale, e.g. German: 1.245 or English: 1,245
+      let words = substitute(words, '\d\@<=\(\(\d\{3\}\)\+\)$', separator.'&', 'g')
+    endif
+    let result = printf(fmt, words). result
+  else
+    let result = printf(fmt_short, words). result
   endif
-  return  words . " words" . g:airline_symbols.space . g:airline_right_alt_sep . g:airline_symbols.space
+  return result
 endfunction
 
 function! s:wordcount()
