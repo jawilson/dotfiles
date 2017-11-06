@@ -3,22 +3,18 @@
 
 " http://got-ravings.blogspot.com/2008/10/vim-pr0n-statusline-whitespace-flags.html
 
+scriptencoding utf-8
+
 let s:show_message = get(g:, 'airline#extensions#whitespace#show_message', 1)
 let s:symbol = get(g:, 'airline#extensions#whitespace#symbol', g:airline_symbols.whitespace)
 let s:default_checks = ['indent', 'trailing', 'mixed-indent-file']
 
-let s:trailing_format = get(g:, 'airline#extensions#whitespace#trailing_format', 'trailing[%s]')
-let s:mixed_indent_format = get(g:, 'airline#extensions#whitespace#mixed_indent_format', 'mixed-indent[%s]')
-let s:long_format = get(g:, 'airline#extensions#whitespace#long_format', 'long[%s]')
-let s:mixed_indent_file_format = get(g:, 'airline#extensions#whitespace#mixed_indent_file_format', 'mix-indent-file[%s]')
-let s:indent_algo = get(g:, 'airline#extensions#whitespace#mixed_indent_algo', 0)
-let s:skip_check_ft = {'make': ['indent', 'mixed-indent-file'] }
-let s:max_lines = get(g:, 'airline#extensions#whitespace#max_lines', 20000)
 let s:enabled = get(g:, 'airline#extensions#whitespace#enabled', 1)
-let s:c_like_langs = get(g:, 'airline#extensions#c_like_langs', [ 'c', 'cpp', 'cuda', 'javascript', 'ld', 'php' ])
+let s:skip_check_ft = {'make': ['indent', 'mixed-indent-file'] }
 
 function! s:check_mixed_indent()
-  if s:indent_algo == 1
+  let indent_algo = get(g:, 'airline#extensions#whitespace#mixed_indent_algo', 0)
+  if indent_algo == 1
     " [<tab>]<space><tab>
     " spaces before or between tabs are not allowed
     let t_s_t = '(^\t* +\t\s*\S)'
@@ -26,7 +22,7 @@ function! s:check_mixed_indent()
     " count of spaces at the end of tabs should be less than tabstop value
     let t_l_s = '(^\t+ {' . &ts . ',}' . '\S)'
     return search('\v' . t_s_t . '|' . t_l_s, 'nw')
-  elseif s:indent_algo == 2
+  elseif indent_algo == 2
     return search('\v(^\t* +\t\s*\S)', 'nw')
   else
     return search('\v(^\t+ +)|(^ +\t+)', 'nw')
@@ -34,7 +30,9 @@ function! s:check_mixed_indent()
 endfunction
 
 function! s:check_mixed_indent_file()
-  if index(s:c_like_langs, &ft) > -1
+  let c_like_langs = get(g:, 'airline#extensions#c_like_langs',
+        \ [ 'c', 'cpp', 'cuda', 'go', 'javascript', 'ld', 'php' ])
+  if index(c_like_langs, &ft) > -1
     " for C-like languages: allow /** */ comment style with one space before the '*'
     let head_spc = '\v(^ +\*@!)'
   else
@@ -50,14 +48,15 @@ function! s:check_mixed_indent_file()
 endfunction
 
 function! airline#extensions#whitespace#check()
-  if &readonly || !&modifiable || !s:enabled || line('$') > s:max_lines
+  let max_lines = get(g:, 'airline#extensions#whitespace#max_lines', 20000)
+  if &readonly || !&modifiable || !s:enabled || line('$') > max_lines
           \ || get(b:, 'airline_whitespace_disabled', 0)
     return ''
   endif
 
   if !exists('b:airline_whitespace_check')
     let b:airline_whitespace_check = ''
-    let checks = get(g:, 'airline#extensions#whitespace#checks', s:default_checks)
+    let checks = get(b:, 'airline_whitespace_checks', get(g:, 'airline#extensions#whitespace#checks', s:default_checks))
 
     let trailing = 0
     if index(checks, 'trailing') > -1
@@ -90,23 +89,33 @@ function! airline#extensions#whitespace#check()
 
     if trailing != 0 || mixed != 0 || long != 0 || !empty(mixed_file)
       let b:airline_whitespace_check = s:symbol
+      if strlen(s:symbol) > 0
+        let space = (g:airline_symbols.space)
+      else
+        let space = ''
+      endif
+
       if s:show_message
         if trailing != 0
-          let b:airline_whitespace_check .= (g:airline_symbols.space).printf(s:trailing_format, trailing)
+          let trailing_fmt = get(g:, 'airline#extensions#whitespace#trailing_format', '[%s]trailing')
+          let b:airline_whitespace_check .= space.printf(trailing_fmt, trailing)
         endif
         if mixed != 0
-          let b:airline_whitespace_check .= (g:airline_symbols.space).printf(s:mixed_indent_format, mixed)
+          let mixed_indent_fmt = get(g:, 'airline#extensions#whitespace#mixed_indent_format', '[%s]mixed-indent')
+          let b:airline_whitespace_check .= space.printf(mixed_indent_fmt, mixed)
         endif
         if long != 0
-          let b:airline_whitespace_check .= (g:airline_symbols.space).printf(s:long_format, long)
+          let long_fmt = get(g:, 'airline#extensions#whitespace#long_format', '[%s]long')
+          let b:airline_whitespace_check .= space.printf(long_fmt, long)
         endif
         if !empty(mixed_file)
-          let b:airline_whitespace_check .= (g:airline_symbols.space).printf(s:mixed_indent_file_format, mixed_file)
+          let mixed_indent_file_fmt = get(g:, 'airline#extensions#whitespace#mixed_indent_file_format', '[%s]mix-indent-file')
+          let b:airline_whitespace_check .= space.printf(mixed_indent_file_fmt, mixed_file)
         endif
       endif
     endif
   endif
-  return b:airline_whitespace_check
+  return airline#util#shorten(b:airline_whitespace_check, 120, 9)
 endfunction
 
 function! airline#extensions#whitespace#toggle()
@@ -131,6 +140,12 @@ function! airline#extensions#whitespace#toggle()
   echo 'Whitespace checking: '.(s:enabled ? 'Enabled' : 'Disabled')
 endfunction
 
+function! airline#extensions#whitespace#disable()
+  if s:enabled
+    call airline#extensions#whitespace#toggle()
+  endif
+endfunction
+
 function! airline#extensions#whitespace#init(...)
   call airline#parts#define_function('whitespace', 'airline#extensions#whitespace#check')
 
@@ -142,8 +157,12 @@ function! airline#extensions#whitespace#init(...)
 endfunction
 
 function! s:ws_refresh()
+  if get(b:, 'airline_ws_changedtick', 0) == b:changedtick
+    return
+  endif
   unlet! b:airline_whitespace_check
   if get(g:, 'airline_skip_empty_sections', 0)
     exe ':AirlineRefresh'
   endif
+  let b:airline_ws_changedtick = b:changedtick
 endfunction

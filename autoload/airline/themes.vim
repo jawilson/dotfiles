@@ -1,6 +1,8 @@
 " MIT License. Copyright (c) 2013-2016 Bailey Ling.
 " vim: et ts=2 sts=2 sw=2
 
+scriptencoding utf-8
+
 " generates a dictionary which defines the colors for each highlight group
 function! airline#themes#generate_color_map(sect1, sect2, sect3, ...)
   let palette = {
@@ -42,9 +44,14 @@ function! airline#themes#patch(palette)
     if !has_key(a:palette[mode], 'airline_error')
       let a:palette[mode]['airline_error'] = [ '#000000', '#990000', 232, 160 ]
     endif
+    if !has_key(a:palette[mode], 'airline_term')
+      "let a:palette[mode]['airline_term'] = [ '#9cffd3', '#202020', 85, 232]
+      let a:palette[mode]['airline_term'] = airline#highlighter#get_highlight('airline_c')
+    endif
   endfor
 
   let a:palette.accents = get(a:palette, 'accents', {})
+  let a:palette.accents.none = [ '', '', '', '', '' ]
   let a:palette.accents.bold = [ '', '', '', '', 'bold' ]
   let a:palette.accents.italic = [ '', '', '', '', 'italic' ]
 

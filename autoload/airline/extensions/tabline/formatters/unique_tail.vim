@@ -1,6 +1,8 @@
 " MIT License. Copyright (c) 2013-2016 Bailey Ling.
 " vim: et ts=2 sts=2 sw=2
 
+scriptencoding utf-8
+
 function! airline#extensions#tabline#formatters#unique_tail#format(bufnr, buffers)
   let duplicates = {}
   let tails = {}
@@ -19,8 +21,14 @@ function! airline#extensions#tabline#formatters#unique_tail#format(bufnr, buffer
     endif
   endfor
 
+  let fmod = get(g:, 'airline#extensions#tabline#fnamemod', ':p:.')
   for nr in values(duplicates)
-    let map[nr] = airline#extensions#tabline#formatters#default#wrap_name(nr, fnamemodify(bufname(nr), ':p:.'))
+    let fnamecollapse = get(g:, 'airline#extensions#tabline#fnamecollapse', 1)
+    if fnamecollapse
+      let map[nr] = airline#extensions#tabline#formatters#default#wrap_name(nr, substitute(fnamemodify(name, fmod), '\v\w\zs.{-}\ze(\\|/)', '', 'g'))
+    else
+      let map[nr] = airline#extensions#tabline#formatters#default#wrap_name(nr, fnamemodify(bufname(nr), fmod))
+    endif
   endfor
 
   if has_key(map, a:bufnr)

@@ -1,6 +1,8 @@
 " MIT License. Copyright (c) 2013-2016 Bailey Ling.
 " vim: et ts=2 sts=2 sw=2
 
+scriptencoding utf-8
+
 let g:airline_statusline_funcrefs = get(g:, 'airline_statusline_funcrefs', [])
 
 let s:sections = ['a','b','c','gutter','x','y','z', 'error', 'warning']
@@ -65,6 +67,8 @@ function! airline#switch_theme(name)
   let w:airline_lastmode = ''
   call airline#load_theme()
 
+  silent doautocmd User AirlineAfterTheme
+
   " this is required to prevent clobbering the startup info message, i don't know why...
   call airline#check_mode(winnr())
 endfunction
@@ -72,7 +76,7 @@ endfunction
 function! airline#switch_matching_theme()
   if exists('g:colors_name')
     let existing = g:airline_theme
-    let theme = substitute(g:colors_name, '-', '_', 'g')
+    let theme = substitute(tolower(g:colors_name), '-', '_', 'g')
     try
       let palette = g:airline#themes#{theme}#palette
       call airline#switch_theme(theme)
@@ -107,11 +111,8 @@ function! airline#update_statusline()
     call s:invoke_funcrefs(context, s:inactive_funcrefs)
   endfor
 
-  unlet! w:airline_render_left
-  unlet! w:airline_render_right
-  for section in s:sections
-    unlet! w:airline_section_{section}
-  endfor
+  unlet! w:airline_render_left w:airline_render_right
+  exe 'unlet! ' 'w:airline_section_'. join(s:sections, ' w:airline_section_')
 
   let w:airline_active = 1
   let context = { 'winnr': winnr(), 'active': 1, 'bufnr': winbufnr(winnr()) }
@@ -142,6 +143,11 @@ function! airline#statusline(winnr)
 endfunction
 
 function! airline#check_mode(winnr)
+  if !exists("s:airline_run")
+    let s:airline_run = 0
+  endif
+  let s:airline_run += 1
+
   let context = s:contexts[a:winnr]
 
   if get(w:, 'airline_active', 1)
@@ -184,12 +190,18 @@ function! airline#check_mode(winnr)
   endif
 
   let mode_string = join(l:mode)
+  if s:airline_run < 3
+    " skip this round.
+    " When this function is run too early after startup,
+    " it forces a redraw by vim which will remove the intro screen.
+    let w:airline_lastmode = mode_string
+    return ''
+  endif
   if get(w:, 'airline_lastmode', '') != mode_string
     call airline#highlighter#highlight_modified_inactive(context.bufnr)
-    call airline#highlighter#highlight(l:mode)
+    call airline#highlighter#highlight(l:mode, context.bufnr)
     let w:airline_lastmode = mode_string
   endif
 
   return ''
 endfunction
-

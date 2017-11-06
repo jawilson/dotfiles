@@ -1,22 +1,24 @@
 " MIT License. Copyright (c) 2013-2016 Bailey Ling.
 " vim: et ts=2 sts=2 sw=2
 
+scriptencoding utf-8
+
 let s:prototype = {}
 
-function! s:prototype.split(...)
+function! s:prototype.split(...) dict
   call add(self._sections, ['|', a:0 ? a:1 : '%='])
 endfunction
 
-function! s:prototype.add_section_spaced(group, contents)
+function! s:prototype.add_section_spaced(group, contents) dict
   let spc = empty(a:contents) ? '' : g:airline_symbols.space
   call self.add_section(a:group, spc.a:contents.spc)
 endfunction
 
-function! s:prototype.add_section(group, contents)
+function! s:prototype.add_section(group, contents) dict
   call add(self._sections, [a:group, a:contents])
 endfunction
 
-function! s:prototype.add_raw(text)
+function! s:prototype.add_raw(text) dict
   call add(self._sections, ['', a:text])
 endfunction
 
@@ -32,7 +34,7 @@ function! s:get_prev_group(sections, i)
   return ''
 endfunction
 
-function! s:prototype.build()
+function! s:prototype.build() dict
   let side = 1
   let line = ''
   let i = 0
@@ -47,6 +49,13 @@ function! s:prototype.build()
     let contents = section[1]
     let pgroup = prev_group
     let prev_group = s:get_prev_group(self._sections, i)
+    if group ==# 'airline_c' && &buftype ==# 'terminal' && self._context.active
+      let group = 'airline_term'
+    elseif group ==# 'airline_c' && !self._context.active && has_key(self._context, 'bufnr')
+      let group = 'airline_c'. self._context.bufnr
+    elseif prev_group ==# 'airline_c' && !self._context.active && has_key(self._context, 'bufnr')
+      let prev_group = 'airline_c'. self._context.bufnr
+    endif
     if is_empty
       let prev_group = pgroup
     endif
@@ -55,7 +64,7 @@ function! s:prototype.build()
     if is_empty
       " need to fix highlighting groups, since we
       " have skipped a section, we actually need
-      " the previous previous group and so the 
+      " the previous previous group and so the
       " seperator goes from the previous previous group
       " to the current group
       let pgroup = group
@@ -87,6 +96,7 @@ function! s:prototype.build()
   endwhile
 
   if !self._context.active
+    "let line = substitute(line, '%#airline_c#', '%#airline_c'.self._context.bufnr.'#', '')
     let line = substitute(line, '%#.\{-}\ze#', '\0_inactive', 'g')
   endif
   return line
@@ -142,8 +152,10 @@ endfunction
 function! s:section_is_empty(self, content)
   let start=1
 
-  " do not check for inactive windows
+  " do not check for inactive windows or the tabline
   if a:self._context.active == 0
+    return 0
+  elseif get(a:self._context, 'tabline', 0)
     return 0
   endif
 
@@ -151,10 +163,18 @@ function! s:section_is_empty(self, content)
   if get(g:, 'airline_skip_empty_sections', 0) == 0
     return 0
   endif
+
+  " only check, if airline#skip_empty_sections == 1
+  if get(w:, 'airline_skip_empty_sections', -1) == 0
+    return 0
+  endif
   " assume accents sections to be never empty
   " (avoides, that on startup the mode message becomes empty)
   if match(a:content, '%#__accent_[^#]*#.*__restore__#') > -1
     return 0
+  endif
+  if empty(a:content)
+    return 1
   endif
   let list=matchlist(a:content, '%{\zs.\{-}\ze}', 1, start)
   if empty(list)
