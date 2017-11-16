@@ -51,31 +51,24 @@ templates:
       thexem.de: 10 seconds
     notify:
       entries:
+        title: '{{ task }} - Download Started'
         message: >
-          {{task}} - Download started:
           {%- if series_name is defined %}
-          {% set info_string = tvdb_series_name|d(series_name) ~ ' - ' ~ series_id ~ (' - ' ~ tvdb_ep_name if tvdb_ep_name|default(False) else '') %}
-          {%- if trakt_series_url is defined and trakt_season is defined and trakt_episode is defined -%}
-          <{{ trakt_series_url }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}|{{ info_string }}>
-          {%- else %}
-          {{ info_string }}
-          {%- endif %}
-          - {{quality}}
+          {{ tvdb_series_name|d(series_name) }} - {{ series_id }} - {% if tvdb_ep_name|default(False) %}{{ tvdb_ep_name }} - {% endif %}{{quality}}
           {%- elif imdb_name is defined %}
-          {% set info_string = imdb_name ~ (' (' ~ imdb_year ~ ')' if imdb_year|d(False) else '') %}
-          {%- if imdb_url is defined %}
-          <{{imdb_url}}|{{info_string}}>
-          {%- else %}
-          {{info_string}}
-          {%- endif %}
-          - {{quality}}{% if extras|d(False) %} 3d half-{{ extras|lower }}{% endif %}
+          {{ imdb_name }}{% if imdb_year|d(False) %} ({{imdb_year}}){% endif %} - {{quality}}{% if extras|d(False) %} 3d half-{{ extras|lower }}{% endif %}
           {%- else -%}
           {{title}}
           {%- endif %}
         via:
-          - slack:
-              web_hook_url: '{? slack.webhook_url ?}'
-              channel: '#bots'
+          - pushbullet:
+              api_key: '{? pushbullet.apikey ?}'
+              url: >
+                {%- if trakt_series_url is defined and trakt_season is defined and trakt_episode is defined -%}
+                {{ trakt_series_url }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}
+                {%- elif imdb_url is defined %}
+                {{imdb_url}}
+                {%- endif %}
 
   global-filter:
     # Most of these are the results of problem torrents I kept seeing still pop up, so I wholesale blocked them
@@ -124,10 +117,6 @@ templates:
       account: '{? trakt.account ?}'
       list: TV Shows
       strip_dates: yes
-    _tv_trakt_ak_list_tv_shows: &tv-trakt-ak-list-tv-shows
-      account: '{? trakt.ak_account ?}'
-      list: TV Shows
-      strip_dates: yes
     _tv_series: &tv-series
       include:
         - series.yml
@@ -136,9 +125,6 @@ templates:
           inputs:
             - trakt_list:
                 <<: *tv-trakt-list-tv-shows
-                type: shows
-            - trakt_list:
-                <<: *tv-trakt-ak-list-tv-shows
                 type: shows
 
   tv-trakt-follow:
@@ -175,7 +161,6 @@ templates:
     # or are currently downloading
     exists_series:
       - "{? storage.videos ?}/TV Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}"
-      - '{? storage.videos ?}/AK Shows'
       - '{? storage.videos ?}/staging/tv_shows'
       - '{? storage.downloads ?}'
 
@@ -195,15 +180,6 @@ templates:
             trakt_list:
               <<: *tv-trakt-list-tv-shows
               type: shows
-      - configure_series:
-          settings:
-            set:
-              movedone: >-
-                {? storage.videos ?}/AK Shows/{{ tvdb_series_name|default(series_name)|replace('/', '_')|replace(':', ' -')|replace(',', '') }}/{% if series_id_type == 'ep' %}Season {{ series_season }}/{% endif %}
-          from:
-            trakt_list:
-              <<: *tv-trakt-ak-list-tv-shows
-              type: shows
     set:
       queuetotop: yes
       # Rename the "content file" to something nice, use leading slash to force file to top level
@@ -219,10 +195,6 @@ templates:
     _movie_trakt_list_movies: &movie-trakt-list-movies
       account: '{? trakt.account ?}'
       list: Movie Queue
-      type: movies
-    _movie_trakt_ak_list_movies: &movie-trakt-ak-list-movies
-      account: '{? trakt.ak_account ?}'
-      list: Movies
       type: movies
 
   movies-filter:
@@ -275,8 +247,6 @@ templates:
     list_remove:
       - trakt_list:
           <<: *movie-trakt-list-movies
-      - trakt_list:
-          <<: *movie-trakt-ak-list-movies
 
   # This template uses the movie queue to find movies from various sources
   movies-queued:
@@ -377,7 +347,6 @@ tasks:
     filesystem:
       path:
         - '{? storage.videos ?}/TV Shows'
-        - '{? storage.videos ?}/AK Shows'
       recursive: yes
       retrieve: files
       regexp: '.*\.(avi|mkv|mp4|mpg|m4v)$'
@@ -402,17 +371,12 @@ tasks:
           <<: *tv-trakt-list-tv-shows
           context: collected
           position: next
-      - next_trakt_episodes:
-          <<: *tv-trakt-ak-list-tv-shows
-          context: collected
-          position: next
     all_series:
       tracking: no
       parse_only: yes
     accept_all: yes
     exists_series:
       - '{? storage.videos ?}/TV Shows'
-      - '{? storage.videos ?}/AK Shows'
     series_remove: yes
 
 
@@ -430,24 +394,6 @@ tasks:
     list_add:
       - trakt_list:
           <<: *tv-trakt-list-tv-shows
-          type: shows
-          strip_dates: yes
-
-
-  Follow-Trakt-Shows-AK:
-    priority: 20
-    template: [no_global,tv-trakt-follow]
-    trakt_list:
-      <<: *tv-trakt-ak-list-tv-shows
-      type: episodes
-      strip_dates: yes
-    list_remove:
-      - trakt_list:
-          <<: *tv-trakt-ak-list-tv-shows
-          strip_dates: yes
-    list_add:
-      - trakt_list:
-          <<: *tv-trakt-ak-list-tv-shows
           type: shows
           strip_dates: yes
 
@@ -546,8 +492,6 @@ tasks:
     sequence:
       - trakt_list:
           <<: *movie-trakt-list-movies
-      - trakt_list:
-          <<: *movie-trakt-ak-list-movies
     no_entries_ok: yes
     accept_all: yes
     list_add:
