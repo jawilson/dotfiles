@@ -17,10 +17,6 @@ templates:
           replace:
             regexp: '-?bs666$'
             format: ''
-      - title:
-          replace:
-            regexp: '\bs(\d\d)(\d\d)\b'
-            format: 's\1e\2'
     if:
       - "'torrentleech' in url":
           deluge:
