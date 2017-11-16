@@ -200,7 +200,7 @@ templates:
       - "has_field('category')":
           regexp:
             reject_excluding:
-              - '^(HD|BDRip|DVDRip.DVDScreener|DVD-R|Documentaries)$': {from: category}
+              - '^(DVDRip.DVDScreener|DVD-R|HDRip|Bluray(Rip)?|4K Upscaled.UHD LQ|Real 4K UltraHD HDR|Documentaries)$': {from: category}
     regexp:
       reject:
         - s\d+e\d+: {from: title}
@@ -259,7 +259,7 @@ templates:
             rss_key: '{? torrentleech.rss_key ?}'
             username: '{? torrentleech.username ?}'
             password: '{? torrentleech.password ?}'
-            category: ['HD', 'BDRip', 'DVDRip', 'DVDR', 'Documentaries']
+            category: [11, 12, 13, 14, 29, 41, 47]
         - flexget_archive: [movies]
         - rarbg:
             category: [44, 45, 47]
