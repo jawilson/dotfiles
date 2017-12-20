@@ -74,6 +74,16 @@ plugins=(git git-extras cp debian pip sudo systemd colorize docker docker-compos
 
 # User configuration
 
+# Use coreutils on MacOS
+if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
+    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+    export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+fi
+
+if [ -d /usr/local/opt/python/libexec/bin ]; then
+    export PATH="/usr/local/opt/python/libexec/bin:$PATH"
+fi
+
 # Add user bin directory
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 
@@ -95,7 +105,10 @@ if [ -d /opt/android-ndk ]; then
     export PATH=$ANDROID_NDK:$PATH
 fi
 if [ -d ${HOME}/Android/Sdk ]; then
-    export ANDROID_SDK=/${HOME}/Android/Sdk
+    export ANDROID_SDK=${HOME}/Android/Sdk
+fi
+if [ -d ${HOME}/Library/Android/sdk ]; then
+    export ANDROID_SDK=${HOME}/Library/Android/sdk
 fi
 if [ -d /opt/android-sdk ]; then
     export ANDROID_SDK=/opt/android-sdk
@@ -108,3 +121,16 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# added by travis gem
+[ -f /Users/jawilson/.travis/travis.sh ] && source /Users/jawilson/.travis/travis.sh
+
+PATH="/Users/jawilson/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/Users/jawilson/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/jawilson/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/jawilson/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/jawilson/perl5"; export PERL_MM_OPT;
+
+if [ -d/Applications/Postgres.app/Contents/Versions/latest/bin ]; then
+    export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
+fi

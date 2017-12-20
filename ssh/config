@@ -1,3 +1,7 @@
+Host *
+    UseKeychain yes
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_rsa
 Host Dark-Knight dark-knight
     HostName Dark-Knight.singularity.net
     User admin

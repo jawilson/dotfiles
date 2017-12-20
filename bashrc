@@ -176,3 +176,6 @@ if [ -n "$ANDROID_SDK" ] && [ -d "$ANDROID_SDK" ]; then
     export PATH=$ANDROID_SDK/tools:$PATH
     export PATH=$ANDROID_SDK/platform-tools:$PATH
 fi
+
+# added by travis gem
+[ -f /Users/jawilson/.travis/travis.sh ] && source /Users/jawilson/.travis/travis.sh
