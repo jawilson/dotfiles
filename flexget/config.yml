@@ -458,9 +458,8 @@ tasks:
               Released on {{ entry.trakt_ep_first_aired|formatdate("%B %d, %Y") }}
           {% endfor %}
         via:
-          - slack:
-              web_hook_url: '{? slack.webhook_url ?}'
-              channel: '#bots'
+          - pushbullet:
+              api_key: '{? pushbullet.apikey ?}'
 
 
   # Cleans movies from the movie queue (and Trakt) that we already have
