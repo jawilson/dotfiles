@@ -450,16 +450,14 @@ tasks:
     if:
       - trakt_ep_first_aired and trakt_ep_first_aired < now - timedelta(days=2): accept
     notify:
-      task:
-        message: |+
-          Missing {% if task.accepted > 1 %}episodes{% else %}episode{% endif %} detected:
-          {% for entry in task.accepted %}
-            • <{{ entry.trakt_series_url }}/seasons/{{ entry.trakt_season }}/episodes/{{ entry.trakt_episode }}|{{ entry.trakt_series_name }} - {{ entry.series_id }} - {{ entry.trakt_ep_name }}>
-              Released on {{ entry.trakt_ep_first_aired|formatdate("%B %d, %Y") }}
-          {% endfor %}
+      entries:
+        title: Missing Episode Detected
+        message: >
+          {{ trakt_series_name }} - {{ series_id }} - {{ trakt_ep_name }}: released on {{ trakt_ep_first_aired|formatdate("%B %d, %Y") }}
         via:
           - pushbullet:
               api_key: '{? pushbullet.apikey ?}'
+              url: '{{ trakt_series_url }}/seasons/{{ trakt_season }}/episodes/{{ trakt_episode }}'
 
 
   # Cleans movies from the movie queue (and Trakt) that we already have
