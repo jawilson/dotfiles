@@ -151,8 +151,8 @@ templates:
             min: 500
       - not season_pack:
           content_size:
-            max: 5000
-            min: 20
+            max: 10000
+            min: 100
     # Prevent from downloading shows that were aquired manually
     # or are currently downloading
     exists_series:
