@@ -1,6 +1,8 @@
 home=/mnt/c/Users/jeff.wilson
 C=/mnt/c
 
+meteor=/mnt/c/Projects/meteor-x
+
 vc=/mnt/c/Projects/video-conductor
 
 cn=/mnt/c/Projects/CaptureNode
