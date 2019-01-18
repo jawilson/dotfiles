@@ -10,6 +10,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 # flexget
+alias flexget="docker-compose -f /media/raid/flexget/docker-compose.yml exec flexget flexget -c /config/config.yml -l /dev/null"
 alias "flexget-log-tail"="tail -n 300 $HOME/.flexget/flexget.log | less "
 alias "flexget-sort-tv"="sudo -u debian-deluged flexget -L verbose -c $HOME/.flexget/sorting.yml -l $HOME/.flexget/flexget-sorting.log execute --task Sort_Unpacked_TV_Shows --disable-advancement"
 alias "flexget-sort-premieres"="sudo -u debian-deluged flexget -L verbose -c $HOME/.flexget/sorting.yml -l $HOME/.flexget/flexget-sorting.log execute --task Sort_Unpacked_TV_Premieres --disable-advancement"
