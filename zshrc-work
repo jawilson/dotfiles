@@ -89,5 +89,4 @@ export DOCKER_HOST='tcp://0.0.0.0:2375'
 eval $(dircolors)
 
 # weasel-pageant
-eval $(/mnt/c/Users/jeff.wilson/bin/weasel-pageant-1.0/weasel-pageant -r -a "/tmp/.weasel-pageant-$USER")
-
+eval $(/mnt/c/Users/jeff.wilson/bin/ssh-agent-wsl -r)
