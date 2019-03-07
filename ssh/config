@@ -2,12 +2,18 @@ Host *
     UseKeychain yes
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_rsa
+Host Maxwell maxwell
+    HostName Maxwell.singularity.net
+    ForwardAgent yes
 Host Dark-Knight dark-knight
     HostName Dark-Knight.singularity.net
     User admin
-Host Faraday faraday
-    HostName Faraday.singularity.net
+Host Feynman feynman
+    HostName Feynman.singularity.net
     ForwardAgent yes
+Host home.jeffalwilson.com
+    ForwardAgent yes
+    DynamicForward 1025
 Host P3Steel p3steel
     HostName P3Steel.singularity.net
     User pi
@@ -21,4 +27,6 @@ Host Blue blue
     User root
 Host Galactica galactica
     HostName Galactica.singularity.net
+    User root
+Host 192.168.60.1 galactica.local
     User root
