@@ -13,7 +13,8 @@ www.cplusplus.com##DIV[class="C_DonateBox"]
 
 ! Facebook
 facebook.com##DIV[id="pagelet_ego_pane"]
-www.facebook.com##DIV[id="pagelet_canvas_nav_content"]
+facebook.com##DIV[id="pagelet_canvas_nav_content"]
+facebook.com###pagelet_marketplace_new_user_top_picks_rhc
 
 ! Geek.com
 www.geek.com##DIV[id="colorbox"]
@@ -33,6 +34,11 @@ wwws.mint.com##A[class="accounts-adv"]
 wwws.mint.com##TR[id="transaction-deal-row"][class="deals"]
 wwws.mint.com##DIV[id="advice-top-container"]
 wwws.mint.com##DIV[class="replace-with-iframe-below-header"]
+mint.intuit.com###advice-top-container
+mint.intuit.com###TxnOfferWidgetContainer
+mint.intuit.com###TopTxnOfferWidgetContainer
+mint.intuit.com##.HypothesisTestingView
+mint.intuit.com##.adviceWidget.CardView
 
 ! Trakt.tv
 trakt.tv##DIV[id="large-banner-ad"]
@@ -54,3 +60,7 @@ en.wikipedia.org##DIV[class="cn-fundraising"]
 www.youtube.com##DIV[id="alerts"]
 www.youtube.com##DIV[id="ticker"][class="ytg-base remind-identity"]
 www.youtube.com##DIV[id="confirmBox"][class="yt-alert yt-alert-default yt-alert-warn  "]
+
+! dchappyhours.com
+@@||www.dchappyhours.com/ads.js$script,domain=www.dchappyhours.com
+@@||www.dchappyhours.com/show_ads.js$script,domain=www.dchappyhours.com
