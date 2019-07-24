@@ -1,0 +1,14 @@
+#!/bin/sh
+source ../common.sh
+
+# We don't need to actually load nvm for this test
+export ZSH_NVM_NO_LOAD=true
+
+# Check ZSH_NVM_DIR isn't already set
+[[ -z ${ZSH_NVM_DIR+x} ]] || die "ZSH_NVM_DIR already set"
+
+# Load zsh-nvm
+load_zsh_nvm
+
+# Check ZSH_NVM_DIR is now set
+[[ ! -z ${ZSH_NVM_DIR+x} ]] || die "ZSH_NVM_DIR wasn't set"
