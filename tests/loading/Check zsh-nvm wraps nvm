@@ -1,0 +1,8 @@
+#!/bin/sh
+source ../common.sh
+
+# Load zsh-nvm
+load_zsh_nvm
+
+# Check nvm is wrapped with our revert command
+nvm revert || die "nvm isn't wrapped with our revert command"
