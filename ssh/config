@@ -19,8 +19,10 @@ Host P3Steel p3steel
 Host Beagleone beagleone
     HostName Beagleone.singularity.net
     ForwardAgent yes
-Host wenas Wenas
+Host wenas Wenas wenas.jeffalwilson.com
     HostName wenas.jeffalwilson.com
+    DynamicForward 1026
+    ForwardAgent yes
 Host Blue blue
     HostName Blue.singularity.net
     User root
