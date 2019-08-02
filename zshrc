@@ -72,6 +72,9 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git git-extras cp debian pip sudo systemd colorize docker docker-compose zsh-autosuggestions)
 
+export NVM_LAZY_LOAD=true
+plugins+=(zsh-nvm zsh-better-npm-completion)
+
 # User configuration
 
 # Use coreutils on MacOS
@@ -117,10 +120,6 @@ if [ -n "$ANDROID_SDK" ] && [ -d "$ANDROID_SDK" ]; then
     export PATH=$ANDROID_SDK/tools:$PATH
     export PATH=$ANDROID_SDK/platform-tools:$PATH
 fi
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # added by travis gem
 [ -f /Users/jawilson/.travis/travis.sh ] && source /Users/jawilson/.travis/travis.sh
