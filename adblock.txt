@@ -48,7 +48,7 @@ trakt.tv##DIV[id="small-banner-bottom-ad"]
 trakt.tv##DIV[id="huckster-desktop-wrapper"]
 trakt.tv##DIV[id="huckster-sidenav"]
 trakt.tv##DIV[class="huckster-vip-square"]
-trakt.tv##A[href="/vip"]
+trakt.tv##[href="/vip"]:xpath(..)
 
 ! Weather Underground
 www.wunderground.com##DIV[id="top-ad-wrapper"]
