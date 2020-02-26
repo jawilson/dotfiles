@@ -11,11 +11,9 @@ alias egrep='egrep --color=auto'
 
 # flexget
 alias flexget="docker-compose -f /media/raid/flexget/docker-compose.yml exec flexget flexget -c /config/config.yml -l /dev/null"
-alias "flexget-log-tail"="tail -n 300 $HOME/.flexget/flexget.log | less "
-alias "flexget-sort-tv"="sudo -u debian-deluged flexget -L verbose -c $HOME/.flexget/sorting.yml -l $HOME/.flexget/flexget-sorting.log execute --task Sort_Unpacked_TV_Shows --disable-advancement"
-alias "flexget-sort-premieres"="sudo -u debian-deluged flexget -L verbose -c $HOME/.flexget/sorting.yml -l $HOME/.flexget/flexget-sorting.log execute --task Sort_Unpacked_TV_Premieres --disable-advancement"
-alias "flexget-sort-movies"="sudo -u debian-deluged flexget -L verbose -c $HOME/.flexget/sorting.yml -l $HOME/.flexget/flexget-sorting.log execute --task Sort_Unpacked_Movies"
-alias "flexget-sort-log-tail"="tail -n 300 $HOME/.flexget/flexget-sorting.log | less "
+alias fgsl="flexget series list"
+alias fgss="flexget series show"
+alias fgsf="flexget series forget"
 
 # ack-grep
 alias "ack"="ack-grep"
@@ -40,3 +38,6 @@ docker run \
 
 # HomeAssistant
 alias certbot-renew="docker-compose -f /media/raid/home-assistant/docker-compose.yml.letsencrypt up"
+
+# acme.sh
+alias acme.sh="docker-compose -f /media/raid/acme/docker-compose.yml exec acme"
