@@ -9,6 +9,7 @@
 	editor = vim
 	filemode = false
 	whitespace = blank-at-eol,space-before-tab,tab-in-indent,trailing-space,tabwidth=4
+	autocrlf = true
 [apply]
 	whitespace = fix
 [remote-hg]
