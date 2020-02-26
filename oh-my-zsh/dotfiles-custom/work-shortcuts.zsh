@@ -1,17 +1,17 @@
-home=/mnt/c/Users/jeff.wilson
-C=/mnt/c
+home=/c/Users/jeff.wilson
+C=/c
 
-projects=/mnt/c/Projects
+projects=/c/Projects
 
-meteor=/mnt/c/Projects/meteor-x
+meteor=/c/Projects/meteor-x
 
-vc=/mnt/c/Projects/video-conductor
+vc=/c/Projects/video-conductor
 
-cn=/mnt/c/Projects/CaptureNode
-capturenode=/mnt/c/Projects/CaptureNode/capture-node
-recorder=/mnt/c/Projects/CaptureNode/video-recorder-windows
-simmerge=/mnt/c/Projects/CaptureNode/simmerge
+cn=/c/Projects/CaptureNode
+capturenode=/c/Projects/CaptureNode/capture-node
+recorder=/c/Projects/CaptureNode/video-recorder-windows
+simmerge=/c/Projects/CaptureNode/simmerge
 
-cube=/mnt/c/Projects/Cube/trunk
-cubelog=/mnt/c/Projects/Cube/logs
-src=/mnt/c/Users/jeff.wilson/src
+cube=/c/Projects/Cube/trunk
+cubelog=/c/Projects/Cube/logs
+src=/c/Users/jeff.wilson/src
