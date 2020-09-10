@@ -13,13 +13,13 @@ _zsh_nvm_has() {
 }
 
 _zsh_nvm_latest_release_tag() {
-  echo $(cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))
+  echo $(builtin cd "$NVM_DIR" && git fetch --quiet --tags origin && git describe --abbrev=0 --tags --match "v[0-9]*" $(git rev-list --tags --max-count=1))
 }
 
 _zsh_nvm_install() {
   echo "Installing nvm..."
-  git clone https://github.com/creationix/nvm.git "$NVM_DIR"
-  $(cd "$NVM_DIR" && git checkout --quiet "$(_zsh_nvm_latest_release_tag)")
+  git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+  $(builtin cd "$NVM_DIR" && git checkout --quiet "$(_zsh_nvm_latest_release_tag)")
 }
 
 _zsh_nvm_global_binaries() {
@@ -71,6 +71,12 @@ _zsh_nvm_load() {
   }
 }
 
+_zsh_nvm_completion() {
+
+  # Add provided nvm completion
+  [[ -r $NVM_DIR/bash_completion ]] && source $NVM_DIR/bash_completion
+}
+
 _zsh_nvm_lazy_load() {
 
   # Get all global node module binaries including node
@@ -87,6 +93,7 @@ _zsh_nvm_lazy_load() {
 
   # Add nvm
   global_binaries+=('nvm')
+  global_binaries+=($NVM_LAZY_LOAD_EXTRA_COMMANDS)
 
   # Remove any binaries that conflict with current aliases
   local cmds
@@ -119,7 +126,7 @@ _zsh_nvm_upgrade() {
   fi
 
   # Otherwise use our own
-  local installed_version=$(cd "$NVM_DIR" && git describe --tags)
+  local installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
   echo "Installed version is $installed_version"
   echo "Checking latest version of nvm..."
   local latest_version=$(_zsh_nvm_latest_release_tag)
@@ -128,7 +135,7 @@ _zsh_nvm_upgrade() {
   else
     echo "Updating to $latest_version..."
     echo "$installed_version" > "$ZSH_NVM_DIR/previous_version"
-    $(cd "$NVM_DIR" && git fetch --quiet && git checkout "$latest_version")
+    $(builtin cd "$NVM_DIR" && git fetch --quiet && git checkout "$latest_version")
     _zsh_nvm_load
   fi
 }
@@ -140,14 +147,14 @@ _zsh_nvm_previous_version() {
 _zsh_nvm_revert() {
   local previous_version="$(_zsh_nvm_previous_version)"
   if [[ -n "$previous_version" ]]; then
-    local installed_version=$(cd "$NVM_DIR" && git describe --tags)
+    local installed_version=$(builtin cd "$NVM_DIR" && git describe --tags)
     if [[ "$installed_version" = "$previous_version" ]]; then
       echo "Already reverted to $installed_version"
       return
     fi
     echo "Installed version is $installed_version"
     echo "Reverting to $previous_version..."
-    $(cd "$NVM_DIR" && git checkout "$previous_version")
+    $(builtin cd "$NVM_DIR" && git checkout "$previous_version")
     _zsh_nvm_load
   else
     echo "No previous version found"
@@ -207,6 +214,9 @@ if [[ "$ZSH_NVM_NO_LOAD" != true ]]; then
     # Load it
     [[ "$NVM_LAZY_LOAD" == true ]] && _zsh_nvm_lazy_load || _zsh_nvm_load
 
+    # Enable completion
+    [[ "$NVM_COMPLETION" == true ]] && _zsh_nvm_completion
+    
     # Auto use nvm on chpwd
     [[ "$NVM_AUTO_USE" == true ]] && add-zsh-hook chpwd _zsh_nvm_auto_use && _zsh_nvm_auto_use
   fi
