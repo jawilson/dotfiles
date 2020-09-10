@@ -2,7 +2,7 @@
 
 > Zsh plugin for installing, updating and loading `nvm`
 
-[`nvm`](https://github.com/creationix/nvm) is an awesome tool but it can be kind of a pain to install and keep up to date. This zsh plugin allows you to quickly setup `nvm` once, save it in your dotfiles, then never worry about it again.
+[`nvm`](https://github.com/nvm-sh/nvm) is an awesome tool but it can be kind of a pain to install and keep up to date. This zsh plugin allows you to quickly setup `nvm` once, save it in your dotfiles, then never worry about it again.
 
 The plugin will install the latest stable release of `nvm` if you don't already have it, and then automatically `source` it for you. You can upgrade `nvm` to the latest version whenever you want without losing your installed `node` versions by running `nvm upgrade`.
 
@@ -73,6 +73,18 @@ antigen bundle lukechilds/zsh-nvm
 
 Note: If `nvm` doesn't exist in this directory it'll be automatically installed when you start a session.
 
+### Nvm Completion
+
+`nvm` comes with a default bash_completion profile. If you want to enable it, you can do it by exporting  the `NVM_COMPLETION` environment variable and setting it to `true`. It must be set before `zsh-nvm` is loaded.
+
+For example, if you are using antigen, you would put the following in your `.zshrc`:
+
+```bash
+# Export nvm completion settings for zsh-nvm plugin
+export NVM_COMPLETION=true
+antigen bundle lukechilds/zsh-nvm
+```
+
 ### Lazy Loading
 
 If you find `nvm` adds too much lag to your shell startup you can enable lazy loading by exporting the `NVM_LAZY_LOAD` environment variable and setting it to `true`. It must be set before `zsh-nvm` is loaded.
@@ -94,6 +106,17 @@ Performance comparison:
 
 % time (_zsh_nvm_lazy_load)
 ( _zsh_nvm_lazy_load; )  0.01s user 0.01s system 168% cpu 0.012 total
+```
+
+#### Extra commands to trigger lazy loading
+By default lazy loading nvm is triggered by running the `nvm`, `node`, `npm` commands or any installed npm global binaries.
+If you want to trigger the lazy loading via extra arbitrary commands you can define `NVM_LAZY_LOAD_EXTRA_COMMANDS` and set it to an array of commands as strings.
+This can be usefull if programs are not in the above list of binaries but do depend on the availability of `node`, e.g. a vim plugin.
+
+```shell
+export NVM_LAZY_LOAD_EXTRA_COMMANDS=('vim')
+vim --version
+#node is now loaded
 ```
 
 ### Don't autoload node
