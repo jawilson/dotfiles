@@ -3,9 +3,11 @@ C=/c
 
 projects=/c/Projects
 
-meteor=/c/Projects/meteor-x
+meteor=~/src/meteor-x
 
-vc=/c/Projects/video-conductor
+vc=~/src/video-conductor
+
+vera=~/src/vera
 
 cn=/c/Projects/CaptureNode
 capturenode=/c/Projects/CaptureNode/capture-node

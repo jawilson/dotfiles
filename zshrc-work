@@ -73,9 +73,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git git-extras cp debian sudo colorize docker docker-compose node aws zsh-autosuggestions)
-
-export NVM_LAZY_LOAD=true
-plugins+=(zsh-nvm zsh-better-npm-completion)
+plugins+=(zsh-better-npm-completion)
 
 # User configuration
 
@@ -87,9 +85,24 @@ umask 022
 source $ZSH/oh-my-zsh.sh
 
 export EDITOR='vim'
-export DOCKER_HOST='tcp://0.0.0.0:2375'
 
 eval $(dircolors)
 
-# weasel-pageant
-eval $(/c/Users/jeff.wilson/bin/ssh-agent-wsl -r)
+# SSH Agent
+if [[ "$(uname -r)" != *"WSL2"* ]]; then
+    [ -n ${WSL_AUTH_SOCK} ] && export SSH_AUTH_SOCK=${WSL_AUTH_SOCK}
+else
+    export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+    ss -a | grep -q $SSH_AUTH_SOCK
+    if [ $? -ne 0   ]; then
+        echo setting up ssh sock
+        rm -f $SSH_AUTH_SOCK
+        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/jeff.wilson/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+    fi
+fi
+
+# fnm
+if [ -d $HOME/.fnm ]; then
+   export PATH=/home/jawilson/.fnm:$PATH
+   eval "`fnm env --use-on-cd`"
+fi
