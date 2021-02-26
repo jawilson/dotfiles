@@ -106,3 +106,7 @@ if [ -d $HOME/.fnm ]; then
    export PATH=/home/jawilson/.fnm:$PATH
    eval "`fnm env --use-on-cd`"
 fi
+
+# nvm (for VS Code)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
