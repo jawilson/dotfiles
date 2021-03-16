@@ -97,7 +97,8 @@ else
     if [ $? -ne 0   ]; then
         echo setting up ssh sock
         rm -f $SSH_AUTH_SOCK
-        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/jeff.wilson/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+        username=$(cmd.exe /c "echo %USERNAME%")
+        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/${username/$'\r'}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
     fi
 fi
 
