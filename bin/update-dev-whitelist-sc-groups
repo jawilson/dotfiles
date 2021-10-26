@@ -1,0 +1,61 @@
+#! /usr/bin/env python
+
+import getpass
+import urllib.request
+import boto3
+
+user = getpass.getuser()
+external_ip = urllib.request.urlopen('https://api.ipify.org').read().decode('utf8')
+cidr_ip = '%s/32' % external_ip
+
+client = boto3.client('ec2');
+
+groups = client.describe_security_groups(
+    Filters=[
+        {
+            'Name': 'group-name',
+            'Values': ['dev-whitelist*']
+        }
+    ]
+)
+
+for group in groups.get('SecurityGroups'):
+    security_group = boto3.resource('ec2').SecurityGroup(group.get('GroupId'))
+    permissions_to_revoke = []
+    for perm in security_group.ip_permissions:
+        ip_ranges = [r for r in perm.get('IpRanges') if r.get('Description') == user or r.get('CidrIp') == cidr_ip]
+        if len(ip_ranges) > 0:
+            permissions_to_revoke.append({
+                'FromPort': perm['FromPort'],
+                'ToPort': perm['ToPort'],
+                'IpProtocol': perm['IpProtocol'],
+                'IpRanges': ip_ranges
+            })
+
+    if len(permissions_to_revoke) > 0:
+        result = security_group.revoke_ingress(IpPermissions=permissions_to_revoke)
+        if not result.get('Return'):
+            raise result
+
+    result = security_group.authorize_ingress(
+        IpPermissions=[
+            {
+                'FromPort': 80,
+                'ToPort': 80,
+                'IpProtocol': 'tcp',
+                'IpRanges': [{
+                    'CidrIp': cidr_ip,
+                    'Description': user
+                }]
+            },
+            {
+                'FromPort': 443,
+                'ToPort': 443,
+                'IpProtocol': 'tcp',
+                'IpRanges': [{
+                    'CidrIp': cidr_ip,
+                    'Description': user
+                }]
+            },
+        ]
+    )

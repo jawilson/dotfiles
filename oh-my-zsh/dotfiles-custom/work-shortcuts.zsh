@@ -1,4 +1,4 @@
-home=/c/Users/jeff.wilson
+home=/c/Users/dcjwi1
 C=/c
 
 projects=/c/Projects

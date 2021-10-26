@@ -34,3 +34,6 @@ Host Galactica galactica
     User root
 Host 192.168.60.1 galactica.local
     User root
+Host wilson-t440 wilson-t440.corp.atellis.com
+    User corp\\jeff.wilson
+    DynamicForward 1027

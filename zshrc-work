@@ -96,9 +96,8 @@ else
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
     ss -a | grep -q $SSH_AUTH_SOCK
     if [ $? -ne 0   ]; then
-        echo setting up ssh sock
         rm -f $SSH_AUTH_SOCK
-        username=$(cmd.exe /c "echo %USERNAME%")
+        username=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null)
         ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/${username/$'\r'}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
     fi
 fi
@@ -116,4 +115,15 @@ export NVM_DIR="$HOME/.nvm"
 # Git Bash
 if [[ "$MSYSTEM" = "MSYS" ]]; then
     export PATH="/c/Windows/System32/OpenSSH:$PATH"
+fi
+
+if [ -d /opt/gstreamer ]; then
+    export PATH=/opt/gstreamer/bin:$PATH
+    export PKG_CONFIG_PATH=/opt/gstreamer/lib/x86_64-linux-gnu/pkgconfig:$PKG_CONFIG_PATH
+fi
+
+gst_build_dir="$HOME/src/gst-build"
+if [ -d $gst_build_dir ]; then
+    export PATH=${gst_build_dir}/subprojects/gstreamer/tools:$PATH
+    export PATH=${gst_build_dir}/subprojects/gst-plugins-bad/tools:$PATH
 fi

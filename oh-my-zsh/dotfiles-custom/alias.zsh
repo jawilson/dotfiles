@@ -41,3 +41,6 @@ alias certbot-renew="docker-compose -f /media/raid/home-assistant/docker-compose
 
 # acme.sh
 alias acme.sh="docker-compose -f /media/raid/acme/docker-compose.yml exec acme"
+
+# docker
+alias dlg="echo $CR_PAT | docker login ghcr.io -u jawilson --password-stdin"
