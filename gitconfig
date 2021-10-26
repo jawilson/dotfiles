@@ -21,8 +21,8 @@
 	cd = !pushd $(git rev-parse --show-toplevel)
 	praise = blame
 	addnw = !sh -c 'git diff -w --no-color "$@" | git apply --cached --ignore-whitespace' -
-	sba = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=master && git subtree add --prefix $2 $1 $BRANCH --squash; }; f"
-	sbu = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=master && git subtree pull --prefix $2 $1 $BRANCH --squash; }; f"
+	sba = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=main && git subtree add --prefix $2 $1 $BRANCH --squash; }; f"
+	sbu = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=main && git subtree pull --prefix $2 $1 $BRANCH --squash; }; f"
 	cp = cherry-pick
 	cl = clone
 	st = status -sb
