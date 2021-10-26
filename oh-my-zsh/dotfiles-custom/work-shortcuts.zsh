@@ -9,11 +9,8 @@ vc=~/src/video-conductor
 
 vera=~/src/vera
 
-cn=/c/Projects/CaptureNode
-capturenode=/c/Projects/CaptureNode/capture-node
-recorder=/c/Projects/CaptureNode/video-recorder-windows
-simmerge=/c/Projects/CaptureNode/simmerge
+cn=/c/Projects/capture-node
 
 cube=/c/Projects/Cube/trunk
 cubelog=/c/Projects/Cube/logs
-src=/c/Users/jeff.wilson/src
+src=/c/Users/dcjwi1/src
