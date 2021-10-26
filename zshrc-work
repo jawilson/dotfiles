@@ -81,6 +81,7 @@ umask 022
 
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
+[[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -90,7 +91,7 @@ eval $(dircolors)
 
 # SSH Agent
 if [[ "$(uname -r)" != *"WSL2"* ]]; then
-    [ -n ${WSL_AUTH_SOCK} ] && export SSH_AUTH_SOCK=${WSL_AUTH_SOCK}
+    [[ -n ${WSL_AUTH_SOCK} ]] && export SSH_AUTH_SOCK=${WSL_AUTH_SOCK}
 else
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
     ss -a | grep -q $SSH_AUTH_SOCK
@@ -111,3 +112,8 @@ fi
 # nvm (for VS Code)
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Git Bash
+if [[ "$MSYSTEM" = "MSYS" ]]; then
+    export PATH="/c/Windows/System32/OpenSSH:$PATH"
+fi
