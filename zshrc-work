@@ -113,6 +113,8 @@ export NVM_DIR="$HOME/.nvm"
 # Git Bash
 if [[ "$MSYSTEM" = "MSYS" ]]; then
     export PATH="/c/Windows/System32/OpenSSH:$PATH"
+    bindkey "\033[1~" beginning-of-line
+    bindkey "\033[4~" end-of-line
 fi
 
 if [ -d /opt/gstreamer ]; then
