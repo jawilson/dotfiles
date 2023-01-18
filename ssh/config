@@ -4,8 +4,8 @@ Host *
 Host Maxwell maxwell
     HostName Maxwell.singularity.net
     ForwardAgent yes
-Host Dark-Knight dark-knight
-    HostName Dark-Knight.singularity.net
+Host Dark-Knight dark-knight 192.168.0.1
+    HostName 192.168.0.1
     User admin
 Host Venom venom
     HostName venom.singularity.net

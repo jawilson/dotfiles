@@ -47,8 +47,10 @@
 [rerere]
 	enabled = 1
 [merge]
-	tool = vimdiff
-[mergetool]
+    tool = vscode
+[mergetool "vscode"]
+    cmd = code --wait $MERGED
+[mergetool "vim"]
 	keepBackup = false
 	keeptemporaries = false
 	keepbackups = false
