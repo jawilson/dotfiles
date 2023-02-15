@@ -131,3 +131,5 @@ fi
 if [ -d "$HOME/.cargo" ]; then
     source "$HOME/.cargo/env"
 fi
+
+export GITHUB_TOKEN=$(cmd.exe /c "echo %GITHUB_TOKEN%" 2>/dev/null)
