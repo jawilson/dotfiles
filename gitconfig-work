@@ -47,9 +47,9 @@
 [rerere]
 	enabled = 1
 [merge]
-    tool = vscode
+	tool = vscode
 [mergetool "vscode"]
-    cmd = code --wait $MERGED
+	cmd = code --wait $MERGED
 [mergetool "vim"]
 	keepBackup = false
 	keeptemporaries = false
