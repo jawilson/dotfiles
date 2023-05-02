@@ -101,8 +101,8 @@ else
 fi
 
 # fnm
-if [ -d $HOME/.fnm ]; then
-   export PATH=/home/jawilson/.fnm:$PATH
+if [ -d $HOME/.local/share/fnm ]; then
+   export PATH=$HOME/.local/share/fnm:$PATH
    eval "`fnm env --use-on-cd`"
 fi
 
