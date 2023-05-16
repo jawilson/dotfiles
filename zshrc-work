@@ -101,10 +101,11 @@ else
 fi
 
 # fnm
-if [ -d $HOME/.local/share/fnm ]; then
-   export PATH=$HOME/.local/share/fnm:$PATH
-   eval "`fnm env --use-on-cd`"
+if [ ! -d $HOME/.local/share/fnm ]; then
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
 fi
+export PATH=$HOME/.local/share/fnm:$PATH
+eval "`fnm env --use-on-cd`"
 
 # nvm (for VS Code)
 export NVM_DIR="$HOME/.nvm"
@@ -132,4 +133,4 @@ if [ -d "$HOME/.cargo" ]; then
     source "$HOME/.cargo/env"
 fi
 
-export GITHUB_TOKEN=$(cmd.exe /c "echo %GITHUB_TOKEN%" 2>/dev/null)
+export GITHUB_TOKEN=$(cmd.exe /c "echo %GITHUB_TOKEN%" 2>/dev/null|tr -d '\r\n')
