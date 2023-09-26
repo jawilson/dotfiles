@@ -96,6 +96,16 @@ source $ZSH/oh-my-zsh.sh
 # Enable SSH agent forwarding
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 
+# fnm
+if [ -d $HOME/.fnm ]; then
+   export PATH=$HOME/.fnm:$PATH
+   eval "`fnm env --use-on-cd`"
+fi
+
+# nvm (for VS Code)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # Default editor
 export EDITOR='vim'
 
