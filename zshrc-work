@@ -100,7 +100,7 @@ fi
 
 # fnm
 if [ ! -d $HOME/.fnm ]; then
-    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir="$HOME/.fnm"
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
 fi
 
 export PATH=$HOME/.fnm:$PATH
