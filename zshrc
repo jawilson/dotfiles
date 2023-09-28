@@ -143,3 +143,7 @@ PERL_MM_OPT="INSTALL_BASE=/Users/jawilson/perl5"; export PERL_MM_OPT;
 if [ -d/Applications/Postgres.app/Contents/Versions/latest/bin ]; then
     export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
 fi
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export GITHUB_TOKEN=$(security find-generic-password -w -a $LOGNAME -s "GitHub PAT")
+fi
