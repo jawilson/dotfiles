@@ -88,9 +88,7 @@ export EDITOR='vim'
 eval $(dircolors)
 
 # SSH Agent
-if [[ "$(uname -r)" != *"WSL2"* ]]; then
-    [[ -n ${WSL_AUTH_SOCK} ]] && export SSH_AUTH_SOCK=${WSL_AUTH_SOCK}
-else
+if [[ "$(uname -r)" = *"WSL2"* ]]; then
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
     ss -a | grep -q $SSH_AUTH_SOCK
     if [ $? -ne 0   ]; then
