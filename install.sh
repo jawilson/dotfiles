@@ -12,6 +12,7 @@ if ! command -v zsh &> /dev/null; then
         sudo apt-get install -qy zsh
     fi
 fi
+sudo chsh "$(id -un)" --shell "/usr/bin/zsh"
 
 # Set up OMZ if necessary
 if [ ! -d "$ZSH" ]; then
