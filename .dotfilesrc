@@ -8,6 +8,7 @@ ignore = [
     'LICENSE',
     'SwitchyRules.txt',
     'adblock.txt',
+    '.vscode',
     '*.log*',
     '*.sqlite',
     '*.swp',
