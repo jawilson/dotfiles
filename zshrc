@@ -106,11 +106,10 @@ else
 fi
 
 # fnm
-if [ ! -d $HOME/.fnm ]; then
+export PATH=$HOME/.fnm:$PATH
+if (( ! $+commands[fnm] )); then
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
 fi
-
-export PATH=$HOME/.fnm:$PATH
 eval "`fnm env --use-on-cd`"
 
 # nvm (for VS Code)
