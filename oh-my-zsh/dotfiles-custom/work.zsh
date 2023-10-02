@@ -1,6 +1,6 @@
-
-
-export MEDIASOUP_ANNOUNCED_IP=$(hostname -I|cut -d' ' -f1)
+if [ "$(uname -s)" != "Darwin" ]; then
+    export MEDIASOUP_ANNOUNCED_IP=$(hostname -I|cut -d' ' -f1)
+fi
 
 if [ -d /opt/gstreamer ]; then
     export PATH=/opt/gstreamer/bin:$PATH
