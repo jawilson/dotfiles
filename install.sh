@@ -19,9 +19,9 @@ fi
 
 # Auto-configure ZSH and OMZ
 if command -v zsh &> /dev/null; then
-    if [ $SHELL != "/usr/bin/zsh" ]; then
-        echo "Changing shell to ZSH"
-        sudo chsh "$(id -un)" --shell "/usr/bin/zsh"
+    if [[ "$SHELL" != *"/zsh" ]]; then
+        echo "Changing default shell to ZSH"
+        sudo chsh -s "$(which zsh)" "$(id -un)"
     fi
 
     # Set up OMZ if necessary
