@@ -5,7 +5,6 @@ export ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-#ZSH_THEME="robbyrussell"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # powerlevel10k config
@@ -70,10 +69,8 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras cp debian pip sudo systemd colorize docker docker-compose zsh-autosuggestions)
-
-export NVM_LAZY_LOAD=true
-plugins+=(zsh-nvm zsh-better-npm-completion)
+plugins=(git git-extras cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
+plugins+=(fnm zsh-better-npm-completion)
 
 # User configuration
 
@@ -89,18 +86,32 @@ fi
 
 # Add user bin directory
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
+[[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
+[[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
 
 # Oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
 # Enable SSH agent forwarding
-zstyle :omz:plugins:ssh-agent agent-forwarding on
+if [[ "$(uname -r)" != *"WSL2"* ]]; then
+    zstyle :omz:plugins:ssh-agent agent-forwarding on
+else
+    export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+    ss -a | grep -q $SSH_AUTH_SOCK
+    if [ $? -ne 0   ]; then
+        rm -f $SSH_AUTH_SOCK
+        username=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null)
+        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/${username/$'\r'}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+    fi
+fi
 
 # fnm
-if [ -d $HOME/.fnm ]; then
-   export PATH=$HOME/.fnm:$PATH
-   eval "`fnm env --use-on-cd`"
+if [ ! -d $HOME/.fnm ]; then
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
 fi
+
+export PATH=$HOME/.fnm:$PATH
+eval "`fnm env --use-on-cd`"
 
 # nvm (for VS Code)
 export NVM_DIR="$HOME/.nvm"
@@ -131,19 +142,10 @@ if [ -n "$ANDROID_SDK" ] && [ -d "$ANDROID_SDK" ]; then
     export PATH=$ANDROID_SDK/platform-tools:$PATH
 fi
 
-# added by travis gem
-[ -f /Users/jawilson/.travis/travis.sh ] && source /Users/jawilson/.travis/travis.sh
-
-PATH="/Users/jawilson/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/Users/jawilson/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/Users/jawilson/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/Users/jawilson/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/Users/jawilson/perl5"; export PERL_MM_OPT;
-
-if [ -d/Applications/Postgres.app/Contents/Versions/latest/bin ]; then
+if [ -d /Applications/Postgres.app/Contents/Versions/latest/bin ]; then
     export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
 fi
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    export GITHUB_TOKEN=$(security find-generic-password -w -a $LOGNAME -s "GitHub PAT")
+if [ -d "$HOME/.cargo" ]; then
+    source "$HOME/.cargo/env"
 fi
