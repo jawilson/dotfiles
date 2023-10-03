@@ -1,4 +1,4 @@
-if [ "$(uname -s)" != "Darwin" ]; then
+if [ "$(uname -s)" = "Linux" ]; then
     export MEDIASOUP_ANNOUNCED_IP=$(hostname -I|cut -d' ' -f1)
 fi
 
