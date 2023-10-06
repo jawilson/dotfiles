@@ -131,16 +131,15 @@ if [ -d /opt/android-ndk ]; then
 fi
 if [ -d ${HOME}/Android/Sdk ]; then
     export ANDROID_SDK=${HOME}/Android/Sdk
-fi
-if [ -d ${HOME}/Library/Android/sdk ]; then
+elif [ -d ${HOME}/Library/Android/sdk ]; then
     export ANDROID_SDK=${HOME}/Library/Android/sdk
-fi
-if [ -d /opt/android-sdk ]; then
+elif [ -d /opt/android-sdk ]; then
     export ANDROID_SDK=/opt/android-sdk
 fi
 if [ -n "$ANDROID_SDK" ] && [ -d "$ANDROID_SDK" ]; then
     export PATH=$ANDROID_SDK/tools:$PATH
     export PATH=$ANDROID_SDK/platform-tools:$PATH
+    export PATH=$ANDROID_SDK/cmdline-tools/latest/bin:$PATH
 fi
 
 if [ -d /Applications/Postgres.app/Contents/Versions/latest/bin ]; then
