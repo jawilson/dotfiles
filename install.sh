@@ -38,3 +38,12 @@ python $SCRIPT_DIR/tools/dotfiles/bin/dotfiles -R $SCRIPT_DIR -s $@
 if [[ $GITHUB_REPOSITORY = "blinemedical/"* ]]; then
     mv $HOME/.gitconfig-work $HOME/.gitconfig
 fi
+
+# Windows (Git Bash) specific setup
+if [[ "$MSYSTEM" = "MSYS" ]]; then
+    # Install scoop
+    if !command -v scoop &> /dev/null; then
+        powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+        powershell -Command "irm get.scoop.sh | iex"
+    fi
+fi
