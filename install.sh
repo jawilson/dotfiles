@@ -28,7 +28,6 @@ if command -v zsh &> /dev/null; then
     if [ ! -d "$ZSH" ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     fi
-    zsh -c 'source <(curl -sL init.zshell.dev); zzinit'
 fi
 
 # Set up env files
