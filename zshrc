@@ -101,7 +101,11 @@ else
     if [ $? -ne 0   ]; then
         rm -f $SSH_AUTH_SOCK
         username=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null)
-        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/${username/$'\r'}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+        if [ -z "$username" ]; then
+            >&2 echo "Failed to get Windows username, unable to configure SSH agent forwarding"
+        else
+            ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/${username/$'\r'}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+        fi
     fi
 fi
 
