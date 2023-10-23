@@ -46,3 +46,24 @@ if [[ "$MSYSTEM" = "MSYS" ]]; then
         powershell -Command "irm get.scoop.sh | iex"
     fi
 fi
+
+# WSL2 specific setup
+if [[ "$(uname -r)" = *"WSL2"* ]]; then
+    if !command -v socat &> /dev/null || !command -v unzip &> /dev/null; then
+        sudo apt-get update -q
+        sudo apt-get install -qy socat
+    fi
+
+    # Install npiperelay
+    if [[ -z "$NPIPERELAY" ]]; then
+        userprofile=`wslpath $(cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d "\r")`
+        mkdir $userprofile/bin
+        curl -fsSL https://github.com/jstarks/npiperelay/releases/latest/download/npiperelay_windows_amd64.zip -o /tmp/npiperelay.zip && unzip -o /tmp/npiperelay.zip npiperelay.exe -d $userprofile/bin && chmod +x $userprofile/bin/npiperelay.exe
+        rm -rf /tmp/npiperelay.zip
+        cmd.exe /c "setx NPIPERELAY %USERPROFILE%\\bin\\npiperelay.exe"
+        win_wslenv=$(cmd.exe /c "echo %WSLENV%" 2>/dev/null | tr -d "\r")
+        if [ "$win_wslenv" != "*NPIPERELAY/p*" ]; then
+            cmd.exe /c "setx WSLENV \"${win_wslenv:+${win_wslenv}:}NPIPERELAY/p\""
+        fi
+    fi
+fi
