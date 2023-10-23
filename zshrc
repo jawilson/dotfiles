@@ -95,18 +95,15 @@ source $ZSH/oh-my-zsh.sh
 # Enable SSH agent forwarding
 if [[ "$(uname -r)" != *"WSL2"* ]]; then
     zstyle :omz:plugins:ssh-agent agent-forwarding on
-else
+elif [[ -n "$NPIPERELAY" ]]; then
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
     ss -a | grep -q $SSH_AUTH_SOCK
-    if [ $? -ne 0   ]; then
+    if [ $? -ne 0 ]; then
         rm -f $SSH_AUTH_SOCK
-        username=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null)
-        if [ -z "$username" ]; then
-            >&2 echo "Failed to get Windows username, unable to configure SSH agent forwarding"
-        else
-            ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"/c/Users/${username/$'\r'}/bin/npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
-        fi
+        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"${NPIPERELAY} -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
     fi
+else
+    >&2 echo "NPIPERELAY environment variable not set, unable to configure SSH agent forwarding"
 fi
 
 # fnm
