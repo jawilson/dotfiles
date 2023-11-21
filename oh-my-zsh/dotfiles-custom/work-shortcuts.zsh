@@ -3,7 +3,7 @@ C=/c
 
 projects=/c/Projects
 
-meteor=~/src/meteor-x
+sc=~/src/simcapture-cloud
 
 vc=~/src/video-conductor
 
