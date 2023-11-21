@@ -1,3 +1,5 @@
+export DOTFILES_DIR=${${(%):-%x}:A:h}
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -150,5 +152,3 @@ fi
 if [ -d "$HOME/.cargo" ]; then
     source "$HOME/.cargo/env"
 fi
-
-export DOTFILES_DIR=${${(%):-%x}:A:h}
