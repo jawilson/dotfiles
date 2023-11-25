@@ -130,24 +130,24 @@ set smarttab
 set softtabstop=4
 set shiftwidth=4
 set tabstop=4
-set textwidth=100
+set textwidth=120
 set wrap
 "set nowrap
 
 " Filetype-specific formatting
 set formatoptions+=t,c,r,o,n
 
-au FileType c,cpp,h,hpp set cindent formatoptions+=ro tw=100
-au FileType c set omnifunc=ccomplete#Complete tw=100
-au FileType make set noexpandtab shiftwidth=8 tw=100
-au FileType python set et sw=4 sts=4 ts=4 tw=100 ai
-au FileType javascript set et sw=2 sts=2 ts=2 tw=100 ai
+au FileType c,cpp,h,hpp set cindent formatoptions+=ro tw=120
+au FileType c set omnifunc=ccomplete#Complete tw=120
+au FileType make set noexpandtab shiftwidth=8 tw=120
+au FileType python set et sw=4 sts=4 ts=4 tw=120 ai
+au FileType javascript set et sw=2 sts=2 ts=2 tw=120 ai
 au FileType html,xhtml set tw=0
-au FileType tex set spell tw=100
+au FileType tex set spell tw=120
 au FileType gitconfig set expandtab!
 au FileType yaml set filetype=ansible
-au BufRead,BufNewFile *.bb set tw=100
-au BufRead,BufNewFile *.dox,*.dox.in set tw=100 filetype=doxygen spell
+au BufRead,BufNewFile *.bb set tw=120
+au BufRead,BufNewFile *.dox,*.dox.in set tw=120 filetype=doxygen spell
 au Syntax {cpp,c,idl} runtime syntax/doxygen.vim
 
 au BufRead,BufNewFile PKGBUILD set ts=4 sts=4 et sw=4
@@ -160,7 +160,7 @@ set wildmode=list:longest
 if has("folding")
     set foldenable
     set foldmethod=indent
-    set foldlevel=100
+    set foldlevel=120
     set foldopen-=search
     set foldopen-=undo
 endif
