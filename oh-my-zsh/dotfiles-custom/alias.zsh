@@ -44,6 +44,7 @@ alias certbot-renew="docker-compose -f /media/raid/home-assistant/docker-compose
 alias acme.sh="docker-compose -f /media/raid/acme/docker-compose.yml exec acme"
 
 # docker
+alias docker-compose="docker compose"
 alias dlggh="echo \$GITHUB_TOKEN | docker login ghcr.io -u jawilson --password-stdin"
 alias dlgaws="aws ecr get-login-password | docker login --username AWS --password-stdin \$(aws sts get-caller-identity --query Account --output text).dkr.ecr.\$(aws configure get region).amazonaws.com"
 alias dlga="dlgaws; dlggh"
