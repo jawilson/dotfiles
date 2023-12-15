@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+dotfiles_opts=("$@")
+if [[ "$CODESPACES" = "true" ]]; then
+    other_args+=("--force")
+fi
 
 # Setup ZSH if necessary
 if ! command -v zsh &> /dev/null; then
     if [[ "$MSYSTEM" = "MSYS" ]]; then
         echo "MSYS such as Git Bash not yet supported"
     else
-        OS_ID=$(grep -Po "(?<=^ID=).+" /etc/os-release | sed 's/"//g')
-        OS_ID_LIKE=$(grep -Po "(?<=^ID_LIKE=).+" /etc/os-release | sed 's/"//g')
+        os_id=$(grep -Po "(?<=^ID=).+" /etc/os-release | sed 's/"//g')
+        os_id_like=$(grep -Po "(?<=^ID_LIKE=).+" /etc/os-release | sed 's/"//g')
 
-        if [[ "$OS_ID" = *"deian"* ]]; then
+        if [[ "$os_id" = *"debian"* ]] || [[ "$os_id_like" = *"debian"* ]]; then
             sudo apt-get update -q
             sudo apt-get install -qy zsh
         fi
@@ -31,7 +36,7 @@ if command -v zsh &> /dev/null; then
 fi
 
 # Set up env files
-python $SCRIPT_DIR/tools/dotfiles/bin/dotfiles -R $SCRIPT_DIR -s $@
+python $script_dir/tools/dotfiles/bin/dotfiles -R $script_dir -s "${other_args[@]}"
 
 # Auto-configure work profile on Codespaces
 if [[ $GITHUB_REPOSITORY = "blinemedical/"* ]]; then
