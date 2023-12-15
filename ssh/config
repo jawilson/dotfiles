@@ -1,6 +1,5 @@
 Host *
     AddKeysToAgent yes
-    IdentityFile ~/.ssh/id_rsa
     User jawilson
 Host Maxwell maxwell
     HostName Maxwell.singularity.net
@@ -11,7 +10,7 @@ Host Feynman feynman
 Host home.jeffalwilson.com
     ForwardAgent yes
     DynamicForward 1025
-Host P3Steel p3steel
+Host P3Steel p3steel p3steel.singularity.net
     HostName P3Steel.singularity.net
     User pi
 Host wilson-t440 wilson-t440.corp.atellis.com
