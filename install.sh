@@ -5,6 +5,11 @@ script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 dotfiles_opts=("$@")
 if [[ "$CODESPACES" = "true" ]]; then
     other_args+=("--force")
+
+    # Auto-configure work profile on Codespaces if in work repo
+    if [[ $GITHUB_REPOSITORY = "blinemedical/"* ]]; then
+        mv $HOME/.gitconfig-work $HOME/.gitconfig
+    fi
 fi
 
 # Setup ZSH if necessary
@@ -37,11 +42,6 @@ fi
 
 # Set up env files
 python $script_dir/tools/dotfiles/bin/dotfiles -R $script_dir -s "${other_args[@]}"
-
-# Auto-configure work profile on Codespaces
-if [[ $GITHUB_REPOSITORY = "blinemedical/"* ]]; then
-    mv $HOME/.gitconfig-work $HOME/.gitconfig
-fi
 
 # Windows (Git Bash) specific setup
 if [[ "$MSYSTEM" = "MSYS" ]]; then
