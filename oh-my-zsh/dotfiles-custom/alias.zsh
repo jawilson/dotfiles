@@ -1,3 +1,6 @@
+# dotfiles
+alias dotfiles='git --git-dir=$DOTFILES_DIR/.git --work-tree=$DOTFILES_DIR'
+
 # ls
 alias ls='ls --color=auto -h --group-directories-first'
 alias ll='ls -alF'
