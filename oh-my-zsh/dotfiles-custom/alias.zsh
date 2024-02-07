@@ -12,12 +12,6 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-# flexget
-alias flexget="docker-compose -f /media/raid/flexget/docker-compose.yml exec flexget flexget -c /config/config.yml -l /dev/null"
-alias fgsl="flexget series list"
-alias fgss="flexget series show"
-alias fgsf="flexget series forget"
-
 # ack-grep
 alias "ack"="ack-grep"
 
@@ -39,12 +33,6 @@ docker run \
   -e TZ=America/New_York \
   -p 8181:8181 \
   -d linuxserver/plexpy"
-
-# HomeAssistant
-alias certbot-renew="docker-compose -f /media/raid/home-assistant/docker-compose.yml.letsencrypt up"
-
-# acme.sh
-alias acme.sh="docker-compose -f /media/raid/acme/docker-compose.yml exec acme"
 
 # docker
 alias docker-compose="docker compose"
