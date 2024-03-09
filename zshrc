@@ -91,9 +91,6 @@ fi
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
 
-# Oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-
 # Enable SSH agent forwarding
 if [[ "$(uname -r)" != *"WSL2"* ]]; then
     zstyle :omz:plugins:ssh-agent agent-forwarding on
@@ -107,6 +104,9 @@ elif [[ -n "$NPIPERELAY" ]]; then
 else
     >&2 echo "NPIPERELAY environment variable not set, unable to configure SSH agent forwarding"
 fi
+
+# Oh-my-zsh
+source $ZSH/oh-my-zsh.sh
 
 # fnm
 if [[ "$MSYSTEM" != "MSYS" ]]; then
