@@ -44,6 +44,7 @@
 	helper = cache
 [push]
 	default = simple
+	autoSetupRemote = true
 [rerere]
 	enabled = 1
 [merge]
