@@ -36,6 +36,6 @@ docker run \
 
 # docker
 alias docker-compose="docker compose"
-alias dlggh="gh auth token | docker login ghcr.io -u jawilson --password-stdin"
+alias dlggh="get-cred-password ghcr.io | docker login ghcr.io -u jawilson --password-stdin"
 alias dlgaws="aws ecr get-login-password | docker login --username AWS --password-stdin \$(aws sts get-caller-identity --query Account --output text).dkr.ecr.\$(aws configure get region).amazonaws.com"
 alias dlga="dlgaws; dlggh"
