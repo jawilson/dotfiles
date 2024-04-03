@@ -30,7 +30,7 @@ if command -v zsh &> /dev/null; then
     fi
 
     # Set up OMZ if necessary
-    if [ ! -d "$ZSH" ]; then
+    if [ ! -d "$ZSH" ] && [ ! -d "$HOME/.oh-my-zsh" ]; then
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     fi
 fi
