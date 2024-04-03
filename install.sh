@@ -2,9 +2,25 @@
 
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-dotfiles_opts=("$@")
-if [[ "$CODESPACES" = "true" ]]; then
-    other_args+=("--force")
+dotfiles_opts=(-R $script_dir -s)
+
+# Handle various arguments that could be passed into the script
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -f|--force)
+            dotfiles_opts+=(--force)
+            shift
+            ;;
+        *)
+            echo "Unknown argument: $1"
+            shift
+            ;;
+    esac
+done
+
+# Add --force to dotfiles_opts if $CODESPACES is set to "true" and dotfiles_opts doesn't already contain --force
+if [[ "$CODESPACES" = "true" && ! " ${dotfiles_opts[@]} " =~ " --force " ]]; then
+    dotfiles_opts+=("--force")
 fi
 
 # Setup ZSH if necessary
@@ -36,7 +52,7 @@ if command -v zsh &> /dev/null; then
 fi
 
 # Set up env files
-python $script_dir/tools/dotfiles/bin/dotfiles -R $script_dir -s "${other_args[@]}"
+python $script_dir/tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
 
 # Windows (Git Bash) specific setup
 if [[ "$MSYSTEM" = "MSYS" ]]; then
