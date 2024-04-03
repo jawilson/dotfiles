@@ -38,11 +38,6 @@ fi
 # Set up env files
 python $script_dir/tools/dotfiles/bin/dotfiles -R $script_dir -s "${other_args[@]}"
 
-# Auto-configure work profile on Codespaces if in work repo
-if [[ "$CODESPACES" = "true" && $GITHUB_REPOSITORY = "blinemedical/"* ]]; then
-    mv $HOME/.gitconfig-work $HOME/.gitconfig
-fi
-
 # Windows (Git Bash) specific setup
 if [[ "$MSYSTEM" = "MSYS" ]]; then
     # Install scoop
