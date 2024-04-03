@@ -2,8 +2,6 @@ if ! command -v curl &> /dev/null || [ -z "$BW_SESSION" ]; then
     return 0
 fi
 
-_get_
-
 nxtup() {
     if [ -z "$1" ]; then
         echo "Usage: nxtup <local_file> [remote_file]"
