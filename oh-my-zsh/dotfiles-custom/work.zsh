@@ -15,3 +15,7 @@ if [ -d $gst_build_dir ]; then
     export PATH=${gst_build_dir}/subprojects/gstreamer/tools:$PATH
     export PATH=${gst_build_dir}/subprojects/gst-plugins-bad/tools:$PATH
 fi
+
+if [ -d ~/.aws ]; then
+    export AWS_PROFILE=dev
+fi
