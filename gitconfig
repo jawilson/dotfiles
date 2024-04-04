@@ -53,11 +53,13 @@
 [web]
 	browser = chrome
 
+[includeIf "gitdir/i:C:/"]
+	path = .gitconfig-windows.inc
 [includeIf "hasconfig:remote.*.url:git@github.com:blinemedical/**"]
-	path = .gitconfig-work
+	path = .gitconfig-work.inc
 [includeIf "hasconfig:remote.*.url:https://github.com/blinemedical/**"]
-	path = .gitconfig-work
+	path = .gitconfig-work.inc
 [includeIf "hasconfig:remote.*.url:git@github.com:laerdallabs/**"]
-	path = .gitconfig-work
+	path = .gitconfig-work.inc
 [includeIf "hasconfig:remote.*.url:https://github.com/laerdallabs/**"]
-	path = .gitconfig-work
+	path = .gitconfig-work.inc
