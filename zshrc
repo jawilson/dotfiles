@@ -72,7 +72,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git git-extras cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-plugins+=(fnm zsh-better-npm-completion)
+plugins+=(fnm zsh-better-npm-completion gh)
 
 # User configuration
 
