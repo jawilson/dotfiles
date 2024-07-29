@@ -18,8 +18,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Add --force to dotfiles_opts if $CODESPACES is set to "true" and dotfiles_opts doesn't already contain --force
-if [[ "$CODESPACES" = "true" && ! " ${dotfiles_opts[@]} " =~ " --force " ]]; then
+if [[ "$CODESPACES" = "true" || $(command -v devcontainer-info) && ! " ${dotfiles_opts[@]} " =~ " --force " ]]; then
     dotfiles_opts+=("--force")
 fi
 
