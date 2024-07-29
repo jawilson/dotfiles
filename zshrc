@@ -94,7 +94,7 @@ fi
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
 
 # Enable SSH agent forwarding
-if [[ "$(uname -r)" != *"WSL2"* ]]; then
+if [[ ! -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
     zstyle :omz:plugins:ssh-agent agent-forwarding on
 elif [[ -n "$NPIPERELAY" ]]; then
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
