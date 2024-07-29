@@ -1,6 +1,12 @@
 History
 -------
 
+0.6.5
++++++
+
+* Update copyright lines
+* Update config parser for Python 3.12
+
 0.6.4
 +++++
 
