@@ -4,15 +4,16 @@ ignore = [
     '.gitattributes',
     '.gitignore',
     '.gitmodules',
-    'README.md',
-    'LICENSE',
-    'SwitchyRules.txt',
-    'adblock.txt',
     '.vscode',
     '*.log*',
     '*.sqlite',
     '*.swp',
-    '*~']
+    '*~',
+    'adblock.txt',
+    'install.sh',
+    'LICENSE',
+    'README.md',
+    'SwitchyRules.txt']
 packages = [
     'config',
     'flexget',
