@@ -52,7 +52,7 @@ if command -v zsh &> /dev/null; then
 fi
 
 # Set up env files
-python $script_dir/tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
+./tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
 
 # Windows (Git Bash) specific setup
 if [[ "$MSYSTEM" = "MSYS" ]]; then
