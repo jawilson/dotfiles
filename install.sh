@@ -64,7 +64,7 @@ if [[ "$MSYSTEM" = "MSYS" ]]; then
 fi
 
 # WSL2 specific setup
-if [[ "$(uname -r)" = *"WSL2"* ]]; then
+if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
     if !command -v socat &> /dev/null || !command -v unzip &> /dev/null; then
         sudo apt-get update -q
         sudo apt-get install -qy socat
