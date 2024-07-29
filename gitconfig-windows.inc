@@ -1,2 +1,0 @@
-[mergetool]
-	guiDefault = true
