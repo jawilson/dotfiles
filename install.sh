@@ -2,25 +2,17 @@
 
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-dotfiles_opts=(-R $script_dir -s)
+dotfiles_opts=(-R $script_dir -s --force)
 
 # Handle various arguments that could be passed into the script
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        -f|--force)
-            dotfiles_opts+=(--force)
-            shift
-            ;;
         *)
             echo "Unknown argument: $1"
             shift
             ;;
     esac
 done
-
-if [[ "$CODESPACES" = "true" || $(command -v devcontainer-info) && ! " ${dotfiles_opts[@]} " =~ " --force " ]]; then
-    dotfiles_opts+=("--force")
-fi
 
 # Setup ZSH if necessary
 if ! command -v zsh &> /dev/null; then
