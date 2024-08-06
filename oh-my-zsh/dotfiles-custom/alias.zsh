@@ -15,11 +15,6 @@ alias egrep='egrep --color=auto'
 # ack-grep
 alias "ack"="ack-grep"
 
-# git
-alias gdiff='git diff --no-index'
-alias gitroot='cd "$(git rev-parse --show-toplevel)"'
-alias gbdag='git fetch -p && for branch in $(git for-each-ref --format "%(refname) %(upstream:track)" refs/heads | awk '\''$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'\'' | tr "\n" " "); do git branch -D $branch; done'
-
 # awk
 alias dedup="awk '!seen[$0]++'"
 
