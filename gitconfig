@@ -8,6 +8,7 @@
 	addnw = !sh -c 'git diff -w --no-color "$@" | git apply --cached --ignore-whitespace' -
 	br = branch
 	cd = !pushd $(git rev-parse --show-toplevel)
+	cfb = "!f() { [ \"$2\" ] && BASE=$2 || BASE=main && git checkout --no-track -b $1 origin/$BASE; }; f"
 	ci = commit -v
 	cl = clone
 	co = checkout
