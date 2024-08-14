@@ -3,3 +3,4 @@
 *~
 *.pyc
 secretfile.yml
+.DS_Store
