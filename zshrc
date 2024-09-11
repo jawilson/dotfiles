@@ -4,6 +4,15 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 
 DISABLE_BITWARDEN_SETUP="true"
 
+# fnm
+if [[ "$MSYSTEM" != "MSYS" ]]; then
+    export PATH=$HOME/.fnm:$PATH
+    if (( ! $+commands[fnm] )); then
+        curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
+    fi
+    eval "`fnm env --use-on-cd`"
+fi
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -109,15 +118,6 @@ fi
 
 # Oh-my-zsh
 source $ZSH/oh-my-zsh.sh
-
-# fnm
-if [[ "$MSYSTEM" != "MSYS" ]]; then
-    export PATH=$HOME/.fnm:$PATH
-    if (( ! $+commands[fnm] )); then
-        curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
-    fi
-    eval "`fnm env --use-on-cd`"
-fi
 
 # nvm (for VS Code)
 export NVM_DIR="$HOME/.nvm"
