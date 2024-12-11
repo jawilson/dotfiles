@@ -5,10 +5,10 @@
 	autocrlf = input
 	editor = vim
 [alias]
-	addnw = !sh -c 'git diff -w --no-color "$@" | git apply --cached --ignore-whitespace' -
+	addnw = !sh -c 'git diff -U0 -w --no-color --src-prefix=a/ --dst-prefix=b/ "$@" | git apply --cached --ignore-whitespace --unidiff-zero -'
 	br = branch
 	cd = !pushd $(git rev-parse --show-toplevel)
-	cfb = "!f() { [ \"$2\" ] && BASE=$2 || BASE=main && git checkout --no-track -b $1 origin/$BASE; }; f"
+	cfb = "!f() { [ \"$2\" ] && BASE=$2 || BASE=main && git checkout --no-track -b $1 $BASE; }; f"
 	ci = commit -v
 	cl = clone
 	co = checkout
