@@ -5,19 +5,23 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 DISABLE_BITWARDEN_SETUP="true"
 
 # fnm
-if [[ "$MSYSTEM" != "MSYS" ]]; then
-    export PATH=$HOME/.fnm:$PATH
-    if (( ! $+commands[fnm] )); then
-        curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
+if (( ! $+commands[fnm] )); then
+    if [[ "$MSYSTEM" == "MSYS" && $+commands[scoop] ]]; then
+        scoop install fnm
     fi
-    eval "`fnm env --use-on-cd`"
+    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
+fi
+
+if (( $+commands[fnm] )); then
+    export PATH=$HOME/.fnm:$PATH
+    eval "`fnm env --use-on-cd --shell zsh`"
 fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 export DOTFILES_DIR=${${(%):-%x}:A:h}
@@ -119,15 +123,17 @@ fi
 # Oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
-# nvm (for VS Code)
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
 # Default editor
 export EDITOR='vim'
 
 # Get colors for tools
-eval $(dircolors)
+dircolors_cache="${XDG_CACHE_HOME:-$HOME/.cache}/dircolors-${(%):-%n}.zsh"
+if [[ -r "$dircolors_cache" ]]; then
+    source "$dircolors_cache"
+else
+    dircolors > "$dircolors_cache"
+    source "$dircolors_cache"
+fi
 
 # Android setup
 if [ -d /opt/android-ndk ]; then
