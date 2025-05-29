@@ -1179,7 +1179,7 @@ function _p9k_parse_aws_config() {
 ################################################################
 # AWS Profile
 prompt_aws() {
-  typeset -g P9K_AWS_PROFILE="${AWS_VAULT:-${AWSUME_PROFILE:-${AWS_PROFILE:-$AWS_DEFAULT_PROFILE}}}"
+  typeset -g P9K_AWS_PROFILE="${AWS_SSO_PROFILE:-${AWS_VAULT:-${AWSUME_PROFILE:-${AWS_PROFILE:-$AWS_DEFAULT_PROFILE}}}}"
   local pat class state
   for pat class in "${_POWERLEVEL9K_AWS_CLASSES[@]}"; do
     if [[ $P9K_AWS_PROFILE == ${~pat} ]]; then
@@ -1206,7 +1206,7 @@ prompt_aws() {
 }
 
 _p9k_prompt_aws_init() {
-  typeset -g "_p9k__segment_cond_${_p9k__prompt_side}[_p9k__segment_index]"='${AWS_VAULT:-${AWSUME_PROFILE:-${AWS_PROFILE:-$AWS_DEFAULT_PROFILE}}}'
+  typeset -g "_p9k__segment_cond_${_p9k__prompt_side}[_p9k__segment_index]"='${AWS_SSO_PROFILE:-${AWS_VAULT:-${AWSUME_PROFILE:-${AWS_PROFILE:-$AWS_DEFAULT_PROFILE}}}}'
 }
 
 ################################################################
@@ -4264,8 +4264,8 @@ function _p9k_parse_virtualenv_cfg() {
   cfg=$(<$1) || return
 
   local -a match mbegin mend
-  [[ $'\n'$cfg$'\n' == (#b)*$'\n'prompt[$' \t']#=[$' \t']#([^$' \t']#)[$' \t']#$'\n'* ]] || return
-  local res=$match[1]
+  [[ $'\n'$cfg$'\n' == (#b)*$'\n'prompt[$' \t']#=([^$'\n']#)$'\n'* ]] || return
+  local res=${${match[1]##[$' \t']#}%%[$' \t']#}
   if [[ $res == (\"*\"|\'*\') ]]; then
     # The string is quoted in python style, which isn't the same as quoting in zsh.
     # For example, the literal 'foo"\'bar' denotes foo"'bar in python but in zsh
@@ -4918,6 +4918,10 @@ function _p9k_fetch_nordvpn_status() {
 #   POWERLEVEL9K_NORDVPN_CONNECTING_CONTENT_EXPANSION='${P9K_NORDVPN_COUNTRY_CODE}'
 #   POWERLEVEL9K_NORDVPN_CONNECTING_BACKGROUND=cyan
 function prompt_nordvpn() {
+  # This prompt segment is broken. See https://github.com/romkatv/powerlevel10k/issues/2860.
+  # It is disabled until it is fixed.
+  return
+
   unset $__p9k_nordvpn_tag P9K_NORDVPN_COUNTRY_CODE
   [[ -e /run/nordvpn/nordvpnd.sock ]] || return
   _p9k_fetch_nordvpn_status 2>/dev/null || return
@@ -5125,7 +5129,7 @@ function _p9k_timewarrior_clear() {
 
 function prompt_timewarrior() {
   local dir
-  [[ -n ${dir::=$TIMEWARRIORDB} || -n ${dir::=~/.timewarrior}(#qN/) ]] ||
+  [[ -n ${dir::=$TIMEWARRIORDB} || -n ${dir::=~/.timewarrior}(#q-/N) ]] ||
     dir=${XDG_DATA_HOME:-~/.local/share}/timewarrior
   dir+=/data
   local -a stat
@@ -5234,7 +5238,10 @@ function _p9k_taskwarrior_check_data() {
 }
 
 function _p9k_taskwarrior_init_data() {
-  local -a stat files=($_p9k_taskwarrior_data_dir/{pending,completed}.data)
+  local -a stat files=(
+    $_p9k_taskwarrior_data_dir/{pending,completed}.data
+    $_p9k_taskwarrior_data_dir/taskchampion.sqlite3
+  )
   _p9k_taskwarrior_data_files=($^files(N))
   _p9k_taskwarrior_data_non_files=(${files:|_p9k_taskwarrior_data_files})
   if (( $#_p9k_taskwarrior_data_files )); then
@@ -5261,7 +5268,9 @@ function _p9k_taskwarrior_init_data() {
     local -a ts
     ts=($(command task +PENDING -OVERDUE list rc.verbose=nothing rc.color=0 rc._forcecolor=0 \
       rc.report.list.labels= rc.report.list.columns=due.epoch </dev/null 2>/dev/null)) || ts=()
-    if (( $#ts )); then
+    # The second condition is a workaround for a bug in taskwarrior v3.0.1.
+    # https://github.com/romkatv/powerlevel10k/issues/2648.
+    if (( $#ts && ! ${#${(@)ts:#(|-)<->(|.<->)}} )); then
       _p9k_taskwarrior_next_due=${${(on)ts}[1]}
       (( _p9k_taskwarrior_next_due > EPOCHSECONDS )) || _p9k_taskwarrior_next_due=$((EPOCHSECONDS+60))
     fi
@@ -5747,15 +5756,19 @@ prompt_cpu_arch() {
     state=$_p9k__cache_val[1]
     text=$_p9k__cache_val[2]
   else
-    local cmd
-    for cmd in machine arch; do
-      (( $+commands[$cmd] )) || continue
-      if text=$(command -- $cmd) 2>/dev/null && [[ $text == [a-zA-Z][a-zA-Z0-9_]# ]]; then
-        break
-      else
-        text=
-      fi
-    done
+    if [[ -r /proc/sys/kernel/arch ]]; then
+      text=$(</proc/sys/kernel/arch)
+    else
+      local cmd
+      for cmd in machine arch; do
+        (( $+commands[$cmd] )) || continue
+        if text=$(command -- $cmd) 2>/dev/null && [[ $text == [a-zA-Z][a-zA-Z0-9_]# ]]; then
+          break
+        else
+          text=
+        fi
+      done
+    fi
     state=_${${(U)text}//İ/I}
     _p9k_cache_ephemeral_set "$state" "$text"
   fi
@@ -5807,7 +5820,7 @@ _p9k_preexec2() {
   typeset -g _p9k__preexec_cmd=$2
   _p9k__timer_start=EPOCHREALTIME
   P9K_TTY=old
-  (( ! $+_p9k__iterm_cmd )) || _p9k_iterm2_preexec
+  (( ! $+_p9k__iterm_cmd )) || _p9k_iterm2_preexec "$1"
 }
 
 function _p9k_prompt_net_iface_init() {
@@ -6735,9 +6748,9 @@ function _p9k_clear_instant_prompt() {
           echo -E - ""
           echo -E - "${(%):-For details, see:}"
           if (( _p9k_term_has_href )); then
-            echo    - "${(%):-\e]8;;https://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt\ahttps://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt\e]8;;\a}"
+            echo    - "${(%):-\e]8;;https://github.com/romkatv/powerlevel10k#instant-prompt\ahttps://github.com/romkatv/powerlevel10k#instant-prompt\e]8;;\a}"
           else
-            echo    - "${(%):-https://github.com/romkatv/powerlevel10k/blob/master/README.md#instant-prompt}"
+            echo    - "${(%):-https://github.com/romkatv/powerlevel10k#instant-prompt}"
           fi
           echo -E - ""
           echo    - "${(%):-%3F-- console output produced during zsh initialization follows --%f}"
@@ -8656,6 +8669,7 @@ function _p9k_init_cacheable() {
           amzn)                    _p9k_set_os Linux LINUX_AMZN_ICON;;
           endeavouros)             _p9k_set_os Linux LINUX_ENDEAVOUROS_ICON;;
           rocky)                   _p9k_set_os Linux LINUX_ROCKY_ICON;;
+          almalinux)               _p9k_set_os Linux LINUX_ALMALINUX_ICON;;
           guix)                    _p9k_set_os Linux LINUX_GUIX_ICON;;
           neon)                    _p9k_set_os Linux LINUX_NEON_ICON;;
           *)                       _p9k_set_os Linux LINUX_ICON;;
@@ -8872,7 +8886,17 @@ function _p9k_iterm2_precmd() {
 }
 
 function _p9k_iterm2_preexec() {
-  [[ -t 1 ]] && builtin print -n '\e]133;C;\a'
+  if [[ -t 1 ]]; then
+    if (( ${+__p9k_use_osc133_c_cmdline} )); then
+      () {
+        emulate -L zsh -o extended_glob -o no_multibyte
+        local MATCH MBEGIN MEND
+        builtin printf '\e]133;C;cmdline_url=%s\a' "${1//(#m)[^a-zA-Z0-9"\/:_.-!'()~"]/%${(l:2::0:)$(([##16]#MATCH))}}"
+      } "$1"
+    else
+      builtin print -n '\e]133;C;\a'
+    fi
+  fi
   typeset -gi _p9k__iterm_cmd=2
 }
 
@@ -9002,9 +9026,9 @@ _p9k_init() {
       >&2 echo -E - ""
       >&2 echo -E - "${(%):-  - %BRecommended%b: Change the way Powerlevel10k is loaded from %B$__p9k_zshrc_u%b.}"
       if (( _p9k_term_has_href )); then
-        >&2 echo    - "${(%):-    See \e]8;;https://github.com/romkatv/powerlevel10k/blob/master/README.md#installation\ahttps://github.com/romkatv/powerlevel10k/blob/master/README.md#installation\e]8;;\a.}"
+        >&2 echo    - "${(%):-    See \e]8;;https://github.com/romkatv/powerlevel10k#installation\ahttps://github.com/romkatv/powerlevel10k#installation\e]8;;\a.}"
       else
-        >&2 echo    - "${(%):-    See https://github.com/romkatv/powerlevel10k/blob/master/README.md#installation.}"
+        >&2 echo    - "${(%):-    See https://github.com/romkatv/powerlevel10k#installation.}"
       fi
       if (( $+zsh_defer_options )); then
         >&2 echo -E - ""
@@ -9077,6 +9101,7 @@ _p9k_precmd_first() {
   if [[ -n $KITTY_SHELL_INTEGRATION && KITTY_SHELL_INTEGRATION[(wIe)no-prompt-mark] -eq 0 ]]; then
     KITTY_SHELL_INTEGRATION+=' no-prompt-mark'
     (( $+__p9k_force_term_shell_integration )) || typeset -gri __p9k_force_term_shell_integration=1
+    (( $+__p9k_use_osc133_c_cmdline         )) || typeset -gri __p9k_use_osc133_c_cmdline=1
   elif [[ $TERM_PROGRAM == WarpTerminal ]]; then
     (( $+__p9k_force_term_shell_integration )) || typeset -gri __p9k_force_term_shell_integration=1
   fi
@@ -9478,7 +9503,11 @@ if [[ $__p9k_dump_file != $__p9k_instant_prompt_dump_file && -n $__p9k_instant_p
   zf_rm -f -- $__p9k_instant_prompt_dump_file{,.zwc} 2>/dev/null
 fi
 
-typeset -g P9K_VERSION=1.20.7
+typeset -g P9K_VERSION=1.20.15
+
+if [[ ${VSCODE_SHELL_INTEGRATION-} == <1-> && ${+__p9k_force_term_shell_integration} == 0 ]]; then
+  typeset -gri __p9k_force_term_shell_integration=1
+fi
 unset VSCODE_SHELL_INTEGRATION
 
 _p9k_init_ssh
