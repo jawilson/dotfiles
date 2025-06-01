@@ -5,15 +5,14 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 DISABLE_BITWARDEN_SETUP="true"
 
 # fnm
+[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
 if (( ! $+commands[fnm] )); then
     if [[ "$MSYSTEM" == "MSYS" && $+commands[scoop] ]]; then
         scoop install fnm
     fi
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
 fi
-
 if (( $+commands[fnm] )); then
-    export PATH=$HOME/.fnm:$PATH
     eval "`fnm env --use-on-cd --shell zsh`"
 fi
 
