@@ -36,9 +36,16 @@ if command -v zsh &> /dev/null; then
         sudo chsh -s "$(which zsh)" "$(id -un)"
     fi
 
+    ZSH=${ZSH:-$HOME/.oh-my-zsh}
     # Set up OMZ if necessary
-    if [ ! -d "$ZSH" ] && [ ! -d "$HOME/.oh-my-zsh" ]; then
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    if [ ! -f "$ZSH/oh-my-zsh.sh" ]; then
+        # If $ZSH exists, remove it
+        if [ -d "$ZSH" ]; then
+            echo "Removing existing \$ZSH directory"
+            rm -rf "$HOME/.oh-my-zsh"
+        fi
+        ZSH=$ZSH CHSH=no RUNZSH=no KEEP_ZSHRC=yes \
+            sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     fi
 fi
 
@@ -73,4 +80,10 @@ if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
             cmd.exe /c "setx WSLENV \"${win_wslenv:+${win_wslenv}:}NPIPERELAY/p\""
         fi
     fi
+fi
+
+# Run zsh if available and configured
+if command -v zsh &> /dev/null && [ -f "$ZSH/oh-my-zsh.sh" ]; then
+    echo "ZSH and Oh My Zsh are configured. Starting ZSH..."
+    exec zsh -l
 fi
