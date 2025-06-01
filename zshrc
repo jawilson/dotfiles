@@ -17,11 +17,15 @@ if (( $+commands[fnm] )); then
     eval "`fnm env --use-on-cd --shell zsh`"
 fi
 
+CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+[[ -d $CACHE_HOME ]] || mkdir -p $CACHE_HOME
+
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+if [[ -r "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 export DOTFILES_DIR=${${(%):-%x}:A:h}
@@ -127,7 +131,7 @@ source $ZSH/oh-my-zsh.sh
 export EDITOR='vim'
 
 # Get colors for tools
-dircolors_cache="${XDG_CACHE_HOME:-$HOME/.cache}/dircolors-${(%):-%n}.zsh"
+dircolors_cache="${CACHE_HOME}/dircolors-${(%):-%n}.zsh"
 if [[ -r "$dircolors_cache" ]]; then
     source "$dircolors_cache"
 else
