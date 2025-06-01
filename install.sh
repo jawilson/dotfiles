@@ -7,12 +7,26 @@ dotfiles_opts=(-R $script_dir -s --force)
 # Handle various arguments that could be passed into the script
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --no-run-zsh)
+            # Run ZSH after setup
+            RUNZSH=no
+            shift
+            ;;
         *)
             echo "Unknown argument: $1"
             shift
             ;;
     esac
 done
+
+# Only default to "yes" for RUNZSH if in interactive mode
+if [ -t 0 ]; then
+    # Terminal is interactive
+    RUNZSH=${RUNZSH:-yes}
+else
+    # Non-interactive mode
+    RUNZSH=${RUNZSH:-no}
+fi
 
 # Setup ZSH if necessary
 if ! command -v zsh &> /dev/null; then
@@ -83,7 +97,7 @@ if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
 fi
 
 # Run zsh if available and configured
-if command -v zsh &> /dev/null && [ -f "$ZSH/oh-my-zsh.sh" ]; then
+if [[ "$RUNZSH" = "yes" ]] && command -v zsh &> /dev/null && [ -f "$ZSH/oh-my-zsh.sh" ]; then
     echo "ZSH and Oh My Zsh are configured. Starting ZSH..."
     exec zsh -l
 fi
