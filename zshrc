@@ -11,6 +11,7 @@ if (( ! $+commands[fnm] )); then
         scoop install fnm
     fi
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
+    export PATH=$HOME/.fnm:$PATH
 fi
 if (( $+commands[fnm] )); then
     eval "`fnm env --use-on-cd --shell zsh`"
