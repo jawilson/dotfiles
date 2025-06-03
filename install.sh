@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# Get script directory with fallback if dirname isn't available
+if command -v dirname &> /dev/null; then
+    script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+else
+    script_dir=$( cd -- "${BASH_SOURCE[0]%/*}" &> /dev/null && pwd )
+fi
 
 dotfiles_opts=(-R $script_dir -s --force)
 
