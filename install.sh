@@ -46,6 +46,12 @@ if ! command -v zsh &> /dev/null; then
             sudo apt-get install -qy zsh
         fi
     fi
+
+    if ! command -v zsh &> /dev/null; then
+        echo "Error: ZSH is not installed and could not be installed automatically."
+        echo "Please install ZSH manually and re-run this script."
+        exit 1
+    fi
 fi
 
 # Auto-configure ZSH and OMZ
