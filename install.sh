@@ -68,8 +68,13 @@ if command -v zsh &> /dev/null; then
     fi
 fi
 
-# Set up env files
-./tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
+# Set up the dotfiles
+PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
+if [ -n "$PYTHON_PATH" ]; then
+    $PYTHON_PATH ./tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
+else
+    echo "Warning: No Python installation detected, cannot install dotfiles"
+fi
 
 # Windows (Git Bash) specific setup
 if [[ "$MSYSTEM" = "MSYS" ]]; then
