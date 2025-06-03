@@ -80,6 +80,7 @@ if [ -n "$PYTHON_PATH" ]; then
     $PYTHON_PATH ./tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
 else
     echo "Warning: No Python installation detected, cannot install dotfiles"
+    exit 1
 fi
 
 # Windows (Git Bash) specific setup
