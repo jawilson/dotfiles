@@ -86,7 +86,7 @@ fi
 # Windows (Git Bash) specific setup
 if [[ "$MSYSTEM" = "MSYS" ]]; then
     # Install scoop
-    if !command -v scoop &> /dev/null; then
+    if ! command -v scoop &> /dev/null; then
         powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
         powershell -Command "irm get.scoop.sh | iex"
     fi
@@ -94,7 +94,7 @@ fi
 
 # WSL2 specific setup
 if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
-    if !command -v socat &> /dev/null || !command -v unzip &> /dev/null; then
+    if ! command -v socat &> /dev/null || ! command -v unzip &> /dev/null; then
         sudo apt-get update -q
         sudo apt-get install -qy socat
     fi
