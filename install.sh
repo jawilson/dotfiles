@@ -113,6 +113,16 @@ if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
     fi
 fi
 
+# fnm
+FNM_DIR="$HOME/.fnm"
+if ! command -v $FNM_DIR/fnm &>/dev/null; then
+    if [[ "$MSYSTEM" == "MSYS" ]]; then
+        scoop install fnm
+    else
+        curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$FNM_DIR"
+    fi
+fi
+
 # Run zsh if available and configured
 if [[ "$RUNZSH" = "yes" ]] && command -v zsh &> /dev/null && [ -f "$ZSH/oh-my-zsh.sh" ]; then
     echo "ZSH and Oh My Zsh are configured. Starting ZSH..."

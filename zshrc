@@ -4,22 +4,14 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 
 DISABLE_BITWARDEN_SETUP="true"
 
-# fnm
-[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
-if (( ! $+commands[fnm] )); then
-    if [[ "$MSYSTEM" == "MSYS" && $+commands[scoop] ]]; then
-        scoop install fnm
-    fi
-    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
-    export PATH=$HOME/.fnm:$PATH
-fi
-if (( $+commands[fnm] )); then
-    eval "`fnm env --use-on-cd --shell zsh`"
-fi
-
 CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 [[ -d $CACHE_HOME ]] || mkdir -p $CACHE_HOME
 
+# fnm - may require user input, must be before p10k instant prompt
+[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
+if (( $+commands[fnm] )); then
+    eval "`fnm env --use-on-cd --shell zsh`"
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
