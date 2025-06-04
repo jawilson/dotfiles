@@ -125,6 +125,13 @@ if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
     fi
 fi
 
+# Codespaces specific setup
+if [ -n "$CODESPACES" ]; then
+  if [ -n "$GH_PACKAGE_REGISTRY_TOKEN" ]; then
+    echo "//npm.pkg.github.com/:_authToken=$GH_PACKAGE_REGISTRY_TOKEN" >> ~/.npmrc
+  fi
+fi
+
 # fnm
 FNM_DIR="$HOME/.fnm"
 if ! command -v $FNM_DIR/fnm &>/dev/null; then
