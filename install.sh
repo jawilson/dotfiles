@@ -90,7 +90,7 @@ if [ -z "$PYTHON_PATH" ]; then
     fi
 fi
 if [ -n "$PYTHON_PATH" ]; then
-    $PYTHON_PATH ./tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
+    $PYTHON_PATH "${script_dir}/tools/dotfiles/bin/dotfiles" "${dotfiles_opts[@]}"
 else
     echo "Warning: No Python installation detected, cannot install dotfiles"
     exit 1
