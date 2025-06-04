@@ -6,6 +6,6 @@ These are config files to set up a system the way I like it.
 
 ## Installation
 
-    git clone git://github.com/jawilson/dotfiles ~/.dotfiles
+    git clone https://github.com/jawilson/dotfiles.git ~/.dotfiles
     cd ~/.dotfiles
     ./tools/dotfiles/bin/dotfiles -R $PWD -s
