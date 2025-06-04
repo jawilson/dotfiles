@@ -101,9 +101,9 @@ fi
 
 # WSL2 specific setup
 if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
-    if ! command -v socat &> /dev/null || ! command -v unzip &> /dev/null; then
+    if ! command -v socat &> /dev/null || ! command -v unzip &> /dev/null || ! command -v curl &> /dev/null; then
         sudo apt-get update -q
-        sudo apt-get install -qy socat
+        sudo apt-get install -qy socat unzip curl
     fi
 
     # Install npiperelay
