@@ -33,6 +33,11 @@ else
     RUNZSH=${RUNZSH:-no}
 fi
 
+if command apt-get &> /dev/null; then
+    # Update package lists
+    sudo apt-get update -q
+fi
+
 # Setup ZSH if necessary
 if ! command -v zsh &> /dev/null; then
     if [[ "$MSYSTEM" = "MSYS" ]]; then
@@ -42,7 +47,6 @@ if ! command -v zsh &> /dev/null; then
         os_id_like=$(grep -Po "(?<=^ID_LIKE=).+" /etc/os-release | sed 's/"//g')
 
         if [[ "$os_id" = *"debian"* ]] || [[ "$os_id_like" = *"debian"* ]]; then
-            sudo apt-get update -q
             sudo apt-get install -qy zsh
         fi
     fi
@@ -78,7 +82,6 @@ fi
 PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
 if [ -z "$PYTHON_PATH" ]; then
     if command -v apt-get &> /dev/null; then
-        sudo apt-get update -q
         sudo apt-get install -qy python3
         PYTHON_PATH=$(command -v python3)
     fi
@@ -102,7 +105,6 @@ fi
 # WSL2 specific setup
 if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
     if ! command -v socat &> /dev/null || ! command -v unzip &> /dev/null || ! command -v curl &> /dev/null; then
-        sudo apt-get update -q
         sudo apt-get install -qy socat unzip curl
     fi
 
