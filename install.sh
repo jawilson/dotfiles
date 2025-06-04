@@ -76,6 +76,13 @@ fi
 
 # Set up the dotfiles
 PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
+if [ -z "$PYTHON_PATH" ]; then
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update -q
+        sudo apt-get install -qy python3
+        PYTHON_PATH=$(command -v python3)
+    fi
+fi
 if [ -n "$PYTHON_PATH" ]; then
     $PYTHON_PATH ./tools/dotfiles/bin/dotfiles "${dotfiles_opts[@]}"
 else
