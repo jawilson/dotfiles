@@ -73,6 +73,9 @@ if command -v zsh &> /dev/null; then
             echo "Removing existing \$ZSH directory"
             rm -rf "$HOME/.oh-my-zsh"
         fi
+        if ! command -v curl &> /dev/null; then
+            sudo apt-get install -qy curl
+        fi
         ZSH=$ZSH CHSH=no RUNZSH=no KEEP_ZSHRC=yes \
             sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     fi
