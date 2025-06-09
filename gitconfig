@@ -43,7 +43,11 @@
 	guiDefault = true
 	keepBackup = false
 [mergetool "vscode"]
-	cmd = code --wait $MERGED
+	cmd = code --wait -n $MERGED
+[diff]
+	guitool = vscode
+[difftool "vscode"]
+	cmd = code --wait -n --diff $LOCAL $REMOTE
 [push]
 	default = simple
 	autoSetupRemote = true
@@ -51,8 +55,6 @@
 	hg-git-compat = true
 [rerere]
 	enabled = 1
-[web]
-	browser = chrome
 
 [includeIf "hasconfig:remote.*.url:git@github.com:blinemedical/**"]
 	path = .gitconfig-work.inc
@@ -62,3 +64,10 @@
 	path = .gitconfig-work.inc
 [includeIf "hasconfig:remote.*.url:https://github.com/laerdallabs/**"]
 	path = .gitconfig-work.inc
+[branch]
+	autoSetupMerge = simple
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
