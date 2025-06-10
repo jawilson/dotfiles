@@ -161,6 +161,11 @@ if [ -d "$HOME/.cargo" ]; then
     source "$HOME/.cargo/env"
 fi
 
+# MINGW specific setup
+if [[ "$MSYSTEM" == "MSYS" ]]; then
+  POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL10K_RIGHT_PROMPT_ELEMENTS:#load})
+fi
+
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
 fi
