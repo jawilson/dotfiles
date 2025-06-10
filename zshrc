@@ -161,8 +161,22 @@ if [ -d "$HOME/.cargo" ]; then
     source "$HOME/.cargo/env"
 fi
 
+# WSL2 specific setup
+if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
+  # Keep the current path
+  keep_current_path() {
+    printf "\e]9;9;%s\e\\" "$(wslpath -w "$PWD")"
+  }
+  precmd_functions+=(keep_current_path)
+fi
+
 # MINGW specific setup
 if [[ "$MSYSTEM" == "MSYS" ]]; then
+  # Keep the current path
+  keep_current_path() {
+    printf "\e]9;9;%s\e\\" "$(cygpath -w "$PWD" -C ANSI)"
+  }
+  precmd_functions+=(keep_current_path)
   POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL10K_RIGHT_PROMPT_ELEMENTS:#load})
 fi
 
