@@ -1,3 +1,7 @@
+if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    zmodload zsh/zprof
+fi
+
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
@@ -155,4 +159,8 @@ fi
 
 if [ -d "$HOME/.cargo" ]; then
     source "$HOME/.cargo/env"
+fi
+
+if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    zprof
 fi
