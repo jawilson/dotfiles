@@ -20,6 +20,20 @@ if [[ -r "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
     source "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Enable SSH agent forwarding
+if [[ ! -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
+    zstyle :omz:plugins:ssh-agent agent-forwarding on
+elif [[ -n "$NPIPERELAY" ]]; then
+    export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+    ss -a | grep -q $SSH_AUTH_SOCK
+    if [ $? -ne 0 ]; then
+        rm -f $SSH_AUTH_SOCK
+        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"${NPIPERELAY} -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+    fi
+else
+    >&2 echo "NPIPERELAY environment variable not set, unable to configure SSH agent forwarding"
+fi
+
 export DOTFILES_DIR=${${(%):-%x}:A:h}
 
 # Path to your oh-my-zsh installation.
@@ -101,20 +115,6 @@ fi
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
-
-# Enable SSH agent forwarding
-if [[ ! -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
-    zstyle :omz:plugins:ssh-agent agent-forwarding on
-elif [[ -n "$NPIPERELAY" ]]; then
-    export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
-    ss -a | grep -q $SSH_AUTH_SOCK
-    if [ $? -ne 0 ]; then
-        rm -f $SSH_AUTH_SOCK
-        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"${NPIPERELAY} -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
-    fi
-else
-    >&2 echo "NPIPERELAY environment variable not set, unable to configure SSH agent forwarding"
-fi
 
 # Oh-my-zsh
 source $ZSH/oh-my-zsh.sh
