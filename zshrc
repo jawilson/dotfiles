@@ -177,7 +177,7 @@ if [[ "$MSYSTEM" == "MSYS" ]]; then
     printf "\e]9;9;%s\e\\" "$(cygpath -w "$PWD" -C ANSI)"
   }
   precmd_functions+=(keep_current_path)
-  POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL10K_RIGHT_PROMPT_ELEMENTS:#load})
+  typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(${POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS:#load})
 fi
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
