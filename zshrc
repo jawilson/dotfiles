@@ -163,11 +163,14 @@ fi
 
 # WSL2 specific setup
 if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
-  # Keep the current path
-  keep_current_path() {
-    printf "\e]9;9;%s\e\\" "$(wslpath -w "$PWD")"
-  }
-  precmd_functions+=(keep_current_path)
+  # VS Code terminals break this so we don't set it
+  if [[ "$TERM_PROGRAM" != "vscode" ]]; then
+    # Keep the current path
+    keep_current_path() {
+        printf "\e]9;9;%s\e\\" "$(wslpath -w "$PWD")"
+    }
+    precmd_functions+=(keep_current_path)
+  fi
 fi
 
 # MINGW specific setup
