@@ -33,6 +33,19 @@ else
     RUNZSH=${RUNZSH:-no}
 fi
 
+##
+# Install pre-requisites and tools
+##
+
+# Windows (Git Bash) specific setup
+if [[ "$MSYSTEM" = "MSYS" ]]; then
+    # Install scoop
+    if ! command -v scoop &> /dev/null; then
+        powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
+        powershell -Command "irm get.scoop.sh | iex"
+    fi
+fi
+
 if command apt-get &> /dev/null; then
     # Update package lists
     sudo apt-get update -q
@@ -56,6 +69,29 @@ if ! command -v zsh &> /dev/null; then
         echo "Please install ZSH manually and re-run this script."
         exit 1
     fi
+fi
+
+PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
+if [ -z "$PYTHON_PATH" ]; then
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update -q
+        sudo apt-get install -qy python3
+        PYTHON_PATH=$(command -v python3)
+    elif command -v dnf &> /dev/null; then
+        sudo dnf install -qy python3
+        PYTHON_PATH=$(command -v python3)
+    elif command -v yum &> /dev/null; then
+        sudo yum install -qy python3
+        PYTHON_PATH=$(command -v python3)
+    elif command -v scoop &> /dev/null; then
+        scoop install python
+        PYTHON_PATH=$(command -v python)
+    fi
+fi
+if [ -z "$PYTHON_PATH" ]; then
+    echo "Error: Python is not installed and could not be installed automatically."
+    echo "Please install Python manually and re-run this script."
+    exit 1
 fi
 
 # Auto-configure ZSH and OMZ
@@ -82,27 +118,11 @@ if command -v zsh &> /dev/null; then
 fi
 
 # Set up the dotfiles
-PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
-if [ -z "$PYTHON_PATH" ]; then
-    if command -v apt-get &> /dev/null; then
-        sudo apt-get install -qy python3
-        PYTHON_PATH=$(command -v python3)
-    fi
-fi
 if [ -n "$PYTHON_PATH" ]; then
     $PYTHON_PATH "${script_dir}/tools/dotfiles/bin/dotfiles" "${dotfiles_opts[@]}"
 else
     echo "Warning: No Python installation detected, cannot install dotfiles"
     exit 1
-fi
-
-# Windows (Git Bash) specific setup
-if [[ "$MSYSTEM" = "MSYS" ]]; then
-    # Install scoop
-    if ! command -v scoop &> /dev/null; then
-        powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
-        powershell -Command "irm get.scoop.sh | iex"
-    fi
 fi
 
 # WSL2 specific setup
