@@ -5,10 +5,10 @@ Dim success
 success = True
 
 Dim regKeys
+  ' "HKEY_CURRENT_USER\Software\Google\Chrome", _
+  ' "HKEY_LOCAL_MACHINE\Software\Google\Chrome", _
 regKeys = Array( _
-  "HKEY_CURRENT_USER\Software\Google\Chrome", _
   "HKEY_CURRENT_USER\Software\Policies\Google\Chrome", _
-  "HKEY_LOCAL_MACHINE\Software\Google\Chrome", _
   "HKEY_LOCAL_MACHINE\Software\Policies\Google\Chrome", _
   "HKEY_LOCAL_MACHINE\Software\Policies\Google\Update", _
   "HKEY_LOCAL_MACHINE\Software\WOW6432Node\Google\Enrollment", _
@@ -20,6 +20,7 @@ For Each key In regKeys
     Dim result
     result = WshShell.Run("reg delete " & key & " /f", 0, true)
     If result <> 0 Then
+      WScript.Echo "Failed deleting registry key: " & key
       success = False
     End If
   End If
