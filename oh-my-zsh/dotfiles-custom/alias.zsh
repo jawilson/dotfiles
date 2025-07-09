@@ -34,3 +34,7 @@ alias docker-compose="docker compose"
 alias dlggh="get-cred-password docker:ghcr.io | docker login ghcr.io -u PAT --password-stdin"
 alias dlgaws="aws ecr get-login-password | docker login --username AWS --password-stdin \$(aws sts get-caller-identity --query Account --output text).dkr.ecr.\$(aws configure get region).amazonaws.com"
 alias dlga="dlgaws; dlggh"
+
+# github
+alias ghc="gh copilot"
+alias ghcs="gh copilot suggest"
