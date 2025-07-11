@@ -2,10 +2,6 @@ Host hass-vscode
     HostName feynman
     User homeassistant
     Port 8222
-
-Host *
-    AddKeysToAgent yes
-    User jawilson
 Host Maxwell maxwell
     HostName Maxwell.singularity.net
     ForwardAgent yes
@@ -23,3 +19,6 @@ Host wilson-t440 wilson-t440.corp.atellis.com
     DynamicForward 1027
 Host minecraft.singularity.net 192.168.0.102
     User pmcserver
+Host *
+    AddKeysToAgent yes
+    User jawilson
