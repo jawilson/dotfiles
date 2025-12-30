@@ -10,6 +10,7 @@ vc=~/src/video-conductor
 vera=~/src/vera
 
 cn=/c/Projects/capture-node
+updater=/c/Projects/capture-node-updater
 
 cube=/c/Projects/Cube/trunk
 cubelog=/c/Projects/Cube/logs

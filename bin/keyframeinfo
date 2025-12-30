@@ -1,0 +1,82 @@
+#!/bin/sh
+
+set -e
+
+# --- Check for required tools ---
+for cmd in ffprobe awk mktemp; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "Error: Required command '$cmd' is not installed or not in PATH." >&2
+    exit 1
+  fi
+done
+
+# --- Argument parsing ---
+if [ "$#" -lt 1 ]; then
+  echo "Usage: $0 <input> [-- <extra ffprobe args>]" >&2
+  exit 1
+fi
+
+INPUT="$1"
+shift
+
+# Look for optional `--` to separate ffprobe arguments
+FFPROBE_ARGS=""
+if [ "$1" = "--" ]; then
+  shift
+  FFPROBE_ARGS="$@"
+fi
+
+TMPFILE=$(mktemp)
+CLEANUP() {
+  rm -f "$TMPFILE"
+}
+trap CLEANUP EXIT
+
+trap 'echo "Interrupted. Calculating stats..."; break_loop=1' INT
+
+first_frame_seen=0
+
+# --- Run ffprobe with passthrough args ---
+(
+  echo "Initializing..."
+  ffprobe -v error \
+    -skip_frame nokey \
+    -select_streams v:0 \
+    -show_entries frame=best_effort_timestamp_time \
+    -of csv=p=0 $FFPROBE_ARGS "$INPUT" 2>/dev/null |
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+
+    if [ "$first_frame_seen" -eq 0 ]; then
+      echo "Analyzing input... (Press Ctrl+C to interrupt and show stats)"
+      first_frame_seen=1
+    fi
+
+    echo "$line" >> "$TMPFILE"
+    [ "$break_loop" = "1" ] && break
+  done
+) || true
+
+# --- Compute stats ---
+awk '
+  NF == 0 { next }
+  NR==1 { prev=$1; next }
+  {
+    gap = $1 - prev;
+    total += gap;
+    if (gap > max || NR==2) max = gap;
+    if (gap < min || NR==2) min = gap;
+    prev = $1;
+    count++;
+  }
+  END {
+    if (count > 0) {
+      printf "Average keyframe interval: %.3fs\n", total / count;
+      printf "Minimum keyframe interval: %.3fs\n", min;
+      printf "Maximum keyframe interval: %.3fs\n", max;
+    } else {
+      print "Not enough keyframes to compute intervals.";
+      exit 1;
+    }
+  }
+' "$TMPFILE"

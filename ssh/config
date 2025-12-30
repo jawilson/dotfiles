@@ -1,24 +1,25 @@
-Host hass-vscode
-    HostName feynman
-    User homeassistant
-    Port 8222
+Host *
+    AddKeysToAgent yes
+Host homeassistant
+    HostName homeassistant.local.thesektor.one
+    User hassio
 Host Maxwell maxwell
-    HostName Maxwell.singularity.net
+    HostName Maxwell.local.thesektor.one
     ForwardAgent yes
 Host Feynman feynman
-    HostName Feynman.singularity.net
+    HostName Feynman.local.thesektor.one
+    ForwardAgent yes
+Host feynmanprox feynmanprox.local.thesektor.one
+    HostName feynmanprox.local.thesektor.one
     ForwardAgent yes
 Host home.jeffalwilson.com
     ForwardAgent yes
     DynamicForward 1025
-Host P3Steel p3steel p3steel.singularity.net
-    HostName P3Steel.singularity.net
-    User pi
 Host wilson-t440 wilson-t440.corp.atellis.com
     User corp\\jeff.wilson
     DynamicForward 1027
-Host minecraft.singularity.net 192.168.0.102
+Host minecraft minecraft.home.thesektor.one minecraft.local.thesektor.one 192.168.0.102
+    HostName minecraft.home.thesektor.one
     User pmcserver
 Host *
-    AddKeysToAgent yes
     User jawilson

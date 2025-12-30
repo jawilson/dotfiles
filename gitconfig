@@ -3,12 +3,11 @@
 	email = jeff@jeffalwilson.com
 [core]
 	autocrlf = input
-	editor = vim
 [alias]
 	addnw = !sh -c 'git diff -U0 -w --no-color --src-prefix=a/ --dst-prefix=b/ "$@" | git apply --cached --ignore-whitespace --unidiff-zero -'
 	br = branch
 	cd = !pushd $(git rev-parse --show-toplevel)
-	cfb = "!f() { [ \"$2\" ] && BASE=$2 || BASE=main && git checkout --no-track -b $1 $BASE; }; f"
+	cfb = "!f() { [ \"$2\" ] && BASE=$2 || BASE=origin/$(git_main_branch) && git checkout --no-track -b $1 $BASE; }; f"
 	ci = commit -v
 	cl = clone
 	co = checkout
@@ -23,8 +22,8 @@
 	log-standup = !git log --since yesterday --author $(git config user.email) --pretty=short
 	praise = blame
 	pretty-log = log --graph --pretty=format:'%Cred%h%Creset%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev=8 --date=relative
-	sba = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=main && git subtree add --prefix $2 $1 $BRANCH --squash; }; f"
-	sbu = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=main && git subtree pull --prefix $2 $1 $BRANCH --squash; }; f"
+	sba = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=$(git_main_branch) && git subtree add --prefix $2 $1 $BRANCH --squash; }; f"
+	sbu = "!f() { [ \"$3\" ] && BRANCH=$3 || BRANCH=$(git_main_branch) && git subtree pull --prefix $2 $1 $BRANCH --squash; }; f"
 	st = status -sb
 	svn-pretty-log = "! f() { git log -n 1000 --graph --color=always --pretty=format:\"%Cred%h%Creset%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%Cred%b%Creset\" --date=relative \"$@\" | parse-git-svn-pretty-log | less -FRS; }; f"
 	tarball = ![ "$3" ] && NAME=$3 || NAME=$(basename $(git rev-parse --show-toplevel)) && [ "$2" ] && REF=$2 || REF=HEAD && OUTPUT=$1/$NAME-$(git describe $REF | sed 's,^v,,').tar.gz && git archive --prefix=$NAME/ --output=$OUTPUT $REF^{tree} && readlink -m $OUTPUT && true
@@ -43,11 +42,11 @@
 	guiDefault = true
 	keepBackup = false
 [mergetool "vscode"]
-	cmd = code --wait -n $MERGED
+	cmd = code --wait $MERGED
 [diff]
 	guitool = vscode
 [difftool "vscode"]
-	cmd = code --wait -n --diff $LOCAL $REMOTE
+	cmd = code --wait --diff $LOCAL $REMOTE
 [push]
 	default = simple
 	autoSetupRemote = true
@@ -64,6 +63,8 @@
 	path = .gitconfig-work.inc
 [includeIf "hasconfig:remote.*.url:https://github.com/laerdallabs/**"]
 	path = .gitconfig-work.inc
+[includeIf "gitdir:C:/"]
+	path = .gitconfig-windows.inc
 [branch]
 	autoSetupMerge = simple
 [filter "lfs"]
