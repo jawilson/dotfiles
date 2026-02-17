@@ -136,21 +136,23 @@ else
 fi
 
 # Android setup
-if [ -d /opt/android-ndk ]; then
-    export ANDROID_NDK=/opt/android-ndk
-    export PATH=$ANDROID_NDK:$PATH
-fi
-if [ -d ${HOME}/Android/Sdk ]; then
-    export ANDROID_SDK=${HOME}/Android/Sdk
-elif [ -d ${HOME}/Library/Android/sdk ]; then
-    export ANDROID_SDK=${HOME}/Library/Android/sdk
-elif [ -d /opt/android-sdk ]; then
-    export ANDROID_SDK=/opt/android-sdk
-fi
-if [ -n "$ANDROID_SDK" ] && [ -d "$ANDROID_SDK" ]; then
-    export PATH=$ANDROID_SDK/tools:$PATH
-    export PATH=$ANDROID_SDK/platform-tools:$PATH
-    export PATH=$ANDROID_SDK/cmdline-tools/latest/bin:$PATH
+if [[ "$ENABLE_ANDROID_SETUP" == "true" ]]; then
+    if [ -d /opt/android-ndk ]; then
+        export ANDROID_NDK=/opt/android-ndk
+        export PATH=$ANDROID_NDK:$PATH
+    fi
+    if [ -d ${HOME}/Android/Sdk ]; then
+        export ANDROID_SDK=${HOME}/Android/Sdk
+    elif [ -d ${HOME}/Library/Android/sdk ]; then
+        export ANDROID_SDK=${HOME}/Library/Android/sdk
+    elif [ -d /opt/android-sdk ]; then
+        export ANDROID_SDK=/opt/android-sdk
+    fi
+    if [ -n "$ANDROID_SDK" ] && [ -d "$ANDROID_SDK" ]; then
+        export PATH=$ANDROID_SDK/tools:$PATH
+        export PATH=$ANDROID_SDK/platform-tools:$PATH
+        export PATH=$ANDROID_SDK/cmdline-tools/latest/bin:$PATH
+    fi
 fi
 
 if [ -d /Applications/Postgres.app/Contents/Versions/latest/bin ]; then
