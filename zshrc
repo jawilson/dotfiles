@@ -163,6 +163,25 @@ if [ -f "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"
 fi
 
+# Check for Python and set user scripts directory
+if command -v python &> /dev/null; then
+    if [[ "$OSTYPE" == darwin* ]]; then
+        user_scheme="osx_framework_user"
+    elif [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
+        user_scheme="nt_user"
+    else
+        user_scheme="posix_user"
+    fi
+    python_scripts=$(python -c "from sysconfig import get_path; print(get_path('scripts', '$user_scheme'), end='')" 2>/dev/null)
+    if [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
+        python_scripts=$(cygpath -u "$python_scripts")
+    fi
+
+    if [[ -d $python_scripts ]]; then
+        export PATH="$python_scripts:$PATH"
+    fi
+fi
+
 # WSL2 specific setup
 if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
   # VS Code terminals break this so we don't set it
