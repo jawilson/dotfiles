@@ -100,8 +100,13 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-extras cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-plugins+=(fnm zsh-better-npm-completion gh)
+plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
+if [[ "$MSYSTEM" == "MINGW64" || "$MSYSTEM" == "MINGW32" ]]; then
+    plugins+=(gitfast)
+else
+    plugins+=(git)
+fi
+plugins+=(git-extras fnm zsh-better-npm-completion gh)
 
 # User configuration
 
