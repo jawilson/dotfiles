@@ -1,24 +1,22 @@
 Host *
     AddKeysToAgent yes
 Host homeassistant
-    HostName homeassistant.local.thesektor.one
+    HostName homeassistant.home.thesektor.one
     User hassio
-Host Maxwell maxwell
-    HostName Maxwell.local.thesektor.one
+Host maxwell
+    HostName maxwell.local.thesektor.one
     ForwardAgent yes
-Host Feynman feynman
-    HostName Feynman.local.thesektor.one
-    ForwardAgent yes
-Host feynmanprox feynmanprox.local.thesektor.one
-    HostName feynmanprox.local.thesektor.one
-    ForwardAgent yes
-Host home.jeffalwilson.com
+Host feynman
+    HostName feynman.home.thesektor.one
     ForwardAgent yes
     DynamicForward 1025
+Host feynmanproxhost
+    HostName feynmanproxhost.local.thesektor.one
+    ForwardAgent yes
 Host wilson-t440 wilson-t440.corp.atellis.com
     User corp\\jeff.wilson
     DynamicForward 1027
-Host minecraft minecraft.home.thesektor.one minecraft.local.thesektor.one 192.168.0.102
+Host minecraft
     HostName minecraft.home.thesektor.one
     User pmcserver
 Host *
