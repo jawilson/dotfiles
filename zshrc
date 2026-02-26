@@ -106,7 +106,7 @@ if [[ "$MSYSTEM" == "MINGW64" || "$MSYSTEM" == "MINGW32" ]]; then
 else
     plugins+=(git)
 fi
-plugins+=(git-extras fnm zsh-better-npm-completion gh)
+plugins+=(git-extras fnm zsh-better-npm-completion gh deno dvm)
 
 # User configuration
 
@@ -166,6 +166,10 @@ fi
 
 if [ -f "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"
+fi
+
+if [ -f "$HOME/.dvm/bin/dvm" ]; then
+    export PATH="$HOME/.dvm/bin:$PATH"
 fi
 
 # Check for Python and set user scripts directory
