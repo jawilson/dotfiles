@@ -11,4 +11,4 @@ if [[ ! -f "$ZSH_CACHE_DIR/completions/_dvm" ]]; then
   _comps[dvm]=_dvm
 fi
 
-dvm completions zsh >| "$ZSH_CACHE_DIR/completions/_dvm" &
+dvm completions zsh >| "$ZSH_CACHE_DIR/completions/_dvm" &|
