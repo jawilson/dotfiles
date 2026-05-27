@@ -13,6 +13,7 @@ ignore = [
     'adblock.txt',
     'install.sh',
     'LICENSE',
+    'Microsoft.PowerShell_profile.ps1',
     'README.md',
     'SwitchyRules.txt']
 packages = [

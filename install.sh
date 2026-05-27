@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#region Script setup and argument parsing
+
 # Get script directory with fallback if dirname isn't available
 if command -v dirname &> /dev/null; then
     script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -8,6 +10,15 @@ else
 fi
 
 dotfiles_opts=(-R $script_dir -s --force)
+
+is_windows_native() {
+    case "$(uname -s 2>/dev/null)" in
+        CYGWIN*|MINGW*|MSYS*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+source "${script_dir}/tools/install/link_powershell_profile.sh"
 
 # Handle various arguments that could be passed into the script
 while [[ $# -gt 0 ]]; do
@@ -33,12 +44,12 @@ else
     RUNZSH=${RUNZSH:-no}
 fi
 
-##
-# Install pre-requisites and tools
-##
+#endregion
 
-# Windows (Git Bash) specific setup
-if [[ "$MSYSTEM" = "MSYS" ]]; then
+#region System Pre-requisites
+
+# Windows native shell specific setup
+if is_windows_native; then
     # Install scoop
     if ! command -v scoop &> /dev/null; then
         powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
@@ -53,8 +64,8 @@ fi
 
 # Setup ZSH if necessary
 if ! command -v zsh &> /dev/null; then
-    if [[ "$MSYSTEM" = "MSYS" ]]; then
-        echo "MSYS such as Git Bash not yet supported"
+    if is_windows_native; then
+        echo "Installing ZSH on Windows native shells such as Git Bash is not yet supported"
     else
         os_id=$(grep -Po "(?<=^ID=).+" /etc/os-release | sed 's/"//g')
         os_id_like=$(grep -Po "(?<=^ID_LIKE=).+" /etc/os-release | sed 's/"//g')
@@ -74,7 +85,6 @@ fi
 PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
 if [ -z "$PYTHON_PATH" ]; then
     if command -v apt-get &> /dev/null; then
-        sudo apt-get update -q
         sudo apt-get install -qy python3
         PYTHON_PATH=$(command -v python3)
     elif command -v dnf &> /dev/null; then
@@ -117,12 +127,43 @@ if command -v zsh &> /dev/null; then
     fi
 fi
 
+#endregion
+
 # Set up the dotfiles
 if [ -n "$PYTHON_PATH" ]; then
     $PYTHON_PATH "${script_dir}/tools/dotfiles/bin/dotfiles" "${dotfiles_opts[@]}"
 else
     echo "Warning: No Python installation detected, cannot install dotfiles"
     exit 1
+fi
+
+#region Post-setup configuration
+
+# Native Windows specific setup
+if is_windows_native; then
+    # Link PowerShell profile (non-Windows gets this for free via .config/powershell/Microsoft.PowerShell_profile.ps1)
+    pwsh_profile_source="${script_dir}/config/powershell/Microsoft.PowerShell_profile.ps1"
+    if command -v powershell.exe &> /dev/null; then
+        link_powershell_profile powershell.exe "$pwsh_profile_source"
+    fi
+    if command -v pwsh.exe &> /dev/null; then
+        link_powershell_profile pwsh.exe "$pwsh_profile_source"
+    fi
+
+    # Setup cmdrc
+    cmdrc_source="${HOME}/.cmdrc.bat"
+    cmdrc_source_windows="$cmdrc_source"
+    if command -v cygpath &> /dev/null; then
+        cmdrc_source_windows=$(cygpath -w "$cmdrc_source")
+    fi
+
+    if command -v reg.exe &> /dev/null; then
+        if ! MSYS2_ARG_CONV_EXCL='*' reg.exe add "HKCU\Software\Microsoft\Command Processor" /v AutoRun /t REG_SZ /d "$cmdrc_source_windows" /f > /dev/null; then
+            echo "Warning: Failed to set HKCU\\Software\\Microsoft\\Command Processor\\AutoRun."
+        fi
+    else
+        echo "Warning: reg.exe not found; skipping cmd AutoRun registry configuration."
+    fi
 fi
 
 # WSL2 specific setup
@@ -155,12 +196,14 @@ fi
 # fnm
 FNM_DIR="$HOME/.fnm"
 if ! command -v $FNM_DIR/fnm &>/dev/null; then
-    if [[ "$MSYSTEM" == "MSYS" ]]; then
+    if is_windows_native; then
         scoop install fnm
     else
         curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$FNM_DIR"
     fi
 fi
+
+#endregion
 
 # Run zsh if available and configured
 if [[ "$RUNZSH" = "yes" ]] && command -v zsh &> /dev/null && [ -f "$ZSH/oh-my-zsh.sh" ]; then
