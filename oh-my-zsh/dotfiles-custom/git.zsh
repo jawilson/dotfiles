@@ -16,5 +16,6 @@ alias gbdag='git fetch -p && for branch in $(git for-each-ref --format "%(refnam
 alias gcfb='f() { [ "$2" ] && BASE=$2 || BASE=origin/$(git_main_branch) && git cfb $1 $BASE; }; f'
 alias gpram='git pull --rebase --autostash origin $(git_main_branch)'
 alias gpo='git push origin'
+alias graa='git rebase --autostash --autosquash'
 alias graam='git rebase --autostash --autosquash origin/$(git_main_branch)'
 alias graad='git rebase --autostash --autosquash origin/develop'
