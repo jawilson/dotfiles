@@ -1,5 +1,11 @@
 Host *
     AddKeysToAgent yes
+Host ://git.jeffalwilson.com
+    User git
+    Port 2222
+Host ://git.thesektor.one
+    User git
+    Port 222
 Host homeassistant
     HostName homeassistant.home.thesektor.one
     User hassio
@@ -10,8 +16,14 @@ Host feynman
     HostName feynman.home.thesektor.one
     ForwardAgent yes
     DynamicForward 1025
-Host feynmanproxhost
-    HostName feynmanproxhost.local.thesektor.one
+Host wheeler
+    HostName wheeler.local.thesektor.one
+    ForwardAgent yes
+Host oppenheimer
+    HostName oppenheimer.local.thesektor.one
+    ForwardAgent yes
+Host vonneumann
+    HostName vonneumann.local.thesektor.one
     ForwardAgent yes
 Host wilson-t440 wilson-t440.corp.atellis.com
     User corp\\jeff.wilson
