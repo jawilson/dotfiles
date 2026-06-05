@@ -11,13 +11,6 @@ fi
 
 dotfiles_opts=(-R $script_dir -s --force)
 
-is_windows_native() {
-    case "$(uname -s 2>/dev/null)" in
-        CYGWIN*|MINGW*|MSYS*) return 0 ;;
-        *) return 1 ;;
-    esac
-}
-
 source "${script_dir}/tools/common.sh"
 source "${script_dir}/tools/install/link_powershell_profile.sh"
 

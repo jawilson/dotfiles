@@ -103,7 +103,7 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-if [[ "$MSYSTEM" == "MINGW64" || "$MSYSTEM" == "MINGW32" ]]; then
+if is_windows_native; then
     plugins+=(gitfast)
 else
     plugins+=(git)
@@ -179,13 +179,13 @@ PYTHON=$(get_python_path)
 if command -v $PYTHON &> /dev/null; then
     if [[ "$OSTYPE" == darwin* ]]; then
         user_scheme="osx_framework_user"
-    elif [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
+    elif is_windows_native; then
         user_scheme="nt_user"
     else
         user_scheme="posix_user"
     fi
     python_scripts=$($PYTHON -c "from sysconfig import get_path; print(get_path('scripts', '$user_scheme'), end='')" 2>/dev/null)
-    if [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
+    if is_windows_native; then
         python_scripts=$(cygpath -u "$python_scripts")
     fi
 
@@ -207,7 +207,7 @@ if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
 fi
 
 # MINGW specific setup
-if [[ "$MSYSTEM" == "MSYS" ]]; then
+if is_windows_native; then
   # Keep the current path
   keep_current_path() {
     printf "\e]9;9;%s\e\\" "$(cygpath -w "$PWD" -C ANSI)"
