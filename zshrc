@@ -40,6 +40,8 @@ fi
 
 export DOTFILES_DIR=${${(%):-%x}:A:h}
 
+source "$DOTFILES_DIR/tools/common.sh"
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -173,7 +175,8 @@ if [ -f "$HOME/.dvm/bin/dvm" ]; then
 fi
 
 # Check for Python and set user scripts directory
-if command -v python &> /dev/null; then
+PYTHON=$(get_python_path)
+if command -v $PYTHON &> /dev/null; then
     if [[ "$OSTYPE" == darwin* ]]; then
         user_scheme="osx_framework_user"
     elif [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
@@ -181,7 +184,7 @@ if command -v python &> /dev/null; then
     else
         user_scheme="posix_user"
     fi
-    python_scripts=$(python -c "from sysconfig import get_path; print(get_path('scripts', '$user_scheme'), end='')" 2>/dev/null)
+    python_scripts=$($PYTHON -c "from sysconfig import get_path; print(get_path('scripts', '$user_scheme'), end='')" 2>/dev/null)
     if [[ "$OSTYPE" == msys* || "$OSTYPE" == cygwin* ]]; then
         python_scripts=$(cygpath -u "$python_scripts")
     fi

@@ -18,6 +18,7 @@ is_windows_native() {
     esac
 }
 
+source "${script_dir}/tools/common.sh"
 source "${script_dir}/tools/install/link_powershell_profile.sh"
 
 # Handle various arguments that could be passed into the script
@@ -89,27 +90,22 @@ if ! command -v zsh &> /dev/null; then
     fi
 fi
 
-PYTHON=$(command -v python3 || command -v python2 || command -v python || echo "")
+PYTHON=$(get_python_path)
 if [ -z "$PYTHON" ]; then
     if command -v apt-get &> /dev/null; then
         sudo apt-get install -qy python3
-        PYTHON=$(command -v python3)
     elif command -v dnf &> /dev/null; then
         sudo dnf install -qy python3
-        PYTHON=$(command -v python3)
     elif command -v yum &> /dev/null; then
         sudo yum install -qy python3
-        PYTHON=$(command -v python3)
     elif command -v choco &> /dev/null; then
         choco install -y python3
-        PYTHON=$(command -v python3 || command -v python)
     elif command -v scoop &> /dev/null; then
         scoop install python
-        PYTHON=$(command -v python3 || command -v python)
     elif command -v pacman &> /dev/null; then
         sudo pacman -S --noconfirm python
-        PYTHON=$(command -v python3)
     fi
+    PYTHON=$(get_python_path)
 fi
 if [ -z "$PYTHON" ]; then
     echo "Error: Python is not installed and could not be installed automatically."
