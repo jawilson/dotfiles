@@ -49,11 +49,12 @@ fi
 #region System Pre-requisites
 
 # Windows native shell specific setup
+export PATH="$HOME/scoop/shims:$PATH"
 if is_windows_native; then
     # Install scoop
     if ! command -v scoop &> /dev/null; then
-        powershell -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser"
-        powershell -Command "irm get.scoop.sh | iex"
+        powershell -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072"
+        powershell -Command 'iex "& {$(irm get.scoop.sh)} -RunAsAdmin"'
     fi
 fi
 
@@ -65,7 +66,13 @@ fi
 # Setup ZSH if necessary
 if ! command -v zsh &> /dev/null; then
     if is_windows_native; then
-        echo "Installing ZSH on Windows native shells such as Git Bash is not yet supported"
+        if command -v pacman &> /dev/null; then
+            pacman --noconfirm -S zsh
+        else
+            echo "Error: ZSH is not installed and cannot be installed automatically on native Windows without a supported package manager."
+            echo "Please install ZSH manually (e.g. via Chocolatey or Scoop) and re-run this script."
+            exit 1
+        fi
     else
         os_id=$(grep -Po "(?<=^ID=).+" /etc/os-release | sed 's/"//g')
         os_id_like=$(grep -Po "(?<=^ID_LIKE=).+" /etc/os-release | sed 's/"//g')
@@ -82,23 +89,29 @@ if ! command -v zsh &> /dev/null; then
     fi
 fi
 
-PYTHON_PATH=$(command -v python3 || command -v python2 || command -v python || echo "")
-if [ -z "$PYTHON_PATH" ]; then
+PYTHON=$(command -v python3 || command -v python2 || command -v python || echo "")
+if [ -z "$PYTHON" ]; then
     if command -v apt-get &> /dev/null; then
         sudo apt-get install -qy python3
-        PYTHON_PATH=$(command -v python3)
+        PYTHON=$(command -v python3)
     elif command -v dnf &> /dev/null; then
         sudo dnf install -qy python3
-        PYTHON_PATH=$(command -v python3)
+        PYTHON=$(command -v python3)
     elif command -v yum &> /dev/null; then
         sudo yum install -qy python3
-        PYTHON_PATH=$(command -v python3)
+        PYTHON=$(command -v python3)
+    elif command -v choco &> /dev/null; then
+        choco install -y python3
+        PYTHON=$(command -v python3 || command -v python)
     elif command -v scoop &> /dev/null; then
         scoop install python
-        PYTHON_PATH=$(command -v python)
+        PYTHON=$(command -v python3 || command -v python)
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -S --noconfirm python
+        PYTHON=$(command -v python3)
     fi
 fi
-if [ -z "$PYTHON_PATH" ]; then
+if [ -z "$PYTHON" ]; then
     echo "Error: Python is not installed and could not be installed automatically."
     echo "Please install Python manually and re-run this script."
     exit 1
@@ -106,7 +119,7 @@ fi
 
 # Auto-configure ZSH and OMZ
 if command -v zsh &> /dev/null; then
-    if [[ "$SHELL" != *"/zsh" ]]; then
+    if ! is_windows_native && [[ "$SHELL" != *"/zsh" ]]; then
         echo "Changing default shell to ZSH"
         sudo chsh -s "$(which zsh)" "$(id -un)"
     fi
@@ -130,8 +143,8 @@ fi
 #endregion
 
 # Set up the dotfiles
-if [ -n "$PYTHON_PATH" ]; then
-    $PYTHON_PATH "${script_dir}/tools/dotfiles/bin/dotfiles" "${dotfiles_opts[@]}"
+if [ -n "$PYTHON" ]; then
+    $PYTHON "${script_dir}/tools/dotfiles/bin/dotfiles" "${dotfiles_opts[@]}"
 else
     echo "Warning: No Python installation detected, cannot install dotfiles"
     exit 1
