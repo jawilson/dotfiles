@@ -1,21 +1,10 @@
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
+    typeset -g POWERLEVEL9K_INSTANT_PROMPT=off
     zmodload zsh/zprof
 fi
 
-# Base16 Shell
-BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
-[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
-
-DISABLE_BITWARDEN_SETUP="true"
-
 CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 [[ -d $CACHE_HOME ]] || mkdir -p $CACHE_HOME
-
-# fnm - may require user input, must be before p10k instant prompt
-[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
-if (( $+commands[fnm] )); then
-    eval "`fnm env --use-on-cd --shell zsh`"
-fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -23,6 +12,13 @@ fi
 if [[ -r "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
     source "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+
+export DOTFILES_DIR=${${(%):-%x}:A:h}
+source "$DOTFILES_DIR/tools/common.sh"
+
+# Base16 Shell
+BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
+[[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
 # Enable SSH agent forwarding
 if [[ ! -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
@@ -38,10 +34,6 @@ else
     >&2 echo "NPIPERELAY environment variable not set, unable to configure SSH agent forwarding"
 fi
 
-export DOTFILES_DIR=${${(%):-%x}:A:h}
-
-source "$DOTFILES_DIR/tools/common.sh"
-
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -50,9 +42,6 @@ export ZSH=$HOME/.oh-my-zsh
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
 ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Used for some OHZsh themes to determine if user@host should be printed
 export DEFAULT_USER=jawilson
@@ -103,14 +92,12 @@ ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-if is_windows_native; then
-    plugins+=(gitfast)
-else
-    plugins+=(git)
-fi
-plugins+=(git-extras fnm zsh-better-npm-completion gh deno dvm)
+plugins+=(git gitfast git-extras fnm zsh-better-npm-completion gh deno fnm dvm)
 
 # User configuration
+
+# Plugin configs
+zstyle ':omz:plugins:fnm' autostart yes
 
 # Use coreutils on MacOS
 if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
@@ -122,13 +109,17 @@ if [ -d /usr/local/opt/python/libexec/bin ]; then
     export PATH="/usr/local/opt/python/libexec/bin:$PATH"
 fi
 
-# Add user bin directory
+# Add user paths before sourcing omzsh so that they are available to plugins and the prompt
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
+[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
 
 # Oh-my-zsh
 source $ZSH/oh-my-zsh.sh
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Default editor
 export EDITOR='vim'
