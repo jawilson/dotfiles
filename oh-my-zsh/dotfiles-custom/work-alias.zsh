@@ -11,3 +11,9 @@ alias vsclean='git clean -xdf \
   -e "*.h"'
 
 alias cnclean='cd ~cn; vsclean src/; cd - > /dev/null'
+
+alias tsclean='git clean -xdf \
+  -e ".env*" \
+  -e "*.ts" \
+  -e "!*.d.ts" \
+  -e "node_modules/"'
