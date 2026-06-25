@@ -25,12 +25,15 @@ source "$DOTFILES_DIR/tools/common.sh"
 typeset -gi IS_WINDOWS_NATIVE=0
 is_windows_native && IS_WINDOWS_NATIVE=1
 
+typeset -gi IS_WSL=0
+is_wsl && IS_WSL=1
+
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
 # Enable SSH agent forwarding
-if [[ ! -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
+if (( !IS_WSL )); then
     zstyle :omz:plugins:ssh-agent agent-forwarding on
 elif [[ -n "$NPIPERELAY" ]]; then
     export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
@@ -216,7 +219,7 @@ if command -v $PYTHON &> /dev/null; then
 fi
 
 # WSL2 specific setup
-if [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
+if (( IS_WSL )); then
     if (( !IS_VSCODE_TERMINAL && !IS_AI_AGENT_TERMINAL )); then
         # Keep the current path
         keep_current_path() {
