@@ -9,6 +9,14 @@ is_windows_native() {
   fi
 }
 
+is_wsl() {
+  if [ -n "$WSL_DISTRO_NAME" ] || [[ "$(uname -r)" == *microsoft* ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 get_python_path() {
   if command -v python3 &> /dev/null; then
     echo "$(command -v python3)"
