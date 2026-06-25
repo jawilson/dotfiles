@@ -14,3 +14,23 @@ else
       ;;
   esac
 fi
+
+notify() {
+  if (( IS_WINDOWS_NATIVE || IS_WSL )); then
+    local notify_script="${DOTFILES_DIR:-$HOME/.dotfiles}/bin/notify.ps1"
+    local notify_script_win="$notify_script"
+    if (( IS_WSL )); then
+      notify_script_win="$(wslpath -w "$notify_script")"
+    elif command -v cygpath >/dev/null 2>&1; then
+      notify_script_win="$(cygpath -w "$notify_script")"
+    fi
+    local notify_script_win_ps="${notify_script_win//\'/\'\'}"
+    local -a notify_args_ps
+    for arg in "$@"; do
+      notify_args_ps+=("'${arg//\'/\'\'}'")
+    done
+    powershell.exe -NoProfile -NonInteractive -Command "& ([scriptblock]::Create((Get-Content -Raw -LiteralPath '$notify_script_win_ps'))) ${(j: :)notify_args_ps}" &!
+  else
+    notify-send "$@"
+  fi
+}
