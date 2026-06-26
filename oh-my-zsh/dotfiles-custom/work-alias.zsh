@@ -16,4 +16,5 @@ alias tsclean='git clean -xdf \
   -e ".env*" \
   -e "*.ts" \
   -e "!*.d.ts" \
-  -e "node_modules/"'
+  -e "node_modules/" \
+  -e "cdk.out/"'
