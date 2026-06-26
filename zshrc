@@ -195,6 +195,16 @@ if [ -f "$HOME/.dvm/bin/dvm" ]; then
     export PATH="$HOME/.dvm/bin:$PATH"
 fi
 
+# bun
+if [ -s "$HOME/.bun/_bun" ]; then
+    # completions
+    source "$HOME/.bun/_bun"
+
+    # add bun to PATH
+    export BUN_INSTALL="$HOME/.bun"
+    export PATH="$BUN_INSTALL/bin:$PATH"
+fi
+
 # Check for Python and set user scripts directory
 PYTHON=$(get_python_path)
 if command -v $PYTHON &> /dev/null; then
