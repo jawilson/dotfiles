@@ -1,3 +1,7 @@
+Host vonneumann.local.thesektor.one
+    HostName vonneumann.local.thesektor.one
+    User jawilson
+
 Host *
     AddKeysToAgent yes
 Host ://git.jeffalwilson.com
@@ -24,6 +28,9 @@ Host oppenheimer
     ForwardAgent yes
 Host vonneumann
     HostName vonneumann.local.thesektor.one
+    ForwardAgent yes
+Host groves
+    HostName groves.local.thesektor.one
     ForwardAgent yes
 Host wilson-t440 wilson-t440.corp.atellis.com
     User corp\\jeff.wilson
