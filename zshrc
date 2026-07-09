@@ -35,15 +35,22 @@ BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 # Enable SSH agent forwarding
 if (( !IS_WSL )); then
     zstyle :omz:plugins:ssh-agent agent-forwarding on
-elif [[ -n "$NPIPERELAY" ]]; then
-    export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
-    ss -a | grep -q $SSH_AUTH_SOCK
-    if [ $? -ne 0 ]; then
-        rm -f $SSH_AUTH_SOCK
-        ( setsid socat UNIX-LISTEN:$SSH_AUTH_SOCK,fork EXEC:"${NPIPERELAY} -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+elif [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
+    if [[ -n "${NPIPERELAY:-}" ]]; then
+        WIN_NPIPE_PATH="$NPIPERELAY"
+    else
+        WIN_NPIPE_PATH=`wslpath $(where.exe npiperelay.exe 2>/dev/null | head -n 1 | tr -d '\r')`
     fi
-else
-    >&2 echo "NPIPERELAY environment variable not set, unable to configure SSH agent forwarding"
+
+    if [[ ! -z "$WIN_NPIPE_PATH" ]]; then
+        export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
+        if [ ! -S "$SSH_AUTH_SOCK" ] || ! pgrep -f "socat.*$SSH_AUTH_SOCK" >/dev/null 2>&1; then
+            rm -f "$SSH_AUTH_SOCK"
+            ( setsid socat UNIX-LISTEN:"$SSH_AUTH_SOCK",fork EXEC:"${WIN_NPIPE_PATH} -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+        fi
+    else
+        >&2 echo "Warning: npiperelay.exe not found in PATH. SSH agent forwarding will not work."
+    fi
 fi
 
 # Path to your oh-my-zsh installation.
