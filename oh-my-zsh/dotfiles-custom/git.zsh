@@ -1,5 +1,5 @@
 # Git Bash
-if [[ "$MSYSTEM" = "MSYS" ]]; then
+if (( IS_WINDOWS_NATIVE )); then
     export PATH="/c/Windows/System32/OpenSSH:$PATH"
     bindkey "\033[1~" beginning-of-line
     bindkey "\033[4~" end-of-line
