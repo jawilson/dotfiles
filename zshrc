@@ -39,7 +39,7 @@ elif [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
     if [[ -n "${NPIPERELAY:-}" ]]; then
         WIN_NPIPE_PATH="$NPIPERELAY"
     else
-        WIN_NPIPE_PATH=`wslpath $(where.exe npiperelay.exe 2>/dev/null | head -n 1 | tr -d '\r')`
+        WIN_NPIPE_PATH=$(wslpath "$(where.exe npiperelay.exe 2>/dev/null | head -n 1 | tr -d '\r')")
     fi
 
     if [[ ! -z "$WIN_NPIPE_PATH" ]]; then
