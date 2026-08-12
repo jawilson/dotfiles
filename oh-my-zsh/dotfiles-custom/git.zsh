@@ -6,7 +6,9 @@ if (( IS_WINDOWS_NATIVE )); then
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    export GITHUB_TOKEN=$(security find-generic-password -w -a $LOGNAME -s "GitHub PAT")
+    if GITHUB_TOKEN=$(security find-generic-password -w -a $LOGNAME -s "GitHub PAT" 2>/dev/null); then
+        export GITHUB_TOKEN
+    fi
 fi
 
 # Aliases
