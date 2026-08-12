@@ -32,10 +32,8 @@ is_wsl && IS_WSL=1
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
 
-# Enable SSH agent forwarding
-if (( !IS_WSL )); then
-    zstyle :omz:plugins:ssh-agent agent-forwarding on
-elif [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
+# SSH Agent setup
+if (( IS_WSL )); then
     if [[ -n "${NPIPERELAY:-}" ]]; then
         WIN_NPIPE_PATH="$NPIPERELAY"
     else
@@ -50,6 +48,17 @@ elif [[ -e "/proc/sys/fs/binfmt_misc/WSLInterop" ]]; then
         fi
     else
         >&2 echo "Warning: npiperelay.exe not found in PATH. SSH agent forwarding will not work."
+    fi
+else
+    # 1Password
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    elif [[ "$(uname -s)" == "Linux" ]]; then
+        SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
+    fi
+
+    if [[ -S "$SSH_AUTH_SOCK" ]]; then
+        export SSH_AUTH_SOCK
     fi
 fi
 
