@@ -7,8 +7,9 @@ Host ://git.thesektor.one
     User git
     Port 222
 Host homeassistant
-    HostName homeassistant.home.thesektor.one
+    HostName homeassistant.local.thesektor.one
     User hassio
+    MACs hmac-sha2-512-etm@openssh.com
 Host maxwell
     HostName maxwell.local.thesektor.one
     ForwardAgent yes
