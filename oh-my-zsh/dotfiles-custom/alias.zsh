@@ -39,3 +39,20 @@ alias dlga="dlgaws; dlggh"
 # github
 alias ghc="gh copilot"
 alias ghcs="gh copilot suggest"
+
+# project cleaning
+alias vsclean='git clean -xdf \
+  -e "*.env" \
+  -e "*.user" \
+  -e ".vs" \
+  -e "*.*proj" \
+  -e "*.cs" \
+  -e "*.c" \
+  -e "*.cpp" \
+  -e "*.h"'
+alias tsclean='git clean -xdf \
+  -e ".env*" \
+  -e "*.ts" \
+  -e "!*.d.ts" \
+  -e "node_modules/" \
+  -e "cdk.out/"'

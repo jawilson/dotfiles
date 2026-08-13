@@ -55,14 +55,6 @@
 [rerere]
 	enabled = 1
 
-[includeIf "hasconfig:remote.*.url:git@github.com:blinemedical/**"]
-	path = .gitconfig-work.inc
-[includeIf "hasconfig:remote.*.url:https://github.com/blinemedical/**"]
-	path = .gitconfig-work.inc
-[includeIf "hasconfig:remote.*.url:git@github.com:laerdallabs/**"]
-	path = .gitconfig-work.inc
-[includeIf "hasconfig:remote.*.url:https://github.com/laerdallabs/**"]
-	path = .gitconfig-work.inc
 [includeIf "gitdir:C:/"]
 	path = .gitconfig-windows.inc
 [branch]
