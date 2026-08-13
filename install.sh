@@ -166,6 +166,17 @@ if is_windows_native; then
     else
         echo "Warning: reg.exe not found; skipping cmd AutoRun registry configuration."
     fi
+
+    # Add support for getting credentials from Windows
+    # Install CredentialManager PowerShell module for current user (non-admin)
+    scoop install dos2unix
+    if command -v pwsh.exe &> /dev/null || command -v powershell.exe &> /dev/null; then
+        if command -v pwsh.exe &> /dev/null; then
+            pwsh.exe -NoProfile -NonInteractive -Command "Try { if (-not (Get-Module -ListAvailable -Name CredentialManager)) { Install-Module -Name CredentialManager -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop } } Catch { Write-Host 'Warning: Failed to install CredentialManager module:' \$_.Exception.Message }"
+        else
+            powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Try { if (-not (Get-Module -ListAvailable -Name CredentialManager)) { Install-Module -Name CredentialManager -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop } } Catch { Write-Host 'Warning: Failed to install CredentialManager module:' \$_.Exception.Message }"
+        fi
+    fi
 fi
 
 # WSL2 specific setup

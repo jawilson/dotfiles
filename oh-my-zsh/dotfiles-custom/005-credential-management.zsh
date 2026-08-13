@@ -21,7 +21,7 @@ _get-cred-password-keychain() {
 # Initialize handler on first call
 get-cred-password() {
   local credential_name="$1"
-  
+
   if [[ -z "$credential_name" ]]; then
     echo "Usage: get-cred-password <credential-name>"
     return 1
