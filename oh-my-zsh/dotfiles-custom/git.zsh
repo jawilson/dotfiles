@@ -5,10 +5,8 @@ if (( IS_WINDOWS_NATIVE )); then
     bindkey "\033[4~" end-of-line
 fi
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    if GITHUB_TOKEN=$(security find-generic-password -w -a $LOGNAME -s "GitHub PAT" 2>/dev/null); then
-        export GITHUB_TOKEN
-    fi
+if GITHUB_TOKEN=$(get-cred-password "GitHub PAT" 2>/dev/null); then
+    export GITHUB_TOKEN
 fi
 
 # Aliases

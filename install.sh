@@ -197,7 +197,7 @@ fi
 
 # fnm
 FNM_DIR="$HOME/.fnm"
-if ! command -v $FNM_DIR/fnm &>/dev/null; then
+if ! command -v fnm &>/dev/null && ! command -v $FNM_DIR/fnm &>/dev/null; then
     if is_windows_native; then
         scoop install fnm
     else
