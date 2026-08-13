@@ -205,6 +205,31 @@ if ! command -v $FNM_DIR/fnm &>/dev/null; then
     fi
 fi
 
+# eza
+if ! command -v eza &>/dev/null; then
+    if is_windows_native; then
+        if command -v scoop &> /dev/null; then
+            scoop install eza
+        elif command -v choco &> /dev/null; then
+            choco install -y eza
+        fi
+    elif is_macos; then
+        if command -v brew &> /dev/null; then
+            brew install eza
+        fi
+    else
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get install -qy eza
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -qy eza
+        elif command -v yum &> /dev/null; then
+            sudo yum install -qy eza
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm eza
+        fi
+    fi
+fi
+
 #endregion
 
 # Run zsh if available and configured

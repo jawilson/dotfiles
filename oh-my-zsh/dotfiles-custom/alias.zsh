@@ -2,10 +2,11 @@
 alias dotfiles='git --git-dir=$DOTFILES_DIR/.git --work-tree=$DOTFILES_DIR'
 
 # ls
-alias ls='ls --color=auto -h --group-directories-first'
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
+alias ls='eza -F'
+alias ll='eza -lh --git'
+alias la='eza -la'
+alias lt='eza --tree'
+alias l='eza -F'
 
 # grep
 alias grep='grep --color=auto'
