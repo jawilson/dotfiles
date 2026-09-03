@@ -91,12 +91,12 @@ if [ -z "$PYTHON" ]; then
         sudo dnf install -qy python3
     elif command -v yum &> /dev/null; then
         sudo yum install -qy python3
+    elif command -v pacman &> /dev/null; then
+        sudo pacman -S --noconfirm python
     elif command -v choco &> /dev/null; then
         choco install -y python3
     elif command -v scoop &> /dev/null; then
         scoop install python
-    elif command -v pacman &> /dev/null; then
-        sudo pacman -S --noconfirm python
     fi
     PYTHON=$(get_python_path)
 fi
