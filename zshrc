@@ -132,7 +132,7 @@ if (( IS_AI_AGENT_TERMINAL )); then
     plugins=()
 else
     plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-    plugins+=(git gitfast git-extras fnm zsh-better-npm-completion gh deno fnm dvm)
+    plugins+=(git gitfast git-extras fnm zsh-better-npm-completion gh deno fnm dvm omp-completion)
 fi
 
 # User configuration
