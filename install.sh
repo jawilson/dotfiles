@@ -9,8 +9,6 @@ else
     script_dir=$( cd -- "${BASH_SOURCE[0]%/*}" &> /dev/null && pwd )
 fi
 
-dotfiles_opts=(-R $script_dir -s --force)
-
 source "${script_dir}/tools/common.sh"
 source "${script_dir}/tools/install/link_powershell_profile.sh"
 
@@ -145,13 +143,22 @@ fi
 
 #endregion
 
-# Set up the dotfiles
-if [ -n "$PYTHON" ]; then
-    $PYTHON "${script_dir}/tools/dotfiles/bin/dotfiles" "${dotfiles_opts[@]}"
-else
-    echo "Warning: No Python installation detected, cannot install dotfiles"
+# Set up the dotfiles (links declared in mise.toml)
+export PATH="$HOME/.local/bin:$PATH"
+if ! command -v mise &> /dev/null; then
+    if is_windows_native; then
+        scoop install mise
+    else
+        curl -fsSL https://mise.run | sh
+    fi
+fi
+if ! command -v mise &> /dev/null; then
+    echo "Error: mise is not installed and could not be installed automatically."
+    echo "Please install mise manually (https://mise.jdx.dev/installing-mise.html) and re-run this script."
     exit 1
 fi
+mise trust "${script_dir}/mise.toml"
+mise -C "${script_dir}" dotfiles apply --force --yes
 
 #region Post-setup configuration
 

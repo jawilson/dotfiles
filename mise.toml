@@ -1,0 +1,27 @@
+min_version = "2026.9.17"
+
+# Links this repository into $HOME. Apply with `mise dot apply` from this
+# directory (or `mise -C <repo> dot apply`); install.sh does this for you.
+[dotfiles]
+"~/.bash_aliases" = "bash_aliases"
+"~/.bashrc" = "bashrc"
+"~/.bin" = "bin"
+"~/.chrome-remote-desktop-session" = "chrome-remote-desktop-session"
+"~/.cmdrc.bat" = "cmdrc.bat"
+"~/.gitconfig" = "gitconfig"
+"~/.gitconfig-windows.inc" = "gitconfig-windows.inc"
+"~/.gitconfig-work.inc" = "gitconfig-work.inc"
+"~/.hammerspoon" = "hammerspoon"
+"~/.inputrc" = "inputrc"
+"~/.p10k.zsh" = "p10k.zsh"
+"~/.screenrc" = "screenrc"
+"~/.synergy.conf" = "synergy.conf"
+"~/.vim" = "vim"
+"~/.vimrc" = "vimrc"
+"~/.zshrc" = "zshrc"
+
+# Every entry in these directories links into the matching dot-directory,
+# e.g. config/git -> ~/.config/git.
+"~/.config/*" = "config/*"
+"~/.oh-my-zsh/*" = "oh-my-zsh/*"
+"~/.ssh/*" = "ssh/*"
