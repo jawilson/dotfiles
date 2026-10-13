@@ -157,14 +157,19 @@
   "pendant.thinkingDisplayMode": "collapseWhenDone",
   "security.workspace.trust.untrustedFiles": "open",
   "terminal.integrated.automationProfile.osx": {
-    "args": ["--login", "--interactive"],
+    "args": [
+      "--login",
+      "--interactive"
+    ],
     "path": "zsh",
   },
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.fontFamily": "'MesloLGS Nerd Font Mono', 'MesloLGS Nerd Font', 'MesloLGS NF', 'Meslo NF', 'MesloLGS', monospace",
   "terminal.integrated.profiles.osx": {
     "zsh": {
-      "args": ["-i"],
+      "args": [
+        "-i"
+      ],
       "path": "zsh",
     },
   },
@@ -230,5 +235,8 @@
   "preview.mermaid.enableTelemetry": false,
   "preview.mermaid.showFeaturePopups": false,
   "diffEditor.renderSideBySide": true,
-  "terminal.integrated.commandsToSkipShell": ["-workbench.action.debug.start"],
+  "terminal.integrated.commandsToSkipShell": [
+    "-workbench.action.debug.start"
+  ],
+  "python.terminal.activateEnvironment": false,
 }
