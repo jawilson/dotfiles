@@ -146,11 +146,15 @@ zstyle ':omz:plugins:fnm' autostart yes
 # MARK: Configure PATH
 #region
 
-# Use coreutils on MacOS
-if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
-    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-    export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
-fi
+# Use coreutils on MacOS (Apple Silicon Homebrew, then Intel)
+for coreutils_prefix in /opt/homebrew/opt/coreutils /usr/local/opt/coreutils; do
+    if [ -d "$coreutils_prefix/libexec/gnubin" ]; then
+        export PATH="$coreutils_prefix/libexec/gnubin:$PATH"
+        export MANPATH="$coreutils_prefix/libexec/gnuman:$MANPATH"
+        break
+    fi
+done
+unset coreutils_prefix
 
 [[ -d /usr/local/opt/python/libexec/bin ]] && export PATH="/usr/local/opt/python/libexec/bin:$PATH"
 
@@ -211,7 +215,7 @@ export EDITOR='vim'
 
 # Get colors for tools
 dircolors_cache="${CACHE_HOME}/dircolors-${(%):-%n}.zsh"
-if [[ -r "$dircolors_cache" ]]; then
+if [[ -s "$dircolors_cache" ]]; then
     source "$dircolors_cache"
 else
     dircolors > "$dircolors_cache"

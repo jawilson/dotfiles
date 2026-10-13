@@ -4,6 +4,35 @@
 # LaunchAgents in mise.macos.toml, not steps here.
 set -euo pipefail
 
+# mise cannot install these. It source-builds omp's formula (no bottle) and its shim lacks
+# `with_env`; it cannot uninstall the Packages cask's pkg without pkgutil ids; and the
+# Docker Desktop cask links into root-owned /usr/local/bin, which mise fails to fingerprint.
+# --adopt keeps a Docker.app that is already installed.
+if ! brew list --formula omp > /dev/null 2>&1; then
+    brew install can1357/tap/omp
+fi
+if ! brew list --cask packages > /dev/null 2>&1; then
+    brew install --cask packages
+fi
+if ! brew list --cask docker-desktop > /dev/null 2>&1; then
+    brew install --cask --adopt docker-desktop
+fi
+
+# Chrome as the default browser. macOS shows a confirmation dialog the first time; click "Use Chrome".
+if [ -d "/Applications/Google Chrome.app" ] && ! defaults export com.apple.LaunchServices/com.apple.launchservices.secure - |
+    plutil -convert json -o - - |
+    jq -e '.LSHandlers[] | select(.LSHandlerURLScheme == "https" and .LSHandlerRoleAll == "com.google.chrome")' > /dev/null; then
+    defaultbrowser chrome
+fi
+
+# 1Password as an AutoFill provider (System Settings > General > AutoFill & Passwords). The work
+# profile gets 1Password from MDM, so the extension may not exist yet; run `mise bootstrap` again then.
+if [ -d /Applications/1Password.app ]; then
+    pluginkit -e use -i com.1password.1password.autofill-extension
+else
+    echo "bootstrap: 1Password is not installed; run 'mise bootstrap' again to enable its AutoFill extension" >&2
+fi
+
 # Rust toolchain. zshrc and ~/.zshenv source ~/.cargo/env; --no-modify-path stops
 # rustup from appending to ~/.bashrc, which is a link into this repository.
 if [ ! -x "$HOME/.cargo/bin/rustup" ]; then

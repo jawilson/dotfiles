@@ -55,4 +55,4 @@ Run these from the repository (mise reads the platform and profile files only fr
 - Grant Accessibility and Screen Recording to Karabiner, Hammerspoon, Rectangle, DockDoor, MonitorControl, and FineTune.
 - Sign in to VS Code Settings Sync and Docker (and Tailscale on the work profile).
 - Run `gh auth login`, then `mise bootstrap` again (installs `gh-stack`).
-- Set the default handlers: Chrome as the browser, VS Code for plain text, Ghostty for executables.
+- Click "Use Chrome" when macOS asks to confirm the default browser (macOS requires a click). Set the other default handlers: VS Code for plain text, Ghostty for executables.

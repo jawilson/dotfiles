@@ -35,7 +35,6 @@
 
 [bootstrap.macos.dock]
 apps = [
-  "/System/Library/CoreServices/Finder.app",
   "/Applications/Google Chrome.app",
   "/Applications/Slack.app",
   "/Applications/Visual Studio Code.app",

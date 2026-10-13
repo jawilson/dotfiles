@@ -5,15 +5,16 @@
 adopt = true
 
 [bootstrap.packages]
-# Every profile. Required on every OS: Chrome, VS Code, omp, eza, fnm, gh, git,
-# git-lfs, gnupg, ripgrep, uv, Python and tree (curl and zsh ship with macOS).
+# Every profile. Required on every OS: Chrome, VS Code, eza, fnm, gh, git,
+# git-lfs, gnupg, ripgrep, uv, Python and tree (curl and zsh ship with macOS; omp,
+# Docker Desktop and Packages are installed in tools/bootstrap/macos.sh).
 # htop is included on macOS and Linux (no Windows package).
 # Also basic development tools for personal projects (jq, shellcheck, Docker, bun),
 # tools the dotfiles use (coreutils, dos2unix, terminal-notifier for omp), and
 # personal apps (terminals, keyboard, window and audio utilities).
 "brew:bun" = "latest"
-"brew:can1357/tap/omp" = "latest"
 "brew:coreutils" = "latest"
+"brew:defaultbrowser" = "latest"
 "brew:dos2unix" = "latest"
 "brew:eza" = "latest"
 "brew:fnm" = "latest"
@@ -30,7 +31,6 @@ adopt = true
 "brew:terminal-notifier" = "latest"
 "brew:tree" = "latest"
 "brew:uv" = "latest"
-"brew-cask:docker-desktop" = "latest"
 "brew-cask:dockdoor" = "latest"
 "brew-cask:finetune" = "latest"
 "brew-cask:font-meslo-lg-nerd-font" = "latest"
@@ -39,7 +39,6 @@ adopt = true
 "brew-cask:hammerspoon" = "latest"
 "brew-cask:karabiner-elements" = "latest"
 "brew-cask:monitorcontrol" = "latest"
-"brew-cask:packages" = "latest"
 "brew-cask:rectangle" = "latest"
 "brew-cask:ukelele" = "latest"
 "brew-cask:visual-studio-code" = "latest"
@@ -185,6 +184,11 @@ program = "/usr/bin/open"
 args = ["-g", "-a", "DockDoor"]
 run_at_load = true
 
+[bootstrap.macos.launchd.agents.login-docker]
+program = "/usr/bin/open"
+args = ["-g", "-a", "Docker"]
+run_at_load = true
+
 [bootstrap.macos.launchd.agents.login-finetune]
 program = "/usr/bin/open"
 args = ["-g", "-a", "FineTune"]
@@ -193,6 +197,16 @@ run_at_load = true
 [bootstrap.macos.launchd.agents.login-hammerspoon]
 program = "/usr/bin/open"
 args = ["-g", "-a", "Hammerspoon"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-karabiner-elements]
+program = "/usr/bin/open"
+args = ["-g", "-a", "Karabiner-Elements"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-monitorcontrol]
+program = "/usr/bin/open"
+args = ["-g", "-a", "MonitorControl"]
 run_at_load = true
 
 [bootstrap.macos.launchd.agents.login-rectangle]
