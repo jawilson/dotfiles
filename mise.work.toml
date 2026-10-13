@@ -18,7 +18,6 @@
 "brew:git-crypt" = { os = "macos" }
 "brew:mongosh" = { os = "macos" }
 "brew:mosquitto" = { os = "macos" }
-"brew:openclaw/tap/gogcli" = { os = "macos" }
 "brew:opentofu" = { os = "macos" }
 "brew:pgcli" = { os = "macos" }
 "brew:pre-commit" = { os = "macos" }
