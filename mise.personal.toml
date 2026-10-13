@@ -1,0 +1,10 @@
+# Personal profile, selected by .miserc.local.toml. Personal-only packages go in a
+# [bootstrap.packages] table here, each with { os = "macos" } or { os = "linux" }.
+
+[bootstrap.macos.dock]
+apps = [
+  "/System/Library/CoreServices/Finder.app",
+  "/Applications/Google Chrome.app",
+  "/Applications/Visual Studio Code.app",
+  "/Applications/Ghostty.app",
+]

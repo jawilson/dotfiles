@@ -1,7 +1,9 @@
-min_version = "2026.9.17"
+min_version = "2026.10.8"
 
-# Links this repository into $HOME. Apply with `mise dot apply` from this
-# directory (or `mise -C <repo> dot apply`); install.sh does this for you.
+# Machine setup for `mise bootstrap`. Platform files (mise.macos.toml, mise.linux.toml,
+# mise.windows.toml) load through `auto_env` in .miserc.toml. The profile file
+# (mise.work.toml or mise.personal.toml) is selected by .miserc.local.toml,
+# which install.sh writes.
 [dotfiles]
 "~/.bash_aliases" = "bash_aliases"
 "~/.bashrc" = "bashrc"
@@ -23,5 +25,13 @@ min_version = "2026.9.17"
 # Every entry in these directories links into the matching dot-directory,
 # e.g. config/git -> ~/.config/git.
 "~/.config/*" = "config/*"
-"~/.oh-my-zsh/*" = "oh-my-zsh/*"
 "~/.ssh/*" = "ssh/*"
+
+# Link each custom file while preserving oh-my-zsh's tracked examples.
+"~/.oh-my-zsh/custom" = { source = "zsh/custom", mode = "symlink-each" }
+
+[bootstrap.repos]
+"~/.oh-my-zsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
+
+[bootstrap.user]
+login_shell = "/bin/zsh"

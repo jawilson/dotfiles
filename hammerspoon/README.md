@@ -1,15 +1,15 @@
 # Hammerspoon
 
-macOS only. This directory is symlinked to `~/.hammerspoon`, and `install.sh` installs Hammerspoon with `brew install --cask hammerspoon` if it is missing.
+macOS only. This directory is symlinked to `~/.hammerspoon`, and `mise bootstrap` installs Hammerspoon (the `hammerspoon` cask in `mise.macos.toml`).
 
 ## `init.lua`: input source follows USB devices
 
 Switches the macOS input source based on which USB devices are attached:
 
-| State                          | Input source   |
-| ------------------------------ | -------------- |
-| Any device in `DEVICES` attached | U.S.           |
-| None attached                  | Wilson Dvorak  |
+| State                            | Input source                                                      |
+| -------------------------------- | ----------------------------------------------------------------- |
+| Any device in `DEVICES` attached | U.S.                                                              |
+| None attached                    | Wilson Dvorak, or standard Dvorak if Wilson Dvorak is not enabled |
 
 The check runs at config load and about one second after a plug or unplug event for a listed device. If the USB state can't be read, the input source is left unchanged.
 
@@ -23,7 +23,12 @@ local DEVICES = {
 }
 
 local ATTACHED_SOURCE = "com.apple.keylayout.US"
-local DETACHED_SOURCE = "org.sil.ukelele.keyboardlayout.unsavedukeleledocument.wilsondvorak"
+-- Tried in order when no listed device is attached; the first one that is enabled in
+-- System Settings > Keyboard > Input Sources is used.
+local DETACHED_SOURCES = {
+  "org.sil.ukelele.keyboardlayout.unsavedukeleledocument.wilsondvorak", -- Wilson Dvorak, installed by hand
+  "com.apple.keylayout.Dvorak", -- standard Dvorak
+}
 ```
 
 - `vendorID` and `productID` filter the events from `hs.usb.watcher`, which doesn't report serial numbers.
@@ -46,7 +51,7 @@ Source IDs can be listed from the Hammerspoon console:
 hs.inspect(hs.keycodes.layouts(true))
 ```
 
-Custom layouts such as Wilson Dvorak (`~/Library/Keyboard Layouts/`) are not synced by this repo and must be installed separately.
+Custom layouts such as Wilson Dvorak (`~/Library/Keyboard Layouts/`) are not installed by this repo: install the layout by hand and enable it under System Settings > Keyboard > Input Sources. Until it is enabled, the detached state uses standard Dvorak (`com.apple.keylayout.Dvorak`); if neither is enabled, the input source is left unchanged and the console logs `usb-layout: none of … is enabled`.
 
 ### Applying changes
 

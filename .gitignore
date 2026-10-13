@@ -4,3 +4,6 @@
 *.pyc
 secretfile.yml
 .DS_Store
+.miserc.local.toml
+mise.local.toml
+mise.*.local.toml

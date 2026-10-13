@@ -1,0 +1,25 @@
+# Debian/Ubuntu setup; loaded on Linux through auto_env in .miserc.toml.
+[bootstrap.packages]
+"apt:ca-certificates" = "latest"
+"apt:curl" = "latest"
+"apt:git" = "latest"
+"apt:python3" = "latest"
+"apt:socat" = "latest"  # WSL ssh-agent relay in zshrc
+"apt:unzip" = "latest"  # fnm installer, npiperelay
+"apt:zsh" = "latest"
+# The every-profile CLI set from mise.macos.toml, where apt carries it
+"apt:dos2unix" = "latest"
+"apt:eza" = "latest"
+"apt:gh" = "latest"
+"apt:git-lfs" = "latest"
+"apt:gnupg" = "latest"
+"apt:htop" = "latest"
+"apt:jq" = "latest"
+"apt:make" = "latest"
+"apt:ripgrep" = "latest"
+"apt:shellcheck" = "latest"
+"apt:tree" = "latest"
+
+[tasks.bootstrap]
+description = "Linux setup that [bootstrap] sections cannot declare"
+run = "bash tools/bootstrap/linux.sh"
