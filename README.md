@@ -45,6 +45,7 @@ Run these from the repository (mise reads the platform and profile files only fr
 - `mise bootstrap status --missing` reports drift.
 - `mise bootstrap packages upgrade` replaces `brew upgrade` for casks that mise installed.
 - `mise dot apply` after editing links.
+- zsh-autosuggestions, zsh-better-npm-completion and powerlevel10k are cloned by `[bootstrap.repos]` in `mise.toml`, pinned to a tag or commit. To upgrade one, change its `ref` and run `mise bootstrap repos apply`.
 - If one package fails on a new machine, `mise bootstrap --skip packages` attempts the rest; steps that need the missing package may still fail.
 
 ### Manual follow-ups on a new Mac
