@@ -55,6 +55,10 @@ mode = "0644"
 # rustup is installed with --no-modify-path (tools/bootstrap/macos.sh); this is the line it would add.
 "~/.zshenv/cargo" = { line = '. "$HOME/.cargo/env"' }
 
+# VS Code user settings, kept in vscode/ (not config/, which links wholesale into ~/.config).
+"~/Library/Application Support/Code/User/keybindings.json" = "vscode/keybindings.json"
+"~/Library/Application Support/Code/User/settings.json" = "vscode/settings.json"
+
 [bootstrap.macos.dock]
 autohide = true
 magnification = false
