@@ -47,6 +47,7 @@ Run these from the repository (mise reads the platform and profile files only fr
 - `mise dot apply` after editing links.
 - zsh-autosuggestions, zsh-better-npm-completion and powerlevel10k are cloned by `[bootstrap.repos]` in `mise.toml`, pinned to a tag or commit. To upgrade one, change its `ref` and run `mise bootstrap repos apply`.
 - If one package fails on a new machine, `mise bootstrap --skip packages` attempts the rest; steps that need the missing package may still fail.
+- Node and npm come from mise (`node` in `config/mise/config.toml`). A block in `~/.zshenv` puts mise's shims on PATH for every zsh, including non-interactive ones; interactive shells use full activation. PowerShell and cmd get the shims from the PowerShell profile and `cmdrc.bat`. Existing machines: run `mise bootstrap`, then `brew uninstall fnm` (macOS) and delete `~/.fnm` (Linux).
 - Credentials (API keys, tokens) come from [fnox](https://fnox.jdx.dev). Uncomment and fill in the entries for your profile in `fnox.toml`, run `mise run credentials:sync` to cache them from 1Password (work) or Vaultwarden (personal), then open a new shell. Run sync again after a credential changes in the vault.
 
 ### Manual follow-ups on a new Mac

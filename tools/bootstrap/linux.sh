@@ -12,11 +12,6 @@ deb_installed() {
     [ "$(dpkg-query -W -f='${Status}' "$1" 2> /dev/null)" = "install ok installed" ]
 }
 
-# fnm: apt has no package; zshrc puts ~/.fnm on PATH.
-if [ ! -x "$HOME/.fnm/fnm" ]; then
-    curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell --install-dir "$HOME/.fnm"
-fi
-
 # uv and oh-my-pi: no apt packages; both install into ~/.local/bin, which zshrc puts on PATH.
 if [ ! -x "$HOME/.local/bin/uv" ]; then
     curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh

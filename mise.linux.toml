@@ -5,7 +5,7 @@
 "apt:git" = "latest"
 "apt:python3" = "latest"
 "apt:socat" = "latest"  # WSL ssh-agent relay in zshrc
-"apt:unzip" = "latest"  # fnm installer, npiperelay
+"apt:unzip" = "latest"  # npiperelay
 "apt:zsh" = "latest"
 # The every-profile CLI set from mise.macos.toml, where apt carries it
 "apt:dos2unix" = "latest"

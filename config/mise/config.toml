@@ -3,3 +3,5 @@
 # (zsh/custom/005-credential-management.zsh).
 [tools]
 fnox = "latest"
+# node and npm come from mise shims (zshenv, PowerShell profile and cmdrc.bat put the shims dir on PATH).
+node = "lts"

@@ -134,14 +134,11 @@ if (( IS_AI_AGENT_TERMINAL )); then
     plugins=()
 else
     plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-    plugins+=(git gitfast git-extras fnm zsh-better-npm-completion gh deno dvm)
+    plugins+=(git gitfast git-extras zsh-better-npm-completion gh deno dvm)
     plugins+=(mise)
 fi
 
 # User configuration
-
-# Plugin configs
-zstyle ':omz:plugins:fnm' autostart yes
 
 # MARK: Configure PATH
 #region
@@ -185,7 +182,6 @@ fi
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
-[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 [[ -x "$HOME/.dvm/bin/dvm" ]] && export PATH="$HOME/.dvm/bin:$PATH"
 [[ -d $HOME/.opencode/bin ]] && export PATH=$HOME/.opencode/bin:$PATH

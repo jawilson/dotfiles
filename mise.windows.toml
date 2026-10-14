@@ -5,7 +5,6 @@
 # and curl come from MSYS2 and omp from its installer, both in tools/bootstrap/windows.ps1.
 # htop has no Windows package.
 "scoop:eza" = "latest"
-"scoop:fnm" = "latest"
 "scoop:gh" = "latest"
 "scoop:git" = "latest"
 "scoop:ripgrep" = "latest"

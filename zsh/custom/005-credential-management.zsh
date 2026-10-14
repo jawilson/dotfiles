@@ -33,7 +33,7 @@ _dotfiles_fnox() {
     echo "fnox is not installed; run 'mise bootstrap' in $DOTFILES_DIR." >&2
     return 1
   fi
-  # cd -q skips chpwd hooks (mise, fnm) in the subshell.
+  # cd -q skips chpwd hooks (mise) in the subshell.
   ( builtin cd -q -- "$DOTFILES_DIR" && "$fnox_bin" --non-interactive -P "$_DOTFILES_PROFILE" "$@" )
 }
 

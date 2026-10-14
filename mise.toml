@@ -22,6 +22,9 @@ min_version = "2026.10.8"
 "~/.vimrc" = "vimrc"
 "~/.zshrc" = "zshrc"
 
+# mise.run installs mise in ~/.local/bin; the shims block below needs it on PATH.
+"~/.zshenv/local-bin" = { line = 'export PATH="$HOME/.local/bin:$PATH"', position = "prepend" }
+
 # Every entry in these directories links into the matching dot-directory,
 # e.g. config/git -> ~/.config/git.
 "~/.config/*" = "config/*"
@@ -37,6 +40,12 @@ min_version = "2026.10.8"
 "~/.oh-my-zsh/custom/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git", ref = "v0.7.1" }
 "~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion" = { url = "https://github.com/lukechilds/zsh-better-npm-completion.git", ref = "02ca404a9b585b59788b15af53d4f46fac297153" }
 "~/.oh-my-zsh/custom/themes/powerlevel10k" = { url = "https://github.com/romkatv/powerlevel10k.git", ref = "35833ea15f14b71dbcebc7e54c104d8d56ca5268" } # v1.20.0; a commit, because status misreads annotated tags
+
+# Shims reach every zsh, including the non-interactive agent terminals that skip the oh-my-zsh mise
+# plugin; interactive shells still get full activation from that plugin. This block goes in ~/.zshenv,
+# so ~/.local/bin (mise.run's install location) must be on PATH first.
+[bootstrap.mise_shell_activate]
+zshenv = true
 
 [bootstrap.user]
 login_shell = "/bin/zsh"
