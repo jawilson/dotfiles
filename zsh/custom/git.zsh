@@ -5,10 +5,6 @@ if (( IS_WINDOWS_NATIVE )); then
     bindkey "\033[4~" end-of-line
 fi
 
-if GITHUB_TOKEN=$(get-cred-password "GitHub PAT" 2>/dev/null); then
-    export GITHUB_TOKEN
-fi
-
 # Aliases
 alias gdiff='git diff --no-index'
 alias gitroot='cd "$(git rev-parse --show-toplevel)"'

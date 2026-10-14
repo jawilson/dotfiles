@@ -1,0 +1,5 @@
+# Global mise config, linked to ~/.config/mise by the "~/.config/*" entry in mise.toml.
+# fnox is global because zsh runs it at startup from any directory
+# (zsh/custom/005-credential-management.zsh).
+[tools]
+fnox = "latest"

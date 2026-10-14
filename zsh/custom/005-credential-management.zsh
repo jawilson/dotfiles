@@ -1,56 +1,54 @@
-# Bitwarden handler
-_get-cred-password-bitwarden() {
-  bw get password "$1" 2>/dev/null
-}
+# Credentials come from fnox. fnox.toml in this repository maps each variable to an item in
+# the profile's vault (1Password for work, Vaultwarden for personal). `mise run
+# credentials:sync` caches the values in fnox.local.toml, age-encrypted with this machine's
+# key, so reading them is local and shell startup never runs `op` or `bw`.
 
-# 1Password handler
-_get-cred-password-1password() {
-  op read "op://default/$1/password" 2>/dev/null
-}
+# The profile install.sh recorded in .miserc.local.toml (env = ["work"]); fnox.toml uses the
+# same profile names.
+typeset -g _DOTFILES_PROFILE=
+if [[ -r $DOTFILES_DIR/.miserc.local.toml ]]; then
+  () {
+    local line
+    while IFS= read -r line; do
+      if [[ $line == 'env = ["'*'"]' ]]; then
+        _DOTFILES_PROFILE=${${line#'env = ["'}%'"]'}
+        return
+      fi
+    done < $DOTFILES_DIR/.miserc.local.toml
+  }
+fi
 
-# Windows/WSL handler
-_get-cred-password-windows() {
-  powershell.exe -Command "\$BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR((Get-StoredCredential -Target LegacyGeneric:target=$1).Password); [System.Runtime.InteropServices.Marshal]::PtrToStringAuto(\$BSTR); [Runtime.InteropServices.Marshal]::ZeroFreeBSTR(\$BSTR)" | dos2unix
-}
-
-# macOS Keychain handler
-_get-cred-password-keychain() {
-  security find-generic-password -w -a "$LOGNAME" -s "$1" 2>/dev/null
-}
-
-# Initialize handler on first call
-get-cred-password() {
-  local credential_name="$1"
-  
-  if [[ -z "$credential_name" ]]; then
-    echo "Usage: get-cred-password <credential-name>"
+# Runs fnox on this repository's fnox.toml with this machine's profile.
+_dotfiles_fnox() {
+  if [[ -z $_DOTFILES_PROFILE ]]; then
+    echo "No profile in $DOTFILES_DIR/.miserc.local.toml; run install.sh --profile work|personal." >&2
     return 1
   fi
-
-  if (( IS_WINDOWS_NATIVE || IS_WSL )); then
-    if powershell.exe -Command "if(-Not (Get-Command Get-StoredCredential -errorAction SilentlyContinue)) { exit 1; }" &> /dev/null; then
-      eval "get-cred-password() { _get-cred-password-windows \"\$@\"; }"
-      _get-cred-password-windows "$credential_name"
-      return $?
-    else
-      echo "Error: No credential tool found. Install Bitwarden, 1Password CLI, or CredentialManager PowerShell module." >&2
-      return 1
-    fi
-  else
-    case "$OSTYPE" in
-      darwin*)
-        eval "get-cred-password() { _get-cred-password-keychain \"\$@\"; }"
-        _get-cred-password-keychain "$credential_name"
-        return $?
-        ;;
-      linux*)
-        echo "Error: No credential tool found. Install Bitwarden or 1Password CLI for credential management." >&2
-        return 1
-        ;;
-      *)
-        echo "Error: Unsupported OS and no credential tool available." >&2
-        return 1
-        ;;
-    esac
+  local fnox_bin=${commands[fnox]}
+  # Agent terminals skip mise activation, so fnox may not be on PATH.
+  if [[ -z $fnox_bin ]] && (( $+commands[mise] )); then
+    fnox_bin=$(mise which fnox 2>/dev/null)
   fi
+  if [[ -z $fnox_bin ]]; then
+    echo "fnox is not installed; run 'mise bootstrap' in $DOTFILES_DIR." >&2
+    return 1
+  fi
+  # cd -q skips chpwd hooks (mise, fnm) in the subshell.
+  ( builtin cd -q -- "$DOTFILES_DIR" && "$fnox_bin" --non-interactive -P "$_DOTFILES_PROFILE" "$@" )
 }
+
+# Prints one credential by its fnox.toml name, including ones that are not exported
+# (env = false), such as GHCR_TOKEN.
+get-cred-password() {
+  if [[ -z $1 ]]; then
+    echo "Usage: get-cred-password <name in fnox.toml>" >&2
+    return 1
+  fi
+  _dotfiles_fnox get "$1"
+}
+
+# Export the credentials once per shell. Waiting for credentials:sync to create the cache
+# means a machine without it never contacts a vault at startup.
+if [[ -r $DOTFILES_DIR/fnox.local.toml ]]; then
+  eval "$(_dotfiles_fnox export --format shell 2>/dev/null)"
+fi

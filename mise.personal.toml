@@ -7,3 +7,11 @@ apps = [
   "/Applications/Visual Studio Code.app",
   "/Applications/Ghostty.app",
 ]
+
+# fnox.toml profile for `mise run credentials:sync`.
+[env]
+FNOX_PROFILE = "personal"
+
+# bw, which credentials:sync uses to read Vaultwarden.
+[tools]
+bitwarden = "latest"

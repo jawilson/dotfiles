@@ -40,3 +40,12 @@ min_version = "2026.10.8"
 
 [bootstrap.user]
 login_shell = "/bin/zsh"
+
+# age-keygen creates this machine's fnox key in tools/credentials-sync.sh.
+[tools]
+age = "latest"
+
+[tasks."credentials:sync"]
+description = "Cache this profile's credentials from 1Password or Vaultwarden for zsh"
+run = "bash tools/credentials-sync.sh"
+interactive = true  # Vaultwarden URL, bw login/unlock and op signin prompt on the terminal

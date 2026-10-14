@@ -39,3 +39,12 @@ apps = [
   "/Applications/Visual Studio Code.app",
   "/Applications/Ghostty.app",
 ]
+
+# fnox.toml profile for `mise run credentials:sync`.
+[env]
+FNOX_PROFILE = "work"
+
+# The 1Password CLI for credentials:sync. macOS gets it from brew-cask:1password-cli above;
+# a mise copy there would shadow that one on PATH in this repository.
+[tools]
+"1password" = { version = "latest", os = ["linux", "windows"] }

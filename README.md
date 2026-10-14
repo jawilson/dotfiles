@@ -47,6 +47,7 @@ Run these from the repository (mise reads the platform and profile files only fr
 - `mise dot apply` after editing links.
 - zsh-autosuggestions, zsh-better-npm-completion and powerlevel10k are cloned by `[bootstrap.repos]` in `mise.toml`, pinned to a tag or commit. To upgrade one, change its `ref` and run `mise bootstrap repos apply`.
 - If one package fails on a new machine, `mise bootstrap --skip packages` attempts the rest; steps that need the missing package may still fail.
+- Credentials (API keys, tokens) come from [fnox](https://fnox.jdx.dev). Uncomment and fill in the entries for your profile in `fnox.toml`, run `mise run credentials:sync` to cache them from 1Password (work) or Vaultwarden (personal), then open a new shell. Run sync again after a credential changes in the vault.
 
 ### Manual follow-ups on a new Mac
 
