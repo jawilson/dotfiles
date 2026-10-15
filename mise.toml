@@ -31,7 +31,7 @@ min_version = "2026.10.8"
 "~/.ssh/*" = "ssh/*"
 
 # Link each custom file while preserving oh-my-zsh's tracked examples.
-"~/.oh-my-zsh/custom" = { source = "zsh/custom", mode = "symlink-each" }
+"~/.oh-my-zsh/custom" = { source = "omz-custom", mode = "symlink-each" }
 
 [bootstrap.repos]
 "~/.oh-my-zsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
