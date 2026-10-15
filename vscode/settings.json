@@ -194,8 +194,8 @@
   ],
   "yaml.schemas": {
     "file:///Users/jeff.wilson/.vscode/extensions/continue.continue-2.0.0-darwin-arm64/config-yaml-schema.json": [
-      ".continue/**/*.yaml",
-    ],
+      ".continue/**/*.yaml"
+    ]
   },
   "workbench.colorTheme": "Mermaid Dark",
   "terminal.integrated.enableVisualBell": true,
