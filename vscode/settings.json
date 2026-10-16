@@ -140,7 +140,7 @@
   "java.configuration.runtimes": [
     {
       "name": "JavaSE-25",
-      "path": "${userHome}/.local/share/mise/installs/java/temurin-25.0.4+7.0.LTS",
+      "path": "${userHome}/.local/share/mise/installs/java/temurin-25.0.3+9.0.LTS",
     },
   ],
   "pendant.appendSystemPrompts": [],
@@ -157,19 +157,14 @@
   "pendant.thinkingDisplayMode": "collapseWhenDone",
   "security.workspace.trust.untrustedFiles": "open",
   "terminal.integrated.automationProfile.osx": {
-    "args": [
-      "--login",
-      "--interactive"
-    ],
+    "args": ["--login", "--interactive"],
     "path": "zsh",
   },
   "terminal.integrated.copyOnSelection": true,
   "terminal.integrated.fontFamily": "'MesloLGS Nerd Font Mono', 'MesloLGS Nerd Font', 'MesloLGS NF', 'Meslo NF', 'MesloLGS', monospace",
   "terminal.integrated.profiles.osx": {
     "zsh": {
-      "args": [
-        "-i"
-      ],
+      "args": ["-i"],
       "path": "zsh",
     },
   },
@@ -194,8 +189,8 @@
   ],
   "yaml.schemas": {
     "file:///Users/jeff.wilson/.vscode/extensions/continue.continue-2.0.0-darwin-arm64/config-yaml-schema.json": [
-      ".continue/**/*.yaml"
-    ]
+      ".continue/**/*.yaml",
+    ],
   },
   "workbench.colorTheme": "Mermaid Dark",
   "terminal.integrated.enableVisualBell": true,
@@ -235,8 +230,8 @@
   "preview.mermaid.enableTelemetry": false,
   "preview.mermaid.showFeaturePopups": false,
   "diffEditor.renderSideBySide": true,
-  "terminal.integrated.commandsToSkipShell": [
-    "-workbench.action.debug.start"
-  ],
+  "terminal.integrated.commandsToSkipShell": ["-workbench.action.debug.start"],
   "python.terminal.activateEnvironment": false,
+  "window.newWindowProfile": "Quartermaster",
+  "git.autofetch": true,
 }
