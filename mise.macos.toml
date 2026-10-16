@@ -54,11 +54,9 @@ mode = "0644"
 # rustup is installed with --no-modify-path (tools/bootstrap/macos.sh); this is the line it would add.
 "~/.zshenv/cargo" = { line = '. "$HOME/.cargo/env"' }
 
-# App settings kept outside config/ (which links wholesale into ~/.config), so each app's
-# runtime files (e.g. Karabiner's assets/ and automatic_backups/) stay out of the repo.
+# VS Code user settings, kept in vscode/ (not config/, which links wholesale into ~/.config).
 "~/Library/Application Support/Code/User/keybindings.json" = "vscode/keybindings.json"
 "~/Library/Application Support/Code/User/settings.json" = "vscode/settings.json"
-"~/.config/karabiner/karabiner.json" = "karabiner/karabiner.json"
 
 [bootstrap.macos.dock]
 autohide = true
