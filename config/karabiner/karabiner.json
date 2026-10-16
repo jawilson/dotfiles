@@ -398,7 +398,7 @@
                         ]
                     },
                     {
-                        "description": "Cmd+Tab => Mission Control (USB device 1133:49291)",
+                        "description": "Cmd+Tab => Mission Control (Logitech USB devices 1133:49291, 1133:45091 MX Master 3)",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -407,6 +407,11 @@
                                             {
                                                 "is_keyboard": true,
                                                 "product_id": 49291,
+                                                "vendor_id": 1133
+                                            },
+                                            {
+                                                "is_pointing_device": true,
+                                                "product_id": 45091,
                                                 "vendor_id": 1133
                                             }
                                         ],
@@ -3347,6 +3352,16 @@
                         "product_id": 49291,
                         "vendor_id": 1133
                     },
+                    "ignore_vendor_events": true
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": true,
+                        "product_id": 45091,
+                        "vendor_id": 1133
+                    },
+                    "ignore": false,
                     "ignore_vendor_events": true
                 }
             ],
