@@ -1,0 +1,17 @@
+# Personal profile, selected by .miserc.local.toml. Personal-only packages go in a
+# [bootstrap.packages] table here, each with { os = "macos" } or { os = "linux" }.
+
+[bootstrap.macos.dock]
+apps = [
+  "/Applications/Google Chrome.app",
+  "/Applications/Visual Studio Code.app",
+  "/Applications/Ghostty.app",
+]
+
+# fnox.toml profile for `mise run credentials:sync`.
+[env]
+FNOX_PROFILE = "personal"
+
+# bw, which credentials:sync uses to read Vaultwarden.
+[tools]
+bitwarden = "latest"

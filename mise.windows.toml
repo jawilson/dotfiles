@@ -1,0 +1,17 @@
+# Windows setup; loaded on Windows through auto_env in .miserc.toml.
+[bootstrap.packages]
+# Required on every OS. Python comes from Chocolatey in tools/install/bootstrap-windows.ps1,
+# which also installs Scoop's git first so the repository can be cloned; zsh, gnupg, tree
+# and curl come from MSYS2 and omp from its installer, both in tools/bootstrap/windows.ps1.
+# htop has no Windows package.
+"scoop:eza" = "latest"
+"scoop:gh" = "latest"
+"scoop:git" = "latest"
+"scoop:ripgrep" = "latest"
+"scoop:uv" = "latest"
+"winget:Google.Chrome" = "latest"
+"winget:Microsoft.VisualStudioCode" = "latest"
+
+[tasks.bootstrap]
+description = "Windows setup that [bootstrap] sections cannot declare"
+run = 'powershell -NoProfile -ExecutionPolicy Bypass -File tools\bootstrap\windows.ps1'

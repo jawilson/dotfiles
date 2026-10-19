@@ -1,0 +1,39 @@
+# Credentials that zsh exports at startup (zsh/custom/005-credential-management.zsh), mapped
+# per profile to the item that holds each one in that profile's vault. To add one, uncomment
+# its line, replace the <...> parts, run `mise run credentials:sync`, then open a new shell.
+# Sync caches the values in fnox.local.toml (gitignored), age-encrypted with this machine's
+# key, and shells read only that cache. Run sync again after changing a credential in a vault.
+root = true
+
+# Work: 1Password. Each value is a secret reference, op://<vault>/<item>/<field>. The vault is
+# Employee or Product Team. The field is "credential" for API Credential items and "password"
+# for Login and Password items. 1Password's "Copy Secret Reference" copies the whole reference.
+[profiles.work.providers.op]
+type = "1password"
+
+[profiles.work.secrets]
+OPENAI_API_KEY = { provider = "op", value = "op://Employee/OpenAI/API Key" }
+ANTHROPIC_API_KEY = { provider = "op", value = "op://Employee/Anthropic API Key/credential" }
+CURSOR_API_KEY = { provider = "op", value = "op://Employee/Cursor API Key/credential" }
+GITHUB_MCP_PERSONAL_ACCESS_TOKEN = { provider = "op", value = "op://Employee/GitHub MCP PAT/credential" }
+LINEAR_API_KEY = { provider = "op", value = "op://Employee/Linear API Key/credential" }
+GITHUB_TOKEN = { provider = "op", value = "op://Employee/52wxe27smjtkroyopqduy4cjwm/Local PAT" }
+# Read on demand by `get-cred-password GHCR_TOKEN` (the dlggh alias); env = false keeps it
+# out of the shell environment.
+GHCR_TOKEN = { provider = "op", value = "op://Employee/52wxe27smjtkroyopqduy4cjwm/Local PAT", env = false }
+
+# Personal: Vaultwarden, through the Bitwarden CLI. Each value is an item name, which reads
+# the item's password, or <item name>/<field> for username, notes, uri, totp or a custom field.
+[profiles.personal.providers.bw]
+type = "bitwarden"
+
+[profiles.personal.secrets]
+# OPENAI_API_KEY = { provider = "bw", value = "<item name>" }
+# ANTHROPIC_API_KEY = { provider = "bw", value = "<item name>" }
+# CURSOR_API_KEY = { provider = "bw", value = "<item name>" }
+# GITHUB_MCP_PERSONAL_ACCESS_TOKEN = { provider = "bw", value = "<item name>" }
+# LINEAR_API_KEY = { provider = "bw", value = "<item name>" }
+# GITHUB_TOKEN = { provider = "bw", value = "<item name>" }
+# Read on demand by `get-cred-password GHCR_TOKEN` (the dlggh alias); env = false keeps it
+# out of the shell environment.
+# GHCR_TOKEN = { provider = "bw", value = "<item name>", env = false }

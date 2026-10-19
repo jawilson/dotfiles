@@ -1,0 +1,50 @@
+# Work profile, selected by .miserc.local.toml. JumpCloud MDM installs 1Password,
+# Google Drive, Notion and Slack, so nothing here installs them. Google Chrome is in
+# mise.macos.toml for every profile; adopt = true takes over JumpCloud's copy.
+
+# Work-only packages. A profile file loads on every OS, and Linux also has the brew
+# manager, so each entry names its OS.
+# LocalStack lstk is installed in tools/bootstrap/macos.sh because mise cannot
+# evaluate its cask's `postflight_steps`.
+[bootstrap.packages]
+"apt:awscli" = { os = "linux" }
+"apt:git-crypt" = { os = "linux" }
+"apt:mosquitto-clients" = { os = "linux" }  # clients only; the mosquitto package would start a broker service
+"apt:pgcli" = { os = "linux" }
+"apt:pre-commit" = { os = "linux" }
+"apt:zoxide" = { os = "linux" }
+"brew:atuin" = { os = "macos" }
+"brew:awscli" = { os = "macos" }
+"brew:git-crypt" = { os = "macos" }
+"brew:mongosh" = { os = "macos" }
+"brew:mosquitto" = { os = "macos" }
+"brew:opentofu" = { os = "macos" }
+"brew:pgcli" = { os = "macos" }
+"brew:pre-commit" = { os = "macos" }
+"brew:terragrunt" = { os = "macos" }
+"brew:zoxide" = { os = "macos" }
+"brew-cask:1password-cli" = { os = "macos" }
+"brew-cask:claude" = { os = "macos" }
+"brew-cask:claude-code" = { os = "macos" }
+"brew-cask:obsidian" = { os = "macos" }
+"brew-cask:session-manager-plugin" = { os = "macos" }
+"brew-cask:tailscale-app" = { os = "macos" }
+"brew-cask:windows-app" = { os = "macos" }
+"brew-cask:wizcli" = { os = "macos" }
+
+[bootstrap.macos.dock]
+apps = [
+  "/Applications/Google Chrome.app",
+  "/Applications/Slack.app",
+  "/Applications/Visual Studio Code.app",
+  "/Applications/Ghostty.app",
+]
+
+# fnox.toml profile for `mise run credentials:sync`.
+[env]
+FNOX_PROFILE = "work"
+
+# The 1Password CLI for credentials:sync. macOS gets it from brew-cask:1password-cli above;
+# a mise copy there would shadow that one on PATH in this repository.
+[tools]
+"1password" = { version = "latest", os = ["linux", "windows"] }

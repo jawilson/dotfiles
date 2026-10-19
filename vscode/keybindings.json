@@ -1,0 +1,171 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+      "key": "cmd+right",
+      "command": "workbench.action.terminal.focusNext",
+      "when": "terminalFocus"
+    },
+    {
+      "key": "cmd+left",
+      "command": "workbench.action.terminal.focusPrevious",
+      "when": "terminalFocus"
+    },
+    {
+      "key": "cmd+t",
+      "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+      "key": "cmd+t",
+      "command": "workbench.action.terminal.new",
+      "when": "terminalFocus"
+    },
+    {
+      "key": "cmd+shift+r",
+      "command": "workbench.action.terminal.rename",
+      "when": "terminalFocus"
+    },
+    {
+      "key": "cmd+r",
+      "command": "workbench.action.files.revert",
+      "when": "editorFocus"
+    },
+    {
+      "key": "cmd+shift+t",
+      "command": "workbench.action.terminal.split",
+      "when": "terminalFocus && terminalProcessSupported"
+    },
+    {
+      "key": "shift+alt+down",
+      "when": "terminalFocus",
+      "command": "workbench.action.terminal.resizePaneDown"
+    },
+    {
+      "key": "shift+alt+up",
+      "when": "terminalFocus",
+      "command": "workbench.action.terminal.resizePaneUp"
+    },
+    {
+      "key": "shift+alt+left",
+      "when": "terminalFocus",
+      "command": "workbench.action.terminal.resizePaneLeft"
+    },
+    {
+      "key": "shift+alt+right",
+      "when": "terminalFocus",
+      "command": "workbench.action.terminal.resizePaneRight"
+    },
+    {
+      "key": "cmd+n",
+      "command": "workbench.action.quickOpen",
+      "when": "!inFilesPicker && !inCommandsPicker && !inFileSymbolsPicker && !inWorkspaceSymbolsPicker"
+    },
+    {
+      "key": "cmd+n",
+      "command": "-workbench.action.quickOpen"
+    },
+    {
+      "key": "cmd+n",
+      "command": "workbench.action.tasks.runTask",
+      "when": "inCommandsPicker || inFileSymbolsPicker || inFilesPicker || inWorkspaceSymbolsPicker"
+    },
+    {
+      "key": "cmd+t",
+      "command": "-workbench.action.showAllSymbols"
+    },
+    {
+        "key": "cmd+c",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0003" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+s",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0013" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+z",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u001a" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+d",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0004" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+\\",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u001c" },
+        "when": "terminalFocus"
+    },
+    {
+      "key": "ctrl+shift+l",
+      "command": "pendant.addSelectionToChat",
+      "when": "editorHasSelection && editorTextFocus"
+    },
+    {
+      "key": "shift+cmd+'",
+      "command": "-pendant.addSelectionToChat",
+      "when": "editorHasSelection && editorTextFocus"
+    },
+    {
+      "key": "shift+cmd+s",
+      "command": "saveAll"
+    },
+    {
+      "key": "alt+cmd+s",
+      "command": "-saveAll"
+    },
+    {
+      "key": "alt+cmd+s",
+      "command": "workbench.action.files.saveAs"
+    },
+    {
+      "key": "shift+cmd+s",
+      "command": "-workbench.action.files.saveAs"
+    },
+    {
+      "key": "alt+cmd+s",
+      "command": "workbench.action.files.saveLocalFile",
+      "when": "remoteFileDialogVisible"
+    },
+    {
+      "key": "shift+cmd+s",
+      "command": "-workbench.action.files.saveLocalFile",
+      "when": "remoteFileDialogVisible"
+    },
+    {
+      "key": "alt+cmd+s",
+      "command": "workbench.action.issueReporter.captureScreenshot",
+      "when": "issueReporterOpen"
+    },
+    {
+      "key": "shift+cmd+s",
+      "command": "-workbench.action.issueReporter.captureScreenshot",
+      "when": "issueReporterOpen"
+    },
+    {
+      "key": "ctrl+f",
+      "command": "-markdown.editor.cursorRight",
+      "when": "markdownEditorFocus && activeCustomEditorId == 'vscode.markdown.editor'"
+    },
+    {
+      "key": "ctrl+f",
+      "command": "-cursorRight",
+      "when": "textInputFocus"
+    },
+    {
+      "key": "ctrl+r",
+      "command": "editor.action.rename",
+      "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    },
+    {
+      "key": "f2",
+      "command": "-editor.action.rename",
+      "when": "editorHasRenameProvider && editorTextFocus && !editorReadonly"
+    }
+]

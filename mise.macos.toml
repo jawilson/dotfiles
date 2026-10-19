@@ -1,0 +1,222 @@
+# macOS setup; loaded on macOS through auto_env in .miserc.toml.
+
+# Take over apps that are already installed (by hand or by MDM) instead of replacing them.
+[bootstrap.brew]
+adopt = true
+
+[bootstrap.packages]
+# Every profile. Required on every OS: Chrome, VS Code, eza, gh, git,
+# git-lfs, gnupg, ripgrep, uv, Python and tree (curl and zsh ship with macOS; omp,
+# Docker Desktop and Packages are installed in tools/bootstrap/macos.sh).
+# htop is included on macOS and Linux (no Windows package).
+# Also basic development tools for personal projects (jq, shellcheck, Docker, bun),
+# tools the dotfiles use (coreutils, dos2unix, terminal-notifier for omp), and
+# personal apps (terminals, keyboard, window and audio utilities).
+"brew:bun" = "latest"
+"brew:coreutils" = "latest"
+"brew:defaultbrowser" = "latest"
+"brew:dos2unix" = "latest"
+"brew:eza" = "latest"
+"brew:gh" = "latest"
+"brew:git" = "latest"
+"brew:git-lfs" = "latest"
+"brew:gnupg" = "latest"
+"brew:htop" = "latest"
+"brew:jq" = "latest"
+"brew:mas" = "latest"
+"brew:python@3.14" = "latest"
+"brew:ripgrep" = "latest"
+"brew:shellcheck" = "latest"
+"brew:terminal-notifier" = "latest"
+"brew:tree" = "latest"
+"brew:uv" = "latest"
+"brew-cask:dockdoor" = "latest"
+"brew-cask:finetune" = "latest"
+"brew-cask:font-meslo-lg-nerd-font" = "latest"
+"brew-cask:ghostty" = "latest"
+"brew-cask:google-chrome" = "latest"
+"brew-cask:hammerspoon" = "latest"
+"brew-cask:karabiner-elements" = "latest"
+"brew-cask:monitorcontrol" = "latest"
+"brew-cask:rectangle" = "latest"
+"brew-cask:ukelele" = "latest"
+"brew-cask:visual-studio-code" = "latest"
+"mas:1451685025" = "latest" # WireGuard; sign in to the App Store first
+
+# Adds Apple Silicon Homebrew to PATH for login shells (macOS path_helper), as on the original Mac.
+[bootstrap.files."/etc/paths.d/homebrew"]
+content = "/opt/homebrew/bin\n"
+owner = "root"
+group = "wheel"
+mode = "0644"
+
+[dotfiles]
+# rustup is installed with --no-modify-path (tools/bootstrap/macos.sh); this is the line it would add.
+"~/.zshenv/cargo" = { line = '. "$HOME/.cargo/env"' }
+
+# VS Code user settings, kept in vscode/ (not config/, which links wholesale into ~/.config).
+"~/Library/Application Support/Code/User/keybindings.json" = "vscode/keybindings.json"
+"~/Library/Application Support/Code/User/settings.json" = "vscode/settings.json"
+
+[bootstrap.macos.dock]
+autohide = true
+magnification = false
+
+[bootstrap.macos.finder]
+preferred_view_style = "list"
+show_pathbar = true
+
+[bootstrap.macos.defaults."com.apple.dock"]
+tilesize = 52.0
+
+[bootstrap.macos.defaults."com.apple.finder"]
+FXRemoveOldTrashItems = true
+NewWindowTarget = "PfAF"
+
+[bootstrap.macos.defaults.NSGlobalDomain]
+AppleInterfaceStyle = "Dark"
+InitialKeyRepeat = 25.0
+KeyRepeat = 2.0
+"com.apple.mouse.scaling" = 0.875
+"com.apple.scrollwheel.scaling" = 0.0
+"com.apple.swipescrolldirection" = false
+
+[bootstrap.macos.defaults."com.apple.AppleMultitouchTrackpad"]
+TrackpadMomentumScroll = false
+
+[bootstrap.macos.defaults."com.apple.driver.AppleBluetoothMultitouch.trackpad"]
+TrackpadMomentumScroll = false
+
+[bootstrap.macos.defaults."com.apple.menuextra.clock"]
+ShowAMPM = true
+ShowDayOfWeek = false
+
+[bootstrap.macos.defaults."com.apple.WindowManager"]
+AppWindowGroupingBehavior = 1
+AutoHide = false
+EnableTiledWindowMargins = false
+EnableTilingByEdgeDrag = false
+EnableTilingOptionAccelerator = false
+EnableTopTilingByEdgeDrag = false
+HideDesktop = true
+StageManagerHideWidgets = false
+StandardHideWidgets = false
+
+[bootstrap.macos.defaults."com.knollsoft.Rectangle"]
+allowAnyShortcut = true
+alternateDefaultShortcuts = true
+bottomHalf = { keyCode = 121, modifierFlags = 262144 }
+footprintAnimationDurationMultiplier = 0.75
+hideMenubarIcon = true
+landscapeSnapAreas = '[1,{"action":15},8,{"action":14},5,{"action":1},3,{"action":16},2,{"action":2},7,{"compound":-4},6,{"action":13},4,{"action":0}]'
+launchOnLogin = true
+leftHalf = { keyCode = 115, modifierFlags = 262144 }
+portraitSnapAreas = '[3,{"action":16},6,{"action":13},8,{"action":14},4,{"compound":-5},1,{"action":15},5,{"compound":-5},7,{"action":10},2,{"action":11}]'
+reflowTodo = { keyCode = 45, modifierFlags = 786432 }
+rightHalf = { keyCode = 119, modifierFlags = 262144 }
+subsequentExecutionMode = 1
+toggleTodo = { keyCode = 11, modifierFlags = 786432 }
+topHalf = { keyCode = 116, modifierFlags = 262144 }
+
+[bootstrap.macos.defaults."com.ethanbills.DockDoor"]
+appNameStyle = "default"
+bufferFromDock = -25.0
+cmdTabEnabledTrafficLightButtons = ["quit"]
+disableDockStyleTitles = false
+disableDockStyleTrafficLights = true
+dockBackgroundStyle = "liquidGlass"
+dockPreviewControlPosition = "topTrailing"
+enableCmdTabEnhancements = false
+enableDockPreviews = true
+enableLivePreview = false
+enableLivePreviewForDock = false
+enableWindowSwitcher = false
+enabledTrafficLightButtons = ["close"]
+ignoreAppsWithSingleWindowInCmdTab = false
+previewHeight = 156.25
+previewHoverAction = "previewFullSize"
+previewWidth = 250.0
+showActiveAppIndicator = true
+showAppIconOnly = false
+showMenuBarIcon = false
+showWindowTitle = true
+showWindowsFromCurrentSpaceOnlyInCmdTab = true
+tapEquivalentInterval = 0.3
+useEmbeddedDockPreviewElements = false
+windowPreviewSortOrder = "creationOrder"
+windowTitleVisibility = "alwaysVisible"
+
+[[bootstrap.macos.defaults_entries]]
+domain = "NSGlobalDomain"
+key = "com.apple.trackpad.momentumScroll"
+host = "current"
+value = false
+
+[[bootstrap.macos.defaults_entries]]
+domain = "NSGlobalDomain"
+key = "com.apple.trackpad.scrollBehavior"
+host = "current"
+value = 2
+
+# Modifier remap for the external keyboard with vendor 16700 and product 8467.
+# The other keyboards' mappings are identity mappings and are left out.
+[[bootstrap.macos.defaults_entries]]
+domain = "NSGlobalDomain"
+key = "com.apple.keyboard.modifiermapping.16700-8467-0"
+host = "current"
+value = [
+  { HIDKeyboardModifierMappingSrc = 30064771303, HIDKeyboardModifierMappingDst = 30064771302 },
+  { HIDKeyboardModifierMappingSrc = 30064771298, HIDKeyboardModifierMappingDst = 30064771296 },
+  { HIDKeyboardModifierMappingSrc = 30064771302, HIDKeyboardModifierMappingDst = 30064771300 },
+  { HIDKeyboardModifierMappingSrc = 30064771296, HIDKeyboardModifierMappingDst = 30064771299 },
+  { HIDKeyboardModifierMappingSrc = 30064771300, HIDKeyboardModifierMappingDst = 30064771303 },
+  { HIDKeyboardModifierMappingSrc = 30064771299, HIDKeyboardModifierMappingDst = 30064771298 },
+]
+
+# Same job as ~/Library/LaunchAgents/launched.clean-downloads.plist on the original Mac.
+[bootstrap.macos.launchd.agents.clean-downloads]
+program = "/bin/sh"
+args = ["-c", 'find $HOME/Downloads/ ! -type d -Btime +7 -atime +7 -mtime +7 && find "$HOME/Downloads" -mindepth 1 -type d -empty -delete']
+run_at_load = true
+start_interval = 14400
+
+# Start these apps at login (the original Mac had them as login items). `open -g`
+# launches in the background and does nothing if the app is already running.
+[bootstrap.macos.launchd.agents.login-dockdoor]
+program = "/usr/bin/open"
+args = ["-g", "-a", "DockDoor"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-docker]
+program = "/usr/bin/open"
+args = ["-g", "-a", "Docker"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-finetune]
+program = "/usr/bin/open"
+args = ["-g", "-a", "FineTune"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-hammerspoon]
+program = "/usr/bin/open"
+args = ["-g", "-a", "Hammerspoon"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-karabiner-elements]
+program = "/usr/bin/open"
+args = ["-g", "-a", "Karabiner-Elements"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-monitorcontrol]
+program = "/usr/bin/open"
+args = ["-g", "-a", "MonitorControl"]
+run_at_load = true
+
+[bootstrap.macos.launchd.agents.login-rectangle]
+program = "/usr/bin/open"
+args = ["-g", "-a", "Rectangle"]
+run_at_load = true
+
+[tasks.bootstrap]
+description = "macOS setup that [bootstrap] sections cannot declare"
+run = "bash tools/bootstrap/macos.sh"
