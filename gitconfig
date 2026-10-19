@@ -60,6 +60,8 @@
 	enabled = 1
 [includeIf "hasconfig:remote.*.url:git@github.com:Quartermaster-AI/**"]
 	path = .gitconfig-work.inc
+[includeIf "hasconfig:remote.*.url:git@github.com:jawilson-qm/**"]
+	path = .gitconfig-work.inc
 [includeIf "hasconfig:remote.*.url:https://github.com/Quartermaster-AI/**"]
 	path = .gitconfig-work.inc
 [includeIf "gitdir:C:/"]
