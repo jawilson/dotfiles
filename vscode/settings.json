@@ -234,4 +234,5 @@
   "python.terminal.activateEnvironment": false,
   "window.newWindowProfile": "Quartermaster",
   "git.autofetch": true,
+  "window.title": "${rootName}${separator}${activeRepositoryBranchName}${separator}${activeEditorShort}${separator}${profileName}",
 }
