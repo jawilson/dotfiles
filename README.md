@@ -19,6 +19,8 @@ Machine setup is declared in `mise*.toml` and applied by `mise bootstrap`. `inst
        git clone https://github.com/jawilson/dotfiles.git ~/src/dotfiles
        ~/src/dotfiles/install.sh --profile work
 
+   On macOS, bootstrap puts your home folder at the top of Finder Favorites and `~/src` at the bottom.
+
 ### Debian/Ubuntu
 
 Clone the repo, then run `./install.sh --profile <profile>`.

@@ -3,6 +3,9 @@
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
+# ~/src, as [bootstrap.directories] creates on the other platforms.
+New-Item -ItemType Directory -Force -Path (Join-Path $env:USERPROFILE 'src') | Out-Null
+
 # MSYS2: use %USERPROFILE% as HOME (where mise links the dotfiles), and install zsh.
 function Get-MSYS2 {
   if (Test-Path "C:\msys64\usr\bin\bash.exe") { return "C:\msys64" }

@@ -33,6 +33,10 @@ min_version = "2026.10.8"
 # Link each custom file while preserving oh-my-zsh's tracked examples.
 "~/.oh-my-zsh/custom" = { source = "omz-custom", mode = "symlink-each" }
 
+# Windows creates it in tools/bootstrap/windows.ps1; directories are unix-only.
+[bootstrap.directories."~/src"]
+os = "unix"
+
 [bootstrap.repos]
 "~/.oh-my-zsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
 # Third-party plugins and themes. Each lives in a real directory under custom/, next to

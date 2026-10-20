@@ -18,6 +18,14 @@ if ! brew list --cask docker-desktop > /dev/null 2>&1; then
     brew install --cask --adopt docker-desktop
 fi
 
+# Finder sidebar favorites: the home directory at the top and ~/src (created by
+# [bootstrap.directories] in mise.toml) at the bottom. Compiled into a temporary
+# directory, since `swift` crashes interpreting the file.
+favorites_dir=$(mktemp -d)
+trap 'rm -rf "$favorites_dir"' EXIT
+swiftc -suppress-warnings -o "$favorites_dir/finder-favorites" "$(dirname "${BASH_SOURCE[0]}")/finder-favorites.swift"
+"$favorites_dir/finder-favorites" --first "$HOME" --last "$HOME/src"
+
 # Chrome as the default browser. macOS shows a confirmation dialog the first time; click "Use Chrome".
 if [ -d "/Applications/Google Chrome.app" ] && ! defaults export com.apple.LaunchServices/com.apple.launchservices.secure - |
     plutil -convert json -o - - |
