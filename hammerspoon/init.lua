@@ -8,7 +8,7 @@ local ATTACHED_SOURCE = "com.apple.keylayout.US"
 -- Tried in order when no listed device is attached; the first one that is enabled in
 -- System Settings > Keyboard > Input Sources is used.
 local DETACHED_SOURCES = {
-  "org.sil.ukelele.keyboardlayout.unsavedukeleledocument.wilsondvorak", -- Wilson Dvorak, installed by hand
+  "org.sil.ukelele.keyboardlayout.wilsondvorak.wilsondvorak", -- Wilson Dvorak, installed by hand
   "com.apple.keylayout.Dvorak", -- standard Dvorak
 }
 
