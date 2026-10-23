@@ -31,6 +31,7 @@ type = "bitwarden"
 # OPENAI_API_KEY = { provider = "bw", value = "<item name>" }
 # ANTHROPIC_API_KEY = { provider = "bw", value = "<item name>" }
 # CURSOR_API_KEY = { provider = "bw", value = "<item name>" }
+# GEMINI_API_KEY = { provider = "bw", value = "<item name>" }
 # GITHUB_MCP_PERSONAL_ACCESS_TOKEN = { provider = "bw", value = "<item name>" }
 # LINEAR_API_KEY = { provider = "bw", value = "<item name>" }
 # GITHUB_TOKEN = { provider = "bw", value = "<item name>" }

@@ -59,3 +59,16 @@ if (( $+commands[omp] )); then
       "$*"
   }
 fi
+
+# Antigravity
+if ! command -v agy >/dev/null 2>&1; then
+    if [ -n "$LOCALAPPDATA" ] && command -v cygpath >/dev/null 2>&1; then
+        agy_bin=$(cygpath -u "$LOCALAPPDATA\\agy\\bin")
+    else
+        agy_bin="$HOME/.agy/bin"
+    fi
+
+    if [ -x "$agy_bin/agy" ]; then
+        export PATH="$agy_bin:$PATH"
+    fi
+fi
