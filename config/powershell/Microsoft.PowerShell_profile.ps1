@@ -1,3 +1,3 @@
-if (Get-Command fnm -ErrorAction SilentlyContinue) {
-    fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    mise activate pwsh --shims | Out-String | Invoke-Expression
 }

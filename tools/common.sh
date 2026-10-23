@@ -17,6 +17,13 @@ is_wsl() {
   fi
 }
 
+is_macos() {
+  case "$(uname -s 2>/dev/null)" in
+    Darwin) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 get_python_path() {
   if command -v python3 &> /dev/null; then
     echo "$(command -v python3)"

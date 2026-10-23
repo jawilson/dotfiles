@@ -1,6 +1,7 @@
 @echo off
-:: for /F will launch a new instance of cmd so we create a guard to prevent an infnite loop
-where fnm >nul 2>nul && if not defined FNM_AUTORUN_GUARD (
-    set "FNM_AUTORUN_GUARD=AutorunGuard"
-    FOR /f "tokens=*" %%z IN ('fnm env --use-on-cd') DO CALL %%z
+:: Put mise's shims (node, npm, ...) on PATH. The guard variable is inherited by child cmd
+:: instances, so nested shells do not prepend the directory again.
+if exist "%LOCALAPPDATA%\mise\shims" if not defined MISE_SHIMS_AUTORUN_GUARD (
+    set "MISE_SHIMS_AUTORUN_GUARD=1"
+    set "PATH=%LOCALAPPDATA%\mise\shims;%PATH%"
 )

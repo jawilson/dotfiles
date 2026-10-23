@@ -3,6 +3,7 @@
 	email = jeff@jeffalwilson.com
 [core]
 	autocrlf = input
+	editor = git-vscode edit
 [alias]
 	addnw = !sh -c 'git diff -U0 -w --no-color --src-prefix=a/ --dst-prefix=b/ "$@" | git apply --cached --ignore-whitespace --unidiff-zero -'
 	br = branch
@@ -29,6 +30,7 @@
 	tarball = ![ "$3" ] && NAME=$3 || NAME=$(basename $(git rev-parse --show-toplevel)) && [ "$2" ] && REF=$2 || REF=HEAD && OUTPUT=$1/$NAME-$(git describe $REF | sed 's,^v,,').tar.gz && git archive --prefix=$NAME/ --output=$OUTPUT $REF^{tree} && readlink -m $OUTPUT && true
 	unstage = reset HEAD --
 	up = pull --rebase
+	diff-split = "!f() { (git diff --numstat \"$@\" | while read -r add del file; do if [ \"$add\" = \"-\" ]; then printf \"%-50s | Binary file\\n\" \"$file\"; else pos=$(printf \"\\033[32m%.0s+\\033[0m\" $(seq 1 $add)); neg=$(printf \"\\033[31m%.0s-\\033[0m\" $(seq 1 $del)); printf \" %-50s | %4s+ %4s-  %s%s\\n\" \"$file\" \"$add\" \"$del\" \"$pos\" \"$neg\"; fi; done; git diff --shortstat \"$@\") | ${GIT_PAGER:-$(git config core.pager || echo ${PAGER:-less})}; }; f"
 [color]
 	ui = auto
 [credential]
@@ -36,17 +38,19 @@
 [help]
 	autocorrect = 1
 [merge]
-	tool = vimdiff
+	tool = vscode
 	guitool = vscode
 [mergetool]
 	guiDefault = true
 	keepBackup = false
 [mergetool "vscode"]
-	cmd = code --wait $MERGED
+	cmd = git-vscode merge
+	trustExitCode = true
 [diff]
 	guitool = vscode
+	tool = vscode
 [difftool "vscode"]
-	cmd = code --wait --diff $LOCAL $REMOTE
+	cmd = git-vscode diff
 [push]
 	default = simple
 	autoSetupRemote = true
@@ -54,7 +58,12 @@
 	hg-git-compat = true
 [rerere]
 	enabled = 1
-
+[includeIf "hasconfig:remote.*.url:git@github.com:Quartermaster-AI/**"]
+	path = .gitconfig-work.inc
+[includeIf "hasconfig:remote.*.url:git@github.com:jawilson-qm/**"]
+	path = .gitconfig-work.inc
+[includeIf "hasconfig:remote.*.url:https://github.com/Quartermaster-AI/**"]
+	path = .gitconfig-work.inc
 [includeIf "gitdir:C:/"]
 	path = .gitconfig-windows.inc
 [branch]

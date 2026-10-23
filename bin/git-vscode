@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+#
+# Dispatcher used by ~/.gitconfig as git's editor/difftool/mergetool.
+# Uses VS Code (`code --wait`) when the `code` CLI can actually reach a
+# running VS Code window: locally, in WSL, or in a VS Code Remote-SSH
+# terminal (which exports VSCODE_IPC_HOOK_CLI). Falls back to a terminal
+# tool in a plain SSH console, where `code` has no window to attach to.
+#
+# Usage: git-vscode {edit|diff|merge} [args...]
+
+vscode_available() {
+	command -v code &> /dev/null && { [ -n "$VSCODE_IPC_HOOK_CLI" ] || [ -z "$SSH_CONNECTION" ]; }
+}
+
+mode=$1
+shift
+
+case "$mode" in
+	edit)
+		if vscode_available; then
+			exec code --wait "$@"
+		fi
+		exec "${VISUAL:-${EDITOR:-vim}}" "$@"
+		;;
+	diff)
+		if vscode_available; then
+			exec code --wait --diff "$LOCAL" "$REMOTE"
+		fi
+		exec vimdiff "$LOCAL" "$REMOTE"
+		;;
+	merge)
+		if vscode_available; then
+			exec code --wait --merge "$REMOTE" "$LOCAL" "$BASE" "$MERGED"
+		fi
+		exec vimdiff -d "$LOCAL" "$MERGED" "$REMOTE"
+		;;
+	*)
+		echo "usage: git-vscode {edit|diff|merge} [args...]" >&2
+		exit 1
+		;;
+esac

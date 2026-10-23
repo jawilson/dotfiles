@@ -28,6 +28,9 @@ is_windows_native && IS_WINDOWS_NATIVE=1
 typeset -gi IS_WSL=0
 is_wsl && IS_WSL=1
 
+typeset -gi IS_MACOS=0
+is_macos && IS_MACOS=1
+
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
@@ -121,7 +124,6 @@ ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor root)
 # HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
-ZSH_CUSTOM=$HOME/.oh-my-zsh/dotfiles-custom
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
@@ -132,52 +134,26 @@ if (( IS_AI_AGENT_TERMINAL )); then
     plugins=()
 else
     plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
-    plugins+=(git gitfast git-extras fnm zsh-better-npm-completion gh deno fnm dvm omp-completion)
+    plugins+=(git gitfast git-extras zsh-better-npm-completion gh deno dvm omp-completion)
+    plugins+=(mise)
 fi
 
 # User configuration
 
-# Plugin configs
-zstyle ':omz:plugins:fnm' autostart yes
+# MARK: Configure PATH
+#region
 
-# Use coreutils on MacOS
-if [ -d /usr/local/opt/coreutils/libexec/gnubin ]; then
-    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-    export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
-fi
+# Use coreutils on MacOS (Apple Silicon Homebrew, then Intel)
+for coreutils_prefix in /opt/homebrew/opt/coreutils /usr/local/opt/coreutils; do
+    if [ -d "$coreutils_prefix/libexec/gnubin" ]; then
+        export PATH="$coreutils_prefix/libexec/gnubin:$PATH"
+        export MANPATH="$coreutils_prefix/libexec/gnuman:$MANPATH"
+        break
+    fi
+done
+unset coreutils_prefix
 
-if [ -d /usr/local/opt/python/libexec/bin ]; then
-    export PATH="/usr/local/opt/python/libexec/bin:$PATH"
-fi
-
-# Add user paths before sourcing omzsh so that they are available to plugins and the prompt
-[[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
-[[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
-[[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
-[[ -d $HOME/.fnm ]] && export PATH=$HOME/.fnm:$PATH
-
-# Oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-
-# To customize prompt, run `omz theme set <theme-name>`.
-if (( IS_AI_AGENT_TERMINAL )); then
-    PROMPT='%~ %# '
-    RPROMPT=''
-else
-    [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-fi
-
-# Default editor
-export EDITOR='vim'
-
-# Get colors for tools
-dircolors_cache="${CACHE_HOME}/dircolors-${(%):-%n}.zsh"
-if [[ -r "$dircolors_cache" ]]; then
-    source "$dircolors_cache"
-else
-    dircolors > "$dircolors_cache"
-    source "$dircolors_cache"
-fi
+[[ -d /usr/local/opt/python/libexec/bin ]] && export PATH="/usr/local/opt/python/libexec/bin:$PATH"
 
 # Android setup
 if [[ "$ENABLE_ANDROID_SETUP" == "true" ]]; then
@@ -199,27 +175,51 @@ if [[ "$ENABLE_ANDROID_SETUP" == "true" ]]; then
     fi
 fi
 
-if [ -d /Applications/Postgres.app/Contents/Versions/latest/bin ]; then
+[[ -d /Applications/Postgres.app/Contents/Versions/latest/bin ]] &&
     export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
-fi
 
-if [ -f "$HOME/.cargo/env" ]; then
-    source "$HOME/.cargo/env"
-fi
-
-if [ -f "$HOME/.dvm/bin/dvm" ]; then
-    export PATH="$HOME/.dvm/bin:$PATH"
-fi
+# Add user paths before sourcing omzsh so that they are available to plugins and the prompt
+[[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
+[[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
+[[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
+[[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+[[ -x "$HOME/.dvm/bin/dvm" ]] && export PATH="$HOME/.dvm/bin:$PATH"
+[[ -d $HOME/.opencode/bin ]] && export PATH=$HOME/.opencode/bin:$PATH
 
 # bun
 if [ -s "$HOME/.bun/_bun" ]; then
-    # completions
-    source "$HOME/.bun/_bun"
-
     # add bun to PATH
     export BUN_INSTALL="$HOME/.bun"
     export PATH="$BUN_INSTALL/bin:$PATH"
 fi
+
+#endregion
+
+# MARK: Oh-my-zsh
+source $ZSH/oh-my-zsh.sh
+
+# To customize prompt, run `omz theme set <theme-name>`.
+if (( IS_AI_AGENT_TERMINAL )); then
+    PROMPT='%~ %# '
+    RPROMPT=''
+else
+    [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+fi
+
+# Default editor
+export EDITOR='vim'
+
+# Get colors for tools
+dircolors_cache="${CACHE_HOME}/dircolors-${(%):-%n}.zsh"
+if [[ -s "$dircolors_cache" ]]; then
+    source "$dircolors_cache"
+else
+    dircolors > "$dircolors_cache"
+    source "$dircolors_cache"
+fi
+
+# bun completions
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
 
 # Check for Python and set user scripts directory
 PYTHON=$(get_python_path)
@@ -244,6 +244,11 @@ if command -v $PYTHON &> /dev/null; then
     unset python_scripts
 fi
 
+[[ -s $HOME/.localstack/localstack_setup.sh ]] && source $HOME/.localstack/localstack_setup.sh
+
+# MARK: Platform-specific Setup
+#region
+
 # WSL2 specific setup
 if (( IS_WSL )); then
     if (( !IS_VSCODE_TERMINAL && !IS_AI_AGENT_TERMINAL )); then
@@ -267,6 +272,11 @@ if (( IS_WINDOWS_NATIVE )); then
     fi
 fi
 
+# macOS specific setup
+if (( IS_MACOS )); then
+    export HOMEBREW_AUTO_UPDATE_SECS=259200 # 3 days
+fi
+
 # VS Code shell integration should be sourced near the end of ~/.zshrc.
 if (( IS_VSCODE_TERMINAL )); then
     vscode_shell_integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"
@@ -278,6 +288,8 @@ if (( IS_VSCODE_TERMINAL )); then
     fi
     unset vscode_shell_integration_path
 fi
+
+#endregion
 
 if [ -n "${ZSH_DEBUGRC+1}" ]; then
     zprof
