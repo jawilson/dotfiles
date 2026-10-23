@@ -135,7 +135,9 @@ if (( IS_AI_AGENT_TERMINAL )); then
 else
     plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
     plugins+=(git gitfast git-extras zsh-better-npm-completion gh deno dvm omp-completion)
-    plugins+=(mise)
+    # Scoop's mise.exe is a native Windows binary: its activation hook writes Windows paths that
+    # MSYS2 zsh cannot run, so Windows uses the shims added below instead.
+    (( IS_WINDOWS_NATIVE )) || plugins+=(mise)
 fi
 
 # User configuration
@@ -182,6 +184,11 @@ fi
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
+if (( IS_WINDOWS_NATIVE )) && [[ -n $LOCALAPPDATA ]] && (( $+commands[cygpath] )); then
+    mise_shims=$(cygpath -u "$LOCALAPPDATA\\mise\\shims")
+    [[ -d $mise_shims ]] && export PATH="$mise_shims:$PATH"
+    unset mise_shims
+fi
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 [[ -x "$HOME/.dvm/bin/dvm" ]] && export PATH="$HOME/.dvm/bin:$PATH"
 [[ -d $HOME/.opencode/bin ]] && export PATH=$HOME/.opencode/bin:$PATH
@@ -234,7 +241,7 @@ if command -v $PYTHON &> /dev/null; then
     python_scripts=$($PYTHON -c "from sysconfig import get_path; print(get_path('scripts', '$user_scheme'), end='')" 2>/dev/null)
     unset user_scheme
 
-    if (( IS_WINDOWS_NATIVE )); then
+    if (( IS_WINDOWS_NATIVE )) && [[ -n $python_scripts ]]; then
         python_scripts=$(cygpath -u "$python_scripts")
     fi
 
