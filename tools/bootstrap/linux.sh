@@ -20,34 +20,17 @@ if [ ! -x "$HOME/.local/bin/omp" ]; then
     curl -fsSL https://omp.sh/install | sh -s -- --binary
 fi
 
-# VS Code and Google Chrome from the vendors' apt repositories. Skipped on WSL and in
-# Codespaces, where the Windows or host copies are used (a Linux `code` would shadow the
-# Windows one that VS Code Remote relies on).
-if [ ! -e /proc/sys/fs/binfmt_misc/WSLInterop ] && [ -z "${CODESPACES:-}" ]; then
-    gui_pkgs=()
-    if ! deb_installed code; then
+# eza: in Debian 13+ and Ubuntu 24.04+, but not Debian 12 or older Ubuntu. Where the distro has
+# no package, use the eza project's apt repository.
+if ! deb_installed eza; then
+    if ! apt-cache show eza > /dev/null 2>&1; then
         as_root install -d -m 0755 /etc/apt/keyrings
-        curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | as_root tee /etc/apt/keyrings/microsoft.asc > /dev/null
-        echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/microsoft.asc] https://packages.microsoft.com/repos/code stable main" |
-            as_root tee /etc/apt/sources.list.d/vscode.list > /dev/null
-        # Stop the package from adding a second copy of this repository (apt rejects conflicting Signed-By values).
-        echo "code code/add-microsoft-repo boolean false" | as_root debconf-set-selections
-        gui_pkgs+=(code)
-    fi
-    arch=$(dpkg --print-architecture)
-    if [ "$arch" != amd64 ]; then
-        echo "bootstrap: skipped Google Chrome: Google publishes no Linux build for $arch" >&2
-    elif ! deb_installed google-chrome-stable; then
-        as_root install -d -m 0755 /etc/apt/keyrings
-        curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | as_root tee /etc/apt/keyrings/google-chrome.asc > /dev/null
-        echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.asc] https://dl.google.com/linux/chrome/deb/ stable main" |
-            as_root tee /etc/apt/sources.list.d/google-chrome.list > /dev/null
-        gui_pkgs+=(google-chrome-stable)
-    fi
-    if [ "${#gui_pkgs[@]}" -gt 0 ]; then
+        curl -fsSL https://raw.githubusercontent.com/eza-community/eza/main/deb.asc | as_root tee /etc/apt/keyrings/gierens.asc > /dev/null
+        echo "deb [signed-by=/etc/apt/keyrings/gierens.asc] https://deb.gierens.de stable main" |
+            as_root tee /etc/apt/sources.list.d/gierens.list > /dev/null
         as_root apt-get update -q
-        as_root env DEBIAN_FRONTEND=noninteractive apt-get install -qy "${gui_pkgs[@]}"
     fi
+    as_root env DEBIAN_FRONTEND=noninteractive apt-get install -qy eza
 fi
 
 # WSL: npiperelay lets zshrc reach the Windows ssh-agent through socat.

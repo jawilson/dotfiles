@@ -7,9 +7,8 @@
 "apt:socat" = "latest"  # WSL ssh-agent relay in zshrc
 "apt:unzip" = "latest"  # npiperelay
 "apt:zsh" = "latest"
-# The every-profile CLI set from mise.macos.toml, where apt carries it
+# The every-profile CLI set from mise.macos.toml, where apt carries it (eza: see tools/bootstrap/linux.sh)
 "apt:dos2unix" = "latest"
-"apt:eza" = "latest"
 "apt:gh" = "latest"
 "apt:git-lfs" = "latest"
 "apt:gnupg" = "latest"
