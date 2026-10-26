@@ -28,13 +28,9 @@ GHCR_TOKEN = { provider = "op", value = "op://Employee/52wxe27smjtkroyopqduy4cjw
 type = "bitwarden"
 
 [profiles.personal.secrets]
-# OPENAI_API_KEY = { provider = "bw", value = "<item name>" }
-# ANTHROPIC_API_KEY = { provider = "bw", value = "<item name>" }
-# CURSOR_API_KEY = { provider = "bw", value = "<item name>" }
-# GEMINI_API_KEY = { provider = "bw", value = "<item name>" }
 GITHUB_MCP_PERSONAL_ACCESS_TOKEN = { provider = "bw", value = "80cc9fa9-4a56-4b34-822e-95e1ceaf48bd/PAT - MCP" }
-# LINEAR_API_KEY = { provider = "bw", value = "<item name>" }
 # GITHUB_TOKEN = { provider = "bw", value = "<item name>" }
 # Read on demand by `get-cred-password GHCR_TOKEN` (the dlggh alias); env = false keeps it
 # out of the shell environment.
 # GHCR_TOKEN = { provider = "bw", value = "<item name>", env = false }
+FORGEJO_MCP_ACCESS_TOKEN = { provider = "bw", value = "b7a5dc8e-b552-4295-b1d3-c16338ca718e/Access Token - MCP" }
