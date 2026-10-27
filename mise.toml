@@ -52,7 +52,7 @@ os = "unix"
 zshenv = true
 
 [bootstrap.user]
-login_shell = "/bin/zsh"
+login_shell = "zsh"
 
 # age-keygen creates this machine's fnox key in tools/credentials-sync.sh.
 [tools]
