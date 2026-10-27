@@ -41,9 +41,9 @@ os = "unix"
 "~/.oh-my-zsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
 # Third-party plugins and themes. Each lives in a real directory under custom/, next to
 # the files linked from zsh/custom, and is pinned to a tag or commit; bump the ref to upgrade.
-"~/.oh-my-zsh/custom/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git", ref = "v0.7.1" }
-"~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion" = { url = "https://github.com/lukechilds/zsh-better-npm-completion.git", ref = "02ca404a9b585b59788b15af53d4f46fac297153" }
-"~/.oh-my-zsh/custom/themes/powerlevel10k" = { url = "https://github.com/romkatv/powerlevel10k.git", ref = "35833ea15f14b71dbcebc7e54c104d8d56ca5268" } # v1.20.0; a commit, because status misreads annotated tags
+"~/.oh-my-zsh/custom/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
+"~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion" = { url = "https://github.com/lukechilds/zsh-better-npm-completion.git" }
+"~/.oh-my-zsh/custom/themes/powerlevel10k" = { url = "https://github.com/romkatv/powerlevel10k.git" }
 
 # Shims reach every zsh, including the non-interactive agent terminals that skip the oh-my-zsh mise
 # plugin; interactive shells still get full activation from that plugin. This block goes in ~/.zshenv,
