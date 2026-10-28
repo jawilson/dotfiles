@@ -3641,6 +3641,17 @@
                         "vendor_id": 1133
                     },
                     "ignore": true
+                },
+                {
+                    "identifiers": {
+                        "is_pointing_device": true,
+                        "product_id": 49291,
+                        "vendor_id": 1133
+                    },
+                    "ignore": false,
+                    "ignore_vendor_events": true,
+                    "mouse_flip_horizontal_wheel": true,
+                    "mouse_flip_vertical_wheel": true
                 }
             ],
             "name": "Windows",
