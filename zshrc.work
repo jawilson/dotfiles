@@ -1,0 +1,17 @@
+# Work profile zsh configuration
+
+# 1Password SSH Agent (only when not using a forwarded SSH agent)
+if (( ! IS_WSL )) && [[ -z "${SSH_CONNECTION:-}" || ! -S "${SSH_AUTH_SOCK:-}" ]]; then
+    () {
+        local op_agent_sock=
+        if (( IS_MACOS )); then
+            op_agent_sock="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+        elif [[ "$(uname -s)" == "Linux" ]]; then
+            op_agent_sock="$HOME/.1password/agent.sock"
+        fi
+
+        if [[ -S "$op_agent_sock" ]]; then
+            export SSH_AUTH_SOCK="$op_agent_sock"
+        fi
+    }
+fi

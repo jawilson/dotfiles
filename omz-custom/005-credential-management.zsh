@@ -5,8 +5,8 @@
 
 # The profile install.sh recorded in .miserc.local.toml (env = ["work"]); fnox.toml uses the
 # same profile names.
-typeset -g _DOTFILES_PROFILE=
-if [[ -r $DOTFILES_DIR/.miserc.local.toml ]]; then
+typeset -g _DOTFILES_PROFILE=${_DOTFILES_PROFILE:-}
+if [[ -z "$_DOTFILES_PROFILE" && -r $DOTFILES_DIR/.miserc.local.toml ]]; then
   () {
     local line
     while IFS= read -r line; do

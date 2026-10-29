@@ -31,6 +31,20 @@ is_wsl && IS_WSL=1
 typeset -gi IS_MACOS=0
 is_macos && IS_MACOS=1
 
+# Profile recorded by install.sh in .miserc.local.toml (work or personal)
+typeset -g _DOTFILES_PROFILE=
+if [[ -r "$DOTFILES_DIR/.miserc.local.toml" ]]; then
+    () {
+        local line
+        while IFS= read -r line; do
+            if [[ $line == 'env = ["'*'"]' ]]; then
+                _DOTFILES_PROFILE=${${line#'env = ["'}%'"]'}
+                return
+            fi
+        done < "$DOTFILES_DIR/.miserc.local.toml"
+    }
+fi
+
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
 [[ -s $BASE16_SHELL ]] && source $BASE16_SHELL
@@ -52,19 +66,12 @@ if (( IS_WSL )); then
     else
         >&2 echo "Warning: npiperelay.exe not found in PATH. SSH agent forwarding will not work."
     fi
-else
-    # 1Password
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
-    fi
-
-    if [[ -S "$SSH_AUTH_SOCK" ]]; then
-        export SSH_AUTH_SOCK
-    fi
 fi
 
+# Profile-specific configuration (e.g. zshrc.work or zshrc.personal)
+if [[ -n "$_DOTFILES_PROFILE" && -r "$DOTFILES_DIR/zshrc.$_DOTFILES_PROFILE" ]]; then
+    source "$DOTFILES_DIR/zshrc.$_DOTFILES_PROFILE"
+fi
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 

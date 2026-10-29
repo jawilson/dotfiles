@@ -2,6 +2,9 @@
 # Google Drive, Notion and Slack, so nothing here installs them. Google Chrome is in
 # mise.macos.toml for every profile; adopt = true takes over JumpCloud's copy.
 
+[dotfiles]
+"~/.ssh/config.profile" = "ssh/config.work"
+
 # Work-only packages. A profile file loads on every OS, and Linux also has the brew
 # manager, so each entry names its OS.
 # LocalStack lstk is installed in tools/bootstrap/macos.sh because mise cannot
