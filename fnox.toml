@@ -36,3 +36,4 @@ GITHUB_MCP_PERSONAL_ACCESS_TOKEN = { provider = "bw", value = "80cc9fa9-4a56-4b3
 FORGEJO_MCP_ACCESS_TOKEN = { provider = "bw", value = "b7a5dc8e-b552-4295-b1d3-c16338ca718e/Access Token - MCP" }
 PORTAINER_MCP_GATE_TOKEN = { provider = "bw", value = "b7642286-996d-4b5f-985d-cf955a437b68/MCP Auth Token" }
 PORTAINER_MCP_ACCESS_TOKEN = { provider = "bw", value = "b7642286-996d-4b5f-985d-cf955a437b68/Access Token - MCP" }
+PROXMOX_MCP_API_TOKEN = { provider = "bw", value = "Proxmox (Wheeler)/API Token - mcp"}
