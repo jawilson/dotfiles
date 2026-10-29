@@ -1,39 +1,5 @@
 Host *
     AddKeysToAgent yes
-Host ://git.jeffalwilson.com
-    User git
-    Port 2222
-Host ://git.thesektor.one
-    User git
-    Port 222
-Host homeassistant
-    HostName homeassistant.local.thesektor.one
-    User hassio
-    MACs hmac-sha2-512-etm@openssh.com
-Host maxwell
-    HostName maxwell.local.thesektor.one
-    ForwardAgent yes
-Host feynman
-    HostName feynman.home.thesektor.one
-    ForwardAgent yes
-    DynamicForward 1025
-Host wheeler
-    HostName wheeler.local.thesektor.one
-    ForwardAgent yes
-Host oppenheimer
-    HostName oppenheimer.local.thesektor.one
-    ForwardAgent yes
-Host vonneumann
-    HostName vonneumann.local.thesektor.one
-    ForwardAgent yes
-Host wilson-t440 wilson-t440.corp.atellis.com
-    User corp\\jeff.wilson
-    DynamicForward 1027
-Host minecraft
-    HostName minecraft.home.thesektor.one
-    User pmcserver
-Host swarm-mgr-linux-01
-    HostName swarm-mgr-linux-01
-    ForwardAgent yes
+Include config.profile
 Host *
     User jawilson

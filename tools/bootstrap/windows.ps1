@@ -21,7 +21,29 @@ function Get-MSYS2 {
 
 $msys = Get-MSYS2
 if (-not $msys -or -not (Test-Path (Join-Path $msys 'usr\bin\bash.exe'))) {
-  throw "MSYS2 not found; run tools\install\bootstrap-windows.ps1 first."
+  Write-Host "MSYS2 not found, installing via winget..."
+  winget install --id MSYS2.MSYS2 -e --accept-source-agreements --accept-package-agreements
+  $msys = Get-MSYS2
+}
+if (-not $msys -or -not (Test-Path (Join-Path $msys 'usr\bin\bash.exe'))) {
+  throw "MSYS2 not found after installation; please install MSYS2 at C:\msys64."
+}
+
+$msysLauncher = Join-Path $msys 'msys2_shell.cmd'
+if (Test-Path $msysLauncher) {
+  $launcherContent = Get-Content $msysLauncher
+  $updated = $false
+  $launcherContent = $launcherContent | ForEach-Object {
+    if ($_ -match '^\s*rem\s+set MSYS=winsymlinks:nativestrict\s*$') {
+      $updated = $true
+      ($_ -replace '^\s*rem\s+', '')
+    } else {
+      $_
+    }
+  }
+  if ($updated) {
+    Set-Content -Path $msysLauncher -Value $launcherContent
+  }
 }
 $nsswitch = Join-Path $msys 'etc\nsswitch.conf'
 $content = @(Get-Content $nsswitch)

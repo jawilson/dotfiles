@@ -6,7 +6,7 @@ These are config files to set up a system the way I like it.
 
 ## Installation
 
-Machine setup is declared in `mise*.toml` and applied by `mise bootstrap`. `install.sh` only installs what mise cannot install for itself (Homebrew, Scoop, mise), records the profile, and runs `mise bootstrap`.
+Machine setup is declared in `mise*.toml` and applied by `mise bootstrap`. The install scripts (`install.sh` / `install.ps1`) only install what mise cannot install for itself (Homebrew on macOS, mise), record the profile, and run `mise bootstrap`.
 
 ### New Mac
 
@@ -27,13 +27,7 @@ Clone the repo, then run `./install.sh --profile <profile>`.
 
 ### Windows
 
-1. In an elevated PowerShell, download and run the prerequisite script:
-
-       Invoke-WebRequest https://raw.githubusercontent.com/jawilson/dotfiles/main/tools/install/bootstrap-windows.ps1 -OutFile "$env:TEMP\bootstrap-windows.ps1"
-       powershell -NoProfile -ExecutionPolicy Bypass -File "$env:TEMP\bootstrap-windows.ps1"
-
-2. Clone the repo.
-3. In the MSYS2 shell, run `./install.sh --profile <profile>`.
+Clone the repo, then run `.\install.ps1 -Profile <profile>` in PowerShell (or `./install.sh --profile <profile>` in MSYS2/Git Bash).
 
 ### Profiles
 
@@ -49,7 +43,7 @@ Run these from the repository (mise reads the platform and profile files only fr
 - `mise dot apply` after editing links.
 - zsh-autosuggestions, zsh-better-npm-completion and powerlevel10k are cloned by `[bootstrap.repos]` in `mise.toml`, pinned to a tag or commit. To upgrade one, change its `ref` and run `mise bootstrap repos apply`.
 - If one package fails on a new machine, `mise bootstrap --skip packages` attempts the rest; steps that need the missing package may still fail.
-- Node and npm come from mise (`node` in `config/mise/config.toml`). A block in `~/.zshenv` puts mise's shims on PATH for every zsh, including non-interactive ones; interactive shells use full activation. PowerShell and cmd get the shims from the PowerShell profile and `cmdrc.bat`. Existing machines: run `mise bootstrap`, then `brew uninstall fnm` (macOS) and delete `~/.fnm` (Linux).
+- Node and npm come from mise (`node` in `config/mise/config.toml`). A block in `~/.zshenv` puts mise's shims on PATH for every zsh, including non-interactive ones; interactive shells use full activation. On Windows (MSYS2 zsh) there is no `~/.zshenv` block and no activation, because native Windows `mise.exe` emits Windows paths that break MSYS2 zsh; `zshrc` adds the shims directory instead. PowerShell and cmd get the shims from the PowerShell profile and `cmdrc.bat`. Existing machines: run `mise bootstrap`, then `brew uninstall fnm` (macOS) and delete `~/.fnm` (Linux).
 - Credentials (API keys, tokens) come from [fnox](https://fnox.jdx.dev). Uncomment and fill in the entries for your profile in `fnox.toml`, run `mise run credentials:sync` to cache them from 1Password (work) or Vaultwarden (personal), then open a new shell. Run sync again after a credential changes in the vault.
 
 ### Manual follow-ups on a new Mac

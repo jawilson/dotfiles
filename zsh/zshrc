@@ -19,7 +19,7 @@ if (( !IS_AI_AGENT_TERMINAL )) && [[ -r "${CACHE_HOME}/p10k-instant-prompt-${(%)
     source "${CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-export DOTFILES_DIR=${${(%):-%x}:A:h}
+export DOTFILES_DIR=${${(%):-%x}:A:h:h}
 source "$DOTFILES_DIR/tools/common.sh"
 
 typeset -gi IS_WINDOWS_NATIVE=0
@@ -30,6 +30,20 @@ is_wsl && IS_WSL=1
 
 typeset -gi IS_MACOS=0
 is_macos && IS_MACOS=1
+
+# Profile recorded by install.sh in .miserc.local.toml (work or personal)
+typeset -g _DOTFILES_PROFILE=
+if [[ -r "$DOTFILES_DIR/.miserc.local.toml" ]]; then
+    () {
+        local line
+        while IFS= read -r line; do
+            if [[ $line == 'env = ["'*'"]' ]]; then
+                _DOTFILES_PROFILE=${${line#'env = ["'}%'"]'}
+                return
+            fi
+        done < "$DOTFILES_DIR/.miserc.local.toml"
+    }
+fi
 
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/base16-default.dark.sh"
@@ -52,19 +66,12 @@ if (( IS_WSL )); then
     else
         >&2 echo "Warning: npiperelay.exe not found in PATH. SSH agent forwarding will not work."
     fi
-else
-    # 1Password
-    if [[ "$(uname -s)" == "Darwin" ]]; then
-        SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    elif [[ "$(uname -s)" == "Linux" ]]; then
-        SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
-    fi
-
-    if [[ -S "$SSH_AUTH_SOCK" ]]; then
-        export SSH_AUTH_SOCK
-    fi
 fi
 
+# Profile-specific configuration (e.g. zsh/zshrc.work or zsh/zshrc.personal)
+if [[ -n "$_DOTFILES_PROFILE" && -r "$DOTFILES_DIR/zsh/zshrc.$_DOTFILES_PROFILE" ]]; then
+    source "$DOTFILES_DIR/zsh/zshrc.$_DOTFILES_PROFILE"
+fi
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -135,7 +142,9 @@ if (( IS_AI_AGENT_TERMINAL )); then
 else
     plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
     plugins+=(git gitfast git-extras zsh-better-npm-completion gh deno dvm omp-completion)
-    plugins+=(mise)
+    # Native Windows mise.exe is a native Windows binary: its activation hook writes Windows paths that
+    # MSYS2 zsh cannot run, so Windows uses the shims added below instead.
+    (( IS_WINDOWS_NATIVE )) || plugins+=(mise)
 fi
 
 # User configuration
@@ -182,6 +191,13 @@ fi
 [[ -d $HOME/.bin ]] && export PATH="$HOME/.bin:$PATH"
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
+if (( IS_WINDOWS_NATIVE )) && [[ -n $LOCALAPPDATA ]] && (( $+commands[cygpath] )); then
+    winget_links=$(cygpath -u "$LOCALAPPDATA\\Microsoft\\WinGet\\Links")
+    [[ -d $winget_links ]] && export PATH="$winget_links:$PATH"
+    mise_shims=$(cygpath -u "$LOCALAPPDATA\\mise\\shims")
+    [[ -d $mise_shims ]] && export PATH="$mise_shims:$PATH"
+    unset winget_links mise_shims
+fi
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 [[ -x "$HOME/.dvm/bin/dvm" ]] && export PATH="$HOME/.dvm/bin:$PATH"
 [[ -d $HOME/.opencode/bin ]] && export PATH=$HOME/.opencode/bin:$PATH
@@ -234,7 +250,7 @@ if command -v $PYTHON &> /dev/null; then
     python_scripts=$($PYTHON -c "from sysconfig import get_path; print(get_path('scripts', '$user_scheme'), end='')" 2>/dev/null)
     unset user_scheme
 
-    if (( IS_WINDOWS_NATIVE )); then
+    if (( IS_WINDOWS_NATIVE )) && [[ -n $python_scripts ]]; then
         python_scripts=$(cygpath -u "$python_scripts")
     fi
 
@@ -279,13 +295,15 @@ fi
 
 # VS Code shell integration should be sourced near the end of ~/.zshrc.
 if (( IS_VSCODE_TERMINAL )); then
-    vscode_shell_integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"
-    if [[ -n "$vscode_shell_integration_path" ]]; then
-        if (( IS_WINDOWS_NATIVE )) && command -v cygpath &> /dev/null; then
+    if (( IS_WINDOWS_NATIVE )); then
+        vscode_shell_integration_path="$(cmd.exe //d //c "code.cmd --locate-shell-integration-path zsh" 2>/dev/null | tr -d '\r')"
+        if [[ -n "$vscode_shell_integration_path" ]] && (( $+commands[cygpath] )); then
             vscode_shell_integration_path="$(cygpath -u "$vscode_shell_integration_path")"
         fi
-        [[ -r "$vscode_shell_integration_path" ]] && . "$vscode_shell_integration_path"
+    else
+        vscode_shell_integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"
     fi
+    [[ -n "$vscode_shell_integration_path" && -r "$vscode_shell_integration_path" ]] && . "$vscode_shell_integration_path"
     unset vscode_shell_integration_path
 fi
 

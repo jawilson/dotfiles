@@ -15,12 +15,12 @@ min_version = "2026.10.8"
 "~/.gitconfig-work.inc" = "gitconfig-work.inc"
 "~/.hammerspoon" = "hammerspoon"
 "~/.inputrc" = "inputrc"
-"~/.p10k.zsh" = "p10k.zsh"
+"~/.p10k.zsh" = "zsh/p10k.zsh"
 "~/.screenrc" = "screenrc"
 "~/.synergy.conf" = "synergy.conf"
 "~/.vim" = "vim"
 "~/.vimrc" = "vimrc"
-"~/.zshrc" = "zshrc"
+"~/.zshrc" = "zsh/zshrc"
 
 # mise.run installs mise in ~/.local/bin; the shims block below needs it on PATH.
 "~/.zshenv/local-bin" = { line = 'export PATH="$HOME/.local/bin:$PATH"', position = "prepend" }
@@ -31,7 +31,7 @@ min_version = "2026.10.8"
 "~/.ssh/*" = "ssh/*"
 
 # Link each custom file while preserving oh-my-zsh's tracked examples.
-"~/.oh-my-zsh/custom" = { source = "omz-custom", mode = "symlink-each" }
+"~/.oh-my-zsh/custom" = { source = "zsh/omz-custom", mode = "symlink-each" }
 
 # Windows creates it in tools/bootstrap/windows.ps1; directories are unix-only.
 [bootstrap.directories."~/src"]
@@ -40,10 +40,10 @@ os = "unix"
 [bootstrap.repos]
 "~/.oh-my-zsh" = { url = "https://github.com/ohmyzsh/ohmyzsh.git" }
 # Third-party plugins and themes. Each lives in a real directory under custom/, next to
-# the files linked from zsh/custom, and is pinned to a tag or commit; bump the ref to upgrade.
-"~/.oh-my-zsh/custom/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git", ref = "v0.7.1" }
-"~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion" = { url = "https://github.com/lukechilds/zsh-better-npm-completion.git", ref = "02ca404a9b585b59788b15af53d4f46fac297153" }
-"~/.oh-my-zsh/custom/themes/powerlevel10k" = { url = "https://github.com/romkatv/powerlevel10k.git", ref = "35833ea15f14b71dbcebc7e54c104d8d56ca5268" } # v1.20.0; a commit, because status misreads annotated tags
+# the files linked from zsh/omz-custom, and is pinned to a tag or commit; bump the ref to upgrade.
+"~/.oh-my-zsh/custom/plugins/zsh-autosuggestions" = { url = "https://github.com/zsh-users/zsh-autosuggestions.git" }
+"~/.oh-my-zsh/custom/plugins/zsh-better-npm-completion" = { url = "https://github.com/lukechilds/zsh-better-npm-completion.git" }
+"~/.oh-my-zsh/custom/themes/powerlevel10k" = { url = "https://github.com/romkatv/powerlevel10k.git" }
 
 # Shims reach every zsh, including the non-interactive agent terminals that skip the oh-my-zsh mise
 # plugin; interactive shells still get full activation from that plugin. This block goes in ~/.zshenv,
@@ -52,7 +52,7 @@ os = "unix"
 zshenv = true
 
 [bootstrap.user]
-login_shell = "/bin/zsh"
+login_shell = "zsh"
 
 # age-keygen creates this machine's fnox key in tools/credentials-sync.sh.
 [tools]
