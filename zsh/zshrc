@@ -142,7 +142,7 @@ if (( IS_AI_AGENT_TERMINAL )); then
 else
     plugins=(cp debian pip sudo systemd colorize docker docker-compose node aws zsh-autosuggestions)
     plugins+=(git gitfast git-extras zsh-better-npm-completion gh deno dvm omp-completion)
-    # Scoop's mise.exe is a native Windows binary: its activation hook writes Windows paths that
+    # Native Windows mise.exe is a native Windows binary: its activation hook writes Windows paths that
     # MSYS2 zsh cannot run, so Windows uses the shims added below instead.
     (( IS_WINDOWS_NATIVE )) || plugins+=(mise)
 fi
@@ -192,9 +192,11 @@ fi
 [[ -d $HOME/.local/bin ]] && export PATH="$HOME/.local/bin:$PATH"
 [[ -d $HOME/scoop/shims ]] && export PATH="$HOME/scoop/shims:$PATH"
 if (( IS_WINDOWS_NATIVE )) && [[ -n $LOCALAPPDATA ]] && (( $+commands[cygpath] )); then
+    winget_links=$(cygpath -u "$LOCALAPPDATA\\Microsoft\\WinGet\\Links")
+    [[ -d $winget_links ]] && export PATH="$winget_links:$PATH"
     mise_shims=$(cygpath -u "$LOCALAPPDATA\\mise\\shims")
     [[ -d $mise_shims ]] && export PATH="$mise_shims:$PATH"
-    unset mise_shims
+    unset winget_links mise_shims
 fi
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 [[ -x "$HOME/.dvm/bin/dvm" ]] && export PATH="$HOME/.dvm/bin:$PATH"

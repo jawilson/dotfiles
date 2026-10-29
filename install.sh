@@ -68,17 +68,21 @@ printf 'env = ["%s"]\n' "$profile" > "$miserc_local" || exit 1
 
 #region Prerequisites mise cannot install itself
 
-export PATH="$HOME/.local/bin:$HOME/scoop/shims:$PATH"
-
-# Windows native shell specific setup
 if is_windows_native; then
-    # Install scoop
-    if ! command -v scoop &> /dev/null; then
-        powershell -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072"
-        # shellcheck disable=SC2016
-        powershell -Command 'iex "& {$(irm get.scoop.sh)} -RunAsAdmin"'
+    if [ -n "$LOCALAPPDATA" ]; then
+        winget_links=$(cygpath -u "$LOCALAPPDATA/Microsoft/WinGet/Links" 2>/dev/null || echo "$LOCALAPPDATA/Microsoft/WinGet/Links")
+        export PATH="$winget_links:$PATH"
     fi
-    command -v mise &> /dev/null || scoop install mise
+    export PATH="$HOME/AppData/Local/Microsoft/WinGet/Links:$HOME/.local/bin:$HOME/scoop/shims:$PATH"
+
+    if ! command -v mise &> /dev/null; then
+        winget_cmd="winget"
+        command -v winget &> /dev/null || winget_cmd="winget.exe"
+        "$winget_cmd" install --id jdx.mise -e --accept-source-agreements --accept-package-agreements || "$winget_cmd" install jdx.mise || exit 1
+        hash -r 2>/dev/null || true
+    fi
+else
+    export PATH="$HOME/.local/bin:$PATH"
 fi
 
 if is_macos; then
@@ -105,8 +109,7 @@ if command -v apt-get &> /dev/null; then
 fi
 
 if ! is_windows_native && ! command -v mise &> /dev/null; then
-    mise_installer=$(curl -fsSL https://mise.run) || exit 1
-    printf '%s\n' "$mise_installer" | sh || exit 1
+    curl -fsSL https://mise.run | sh || exit 1
 fi
 
 if ! command -v mise &> /dev/null; then

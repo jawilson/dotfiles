@@ -1,22 +1,20 @@
 # Windows setup; loaded on Windows through auto_env in .miserc.toml.
 [bootstrap.packages]
-# Required on every OS. Python comes from Chocolatey in tools/install/bootstrap-windows.ps1,
-# which also installs Scoop's git first so the repository can be cloned; zsh, gnupg, tree
+# Required on every OS. Git is already present to check out the repo; zsh, gnupg, tree
 # and curl come from MSYS2 and omp from its installer, both in tools/bootstrap/windows.ps1.
 # htop has no Windows package.
-"scoop:eza" = "latest"
-"scoop:gh" = "latest"
-"scoop:git" = "latest"
-"scoop:ripgrep" = "latest"
-"scoop:uv" = "latest"
+"winget:BurntSushi.ripgrep.MSVC" = "latest"
+"winget:GitHub.cli" = "latest"
 "winget:Google.Chrome" = "latest"
 "winget:Microsoft.VisualStudioCode" = "latest"
+"winget:astral-sh.uv" = "latest"
+"winget:eza-community.eza" = "latest"
 
 [tasks.bootstrap]
 description = "Windows setup that [bootstrap] sections cannot declare"
 run = 'powershell -NoProfile -ExecutionPolicy Bypass -File tools\bootstrap\windows.ps1'
 
-# Scoop's mise.exe prints Windows paths, which break PATH in MSYS2 zsh; zshrc adds the
+# Native Windows mise.exe prints Windows paths, which break PATH in MSYS2 zsh; zshrc adds the
 # shims directory itself on Windows.
 [bootstrap.mise_shell_activate]
 zshenv = false
