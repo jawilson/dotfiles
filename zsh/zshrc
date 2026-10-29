@@ -295,13 +295,15 @@ fi
 
 # VS Code shell integration should be sourced near the end of ~/.zshrc.
 if (( IS_VSCODE_TERMINAL )); then
-    vscode_shell_integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"
-    if [[ -n "$vscode_shell_integration_path" ]]; then
-        if (( IS_WINDOWS_NATIVE )) && command -v cygpath &> /dev/null; then
+    if (( IS_WINDOWS_NATIVE )); then
+        vscode_shell_integration_path="$(cmd.exe //d //c "code.cmd --locate-shell-integration-path zsh" 2>/dev/null | tr -d '\r')"
+        if [[ -n "$vscode_shell_integration_path" ]] && (( $+commands[cygpath] )); then
             vscode_shell_integration_path="$(cygpath -u "$vscode_shell_integration_path")"
         fi
-        [[ -r "$vscode_shell_integration_path" ]] && . "$vscode_shell_integration_path"
+    else
+        vscode_shell_integration_path="$(code --locate-shell-integration-path zsh 2>/dev/null)"
     fi
+    [[ -n "$vscode_shell_integration_path" && -r "$vscode_shell_integration_path" ]] && . "$vscode_shell_integration_path"
     unset vscode_shell_integration_path
 fi
 
