@@ -235,4 +235,5 @@
   "window.newWindowProfile": "Quartermaster",
   "git.autofetch": true,
   "window.title": "${rootName}${separator}${activeRepositoryBranchName}${separator}${activeEditorShort}${separator}${profileName}",
+  "security.promptForLocalFileProtocolHandling": false,
 }

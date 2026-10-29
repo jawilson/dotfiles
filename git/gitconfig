@@ -31,6 +31,12 @@
 	unstage = reset HEAD --
 	up = pull --rebase
 	diff-split = "!f() { (git diff --numstat \"$@\" | while read -r add del file; do if [ \"$add\" = \"-\" ]; then printf \"%-50s | Binary file\\n\" \"$file\"; else pos=$(printf \"\\033[32m%.0s+\\033[0m\" $(seq 1 $add)); neg=$(printf \"\\033[31m%.0s-\\033[0m\" $(seq 1 $del)); printf \" %-50s | %4s+ %4s-  %s%s\\n\" \"$file\" \"$add\" \"$del\" \"$pos\" \"$neg\"; fi; done; git diff --shortstat \"$@\") | ${GIT_PAGER:-$(git config core.pager || echo ${PAGER:-less})}; }; f"
+	dlog = -c diff.external=difft log --ext-diff
+	dl = -c diff.external=difft log -p --ext-diff
+	dshow = -c diff.external=difft show --ext-diff
+	ds = -c diff.external=difft show --ext-diff
+	ddiff = -c diff.external=difft diff
+	dft = -c diff.external=difft diff
 [color]
 	ui = auto
 [credential]

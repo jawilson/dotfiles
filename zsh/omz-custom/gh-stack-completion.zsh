@@ -56,7 +56,12 @@ _gh_with_extensions() {
     if [[ ${words[2]} == stack ]] && (( CURRENT > 2 )); then
         _gh_stack
     else
+        local ret
         _gh "$@"
+        ret=$?
+        # The generated _gh script rebinds gh when first autoloaded.
+        compdef _gh_with_extensions gh
+        return $ret
     fi
 }
 
