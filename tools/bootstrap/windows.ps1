@@ -1,5 +1,5 @@
 # Imperative Windows setup, run as the `bootstrap` task from mise.windows.toml.
-# Designed to be rerun: installs check first; the cmd AutoRun value is simply set again.
+# Designed to be rerun: installs check first; registry settings are simply applied again.
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 
@@ -67,6 +67,24 @@ foreach ($shell in 'powershell.exe', 'pwsh.exe') {
 # cmd.exe runs ~/.cmdrc.bat at startup.
 reg.exe add 'HKCU\Software\Microsoft\Command Processor' /v AutoRun /t REG_SZ /d "$env:USERPROFILE\.cmdrc.bat" /f | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "Setting the cmd AutoRun value failed (exit $LASTEXITCODE)." }
+
+# Classic Windows 10 right-click context menu.
+reg.exe add 'HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' /f /ve | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "Setting the classic context menu registry key failed (exit $LASTEXITCODE)." }
+
+# Remove Git GUI and Git Bash context menu options if present.
+$gitShellKeys = @(
+  'HKEY_CLASSES_ROOT\Directory\Background\shell\git_gui',
+  'HKEY_CLASSES_ROOT\Directory\Background\shell\git_shell',
+  'HKEY_CLASSES_ROOT\Directory\shell\git_gui',
+  'HKEY_CLASSES_ROOT\Directory\shell\git_shell'
+)
+foreach ($key in $gitShellKeys) {
+  if (Test-Path -LiteralPath "Registry::$key") {
+    reg.exe delete $key /f | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Removing registry key $key failed (exit $LASTEXITCODE)." }
+  }
+}
 
 # oh-my-pi (omp): prebuilt binary in %LOCALAPPDATA%\omp; the installer adds that folder to the user PATH.
 $ompExe = "$env:LOCALAPPDATA\omp\omp.exe"
