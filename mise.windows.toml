@@ -9,6 +9,7 @@
 "winget:Microsoft.VisualStudioCode" = "latest"
 "winget:astral-sh.uv" = "latest"
 "winget:eza-community.eza" = "latest"
+"winget:jqlang.jq" = "latest"
 
 [tasks.bootstrap]
 description = "Windows setup that [bootstrap] sections cannot declare"
