@@ -3,7 +3,6 @@
 [dotfiles]
 "~/.ssh/config.profile" = "ssh/config.personal"
 
-
 [bootstrap.macos.dock]
 apps = [
   "/Applications/Google Chrome.app",
@@ -18,3 +17,6 @@ FNOX_PROFILE = "personal"
 # bw, which credentials:sync uses to read Vaultwarden.
 [tools]
 bitwarden = "latest"
+go = "latest"
+
+"go:codeberg.org/romaintb/fgj" = "latest"
