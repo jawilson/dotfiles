@@ -62,3 +62,7 @@ age = "latest"
 description = "Cache this profile's credentials from 1Password or Vaultwarden for zsh"
 run = "bash tools/credentials-sync.sh"
 interactive = true  # Vaultwarden URL, bw login/unlock and op signin prompt on the terminal
+
+[tasks."dotfiles:update"]
+description = "Pull latest dotfiles and apply links or bootstrap as needed"
+run = "zsh tools/dotfiles-update.zsh"

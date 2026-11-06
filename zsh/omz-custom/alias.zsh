@@ -1,5 +1,15 @@
 # dotfiles
 alias dotfiles='git --git-dir=$DOTFILES_DIR/.git --work-tree=$DOTFILES_DIR'
+dotfiles-update() {
+    local local_changes_mode dot_apply_mode bootstrap_mode
+    zstyle -s ':dotfiles:update' local-changes local_changes_mode
+    zstyle -s ':dotfiles:update' dot-apply dot_apply_mode
+    zstyle -s ':dotfiles:update' bootstrap bootstrap_mode
+    DOTFILES_UPDATE_LOCAL_CHANGES="${DOTFILES_UPDATE_LOCAL_CHANGES:-${local_changes_mode:-prompt}}" \
+    DOTFILES_UPDATE_DOT_APPLY="${DOTFILES_UPDATE_DOT_APPLY:-${dot_apply_mode:-auto}}" \
+    DOTFILES_UPDATE_BOOTSTRAP="${DOTFILES_UPDATE_BOOTSTRAP:-${bootstrap_mode:-auto}}" \
+        zsh "$DOTFILES_DIR/tools/dotfiles-update.zsh" "$@"
+}
 
 # ls
 alias ls='eza -F'
