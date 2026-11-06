@@ -1,6 +1,7 @@
 [user]
 	name = Jeffery Wilson
 	email = jeff@jeffalwilson.com
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOK/E1HbvgfksTylV5IOWvACFqn/NIj6FSVA74G0hkYc
 [core]
 	autocrlf = input
 	editor = git-vscode edit
@@ -81,3 +82,11 @@
 	required = true
 [init]
 	defaultBranch = main
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+[gpg "ssh"]
+	allowedSignersFile = C:/Users/jawilson/.ssh/allowed_signers
