@@ -16,6 +16,7 @@ FNOX_PROFILE = "personal"
 
 # bw, which credentials:sync uses to read Vaultwarden.
 [tools]
+"forgejo:romaintb/fgj" = "0.6.1"
 bitwarden = "latest"
 go = "latest"
 
