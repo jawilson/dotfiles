@@ -12,11 +12,16 @@ dotfiles-update() {
 }
 
 # ls
-alias ls='eza -F'
-alias ll='eza -lh --git'
-alias la='eza -la'
-alias lt='eza --tree'
-alias l='eza -F'
+alias ls='eza --group-directories-first --icons=auto --color=auto'
+# Long views
+alias l='eza -blF --git --header --group-directories-first --icons=auto --color=auto'
+alias ll='eza -la --git --header --octal-permissions --group-directories-first --icons=auto --color=auto'
+alias la='eza -la --git --header --group-directories-first --icons=auto --color=auto'
+alias lm='eza -l --git --header --sort=modified --reverse --group-directories-first --icons=auto --color=auto'
+# Compact and specialist views
+alias l1='eza --oneline --group-directories-first --icons=auto --color=auto'
+alias lt='eza --tree --level=2 --group-directories-first --icons=auto --color=auto'
+alias l.='eza -a --oneline --color=never | grep -E "^\."'
 
 # grep
 alias grep='grep --color=auto'
