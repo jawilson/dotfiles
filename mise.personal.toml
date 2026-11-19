@@ -17,4 +17,5 @@ FNOX_PROFILE = "personal"
 # bw, which credentials:sync uses to read Vaultwarden.
 [tools]
 "forgejo:romaintb/fgj" = "0.6.1"
-bitwarden = "latest"
+# 2026.10.0 leaves `bw status` running after returning its result.
+bitwarden = "2026.8.0"
