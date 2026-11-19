@@ -394,3 +394,19 @@ fi
 if [[ "$bootstrap_mode" == never ]] && (( bootstrap_files_changed )); then
     print "[dotfiles] Bootstrap files changed; run 'mise bootstrap' in $DOTFILES_DIR to apply."
 fi
+
+if (( ${changed_files[(Ie)fnox.toml]} )); then
+    if [[ -t 0 ]]; then
+        printf "[dotfiles] Credential configuration changed. Sync credentials now? [y/N] "
+        read -r answer || answer=n
+        if [[ "$answer" == [yY]* ]]; then
+            if [[ -z "$mise_bin" ]]; then
+                print -u2 "[dotfiles] Error: 'mise' not found; run 'mise run credentials:sync' in $DOTFILES_DIR."
+                exit 1
+            fi
+            ( builtin cd -q -- "$DOTFILES_DIR" && "$mise_bin" run credentials:sync ) || exit $?
+        fi
+    else
+        print "[dotfiles] Credential configuration changed; run 'mise run credentials:sync' in $DOTFILES_DIR."
+    fi
+fi

@@ -125,7 +125,15 @@ fi
 (
     cd "$script_dir" || exit 1
     mise trust ./mise.toml || exit 1
-    mise -E "$profile" bootstrap --yes --force-dotfiles --skip-dirty
+    mise -E "$profile" bootstrap --yes --force-dotfiles --skip-dirty || exit 1
+    if [ -t 0 ]; then
+        read -r -p "Sync credentials now? [y/N] " answer
+        if [[ "$answer" == [yY]* ]]; then
+            mise -E "$profile" run credentials:sync || exit 1
+        fi
+    else
+        echo "Run 'mise run credentials:sync' to sync credentials."
+    fi
 ) || exit 1
 
 ZSH=${ZSH:-$HOME/.oh-my-zsh}

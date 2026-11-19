@@ -53,6 +53,15 @@ Push-Location $repo
 try {
   mise trust ./mise.toml
   mise -E $Profile bootstrap --yes --force-dotfiles --skip-dirty
+  if ($LASTEXITCODE -ne 0) { throw "mise bootstrap failed (exit $LASTEXITCODE)." }
+  if ([Environment]::UserInteractive -and -not [Console]::IsInputRedirected) {
+    if ((Read-Host 'Sync credentials now? [y/N]') -match '^[yY]') {
+      mise -E $Profile run credentials:sync
+      if ($LASTEXITCODE -ne 0) { throw "Credential sync failed (exit $LASTEXITCODE)." }
+    }
+  } else {
+    Write-Host "Run 'mise run credentials:sync' to sync credentials."
+  }
 } finally {
   Pop-Location
 }
