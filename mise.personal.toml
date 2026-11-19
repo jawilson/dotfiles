@@ -18,6 +18,3 @@ FNOX_PROFILE = "personal"
 [tools]
 "forgejo:romaintb/fgj" = "0.6.1"
 bitwarden = "latest"
-go = "latest"
-
-"go:codeberg.org/romaintb/fgj" = "latest"
