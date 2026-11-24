@@ -40,17 +40,33 @@ fi
 
 # SSH Agent setup
 if (( IS_WSL )); then
-    if [[ -n "${NPIPERELAY:-}" ]]; then
-        WIN_NPIPE_PATH="$NPIPERELAY"
-    else
-        WIN_NPIPE_PATH=$(wslpath "$(where.exe npiperelay.exe 2>/dev/null | head -n 1 | tr -d '\r')")
+    WIN_NPIPE_PATH="${NPIPERELAY:-}"
+    if [[ ! -x "$WIN_NPIPE_PATH" ]]; then
+        WIN_NPIPE_PATH=$(command -v npiperelay.exe 2>/dev/null)
     fi
 
-    if [[ ! -z "$WIN_NPIPE_PATH" ]]; then
+    if [[ -n "$WIN_NPIPE_PATH" && -x "$WIN_NPIPE_PATH" ]]; then
         export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
-        if [ ! -S "$SSH_AUTH_SOCK" ] || ! pgrep -f "socat.*$SSH_AUTH_SOCK" >/dev/null 2>&1; then
+        # Replace relays started with an outdated or invalid executable path.
+        for _relay_pid in ${(f)"$(pgrep -f "^socat UNIX-LISTEN:${SSH_AUTH_SOCK},fork " 2>/dev/null)"}; do
+            _relay_args=$(tr '\0' ' ' < "/proc/$_relay_pid/cmdline" 2>/dev/null)
+            if [[ "$_relay_args" != *"EXEC:${WIN_NPIPE_PATH} -ei -s //./pipe/openssh-ssh-agent,nofork"* ]]; then
+                kill "$_relay_pid" 2>/dev/null
+                for _relay_wait in {1..50}; do
+                    kill -0 "$_relay_pid" 2>/dev/null || break
+                    sleep 0.01
+                done
+            fi
+        done
+        unset _relay_pid _relay_args _relay_wait
+        if [ ! -S "$SSH_AUTH_SOCK" ] || ! pgrep -f "^socat UNIX-LISTEN:${SSH_AUTH_SOCK},fork " >/dev/null 2>&1; then
             rm -f "$SSH_AUTH_SOCK"
             ( setsid socat UNIX-LISTEN:"$SSH_AUTH_SOCK",fork EXEC:"${WIN_NPIPE_PATH} -ei -s //./pipe/openssh-ssh-agent",nofork & ) >/dev/null 2>&1
+            for _relay_wait in {1..50}; do
+                [[ -S "$SSH_AUTH_SOCK" ]] && break
+                sleep 0.01
+            done
+            unset _relay_wait
         fi
     else
         >&2 echo "Warning: npiperelay.exe not found in PATH. SSH agent forwarding will not work."
